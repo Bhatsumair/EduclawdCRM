@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a5f5b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="format-detection" content="telephone=no">
+<title>Educlawd CRM</title>
+<link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Educlawd CRM">
+
+<style>
+/* Educlawd CRM · Base: variables, layout, cards, forms, buttons, modals, auth, school detail */
+:root{color-scheme:light;--bg:#fbf5ea;--card:#fffdf8;--ink:#3b2a1a;--mute:#8a7560;--line:#ecdfca;--teal:#0d7f7a;--teal2:#0a5f5b;--yel:#f7c52d;--soft:#f0ebdf;--red:#c2410c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--teal2);color:#fff}
+header b{font-size:18px}header b span{color:var(--yel)}header small{opacity:.8;margin-left:auto}
+.app{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px;max-width:1280px;margin:auto}
+@media(max-width:800px){.app{grid-template-columns:1fr}.hide{display:none!important}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:70px;resize:vertical}
+label{display:block;font-size:12px;color:var(--mute);margin:8px 0 3px}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:8px 14px;background:var(--teal);color:#fff;font-weight:600}
+button.alt{background:var(--soft);color:var(--teal2)}button.ghost{background:none;color:var(--mute);padding:4px 8px}
+.items{margin-top:10px;display:flex;flex-direction:column;gap:6px;max-height:72vh;overflow:auto}
+.it{padding:10px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.it.on{border-color:var(--teal);background:var(--soft)}
+.it .r{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.it small{color:var(--mute)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{margin-left:auto}
+.strip{display:flex;flex-wrap:wrap;margin:12px 0 0;border:1px solid var(--line);border-radius:10px;background:var(--soft);overflow:hidden}
+.strip>div{flex:1 1 130px;padding:8px 14px;border-right:1px solid var(--line)}.strip>div:last-child{border:0}
+.strip small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+.strip b{font-weight:600}.strip .w{flex:2 1 240px}
+.tabs{display:flex;gap:4px;margin:14px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{background:none;color:var(--mute);border-radius:0;border-bottom:3px solid transparent}
+.tabs button.on{color:var(--teal);border-color:var(--yel)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--soft);color:var(--teal2);font-size:12px;font-weight:600;white-space:nowrap}
+.s-Won{background:#d1fae5;color:#065f46}.s-Lost{background:#fee2e2;color:#991b1b}.s-Negotiation,.s-Proposal{background:#fef3c7;color:#92400e}.s-Lead{background:#e5e7eb;color:#374151}.s-Demo,.s-Meeting{background:#dbeafe;color:#1e40af}.s-Contacted{background:#ede9fe;color:#5b21b6}
+.ct{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.ct small{color:var(--mute);display:block}
+a.call{width:38px;height:38px;border-radius:50%;background:#16a34a;color:#fff;display:grid;place-items:center;text-decoration:none;font-size:17px;flex:none}
+.task{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-left:4px solid var(--yel);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.task.od{border-left-color:var(--red)}.task .due{font-size:12px;color:var(--mute)}.task.od .due{color:var(--red);font-weight:600}
+.ic{font-size:20px;width:34px;height:34px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none}
+h4{margin:18px 0 8px}
+.tl{border-left:2px solid var(--line);margin-left:16px;padding-left:20px}
+.ev{position:relative;margin-bottom:14px}.ev .ic{position:absolute;left:-39px;top:0;width:30px;height:30px;font-size:15px;border:2px solid var(--card)}
+.ev small{color:var(--mute)}
+.total{font-size:22px;font-weight:800;color:var(--teal)}
+table{width:100%;border-collapse:collapse}td{padding:8px 0;border-bottom:1px solid var(--line)}td+td{text-align:right;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;z-index:9}
+.modal .card{width:100%;max-width:520px}
+.empty{color:var(--mute);text-align:center;padding:26px 0}
+.note{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg);white-space:pre-wrap}
+.note small{display:block;color:var(--mute);margin-top:4px}
+.strip{position:relative}
+.strip>div.stg{flex:1 1 100%;display:flex;justify-content:flex-end;align-items:center;gap:8px;border-top:1px solid var(--line);border-right:0;padding:6px 14px}
+.strip .stg small{display:inline}
+.ct{position:relative}.ct .ed{position:absolute;top:5px;right:7px;font-size:11px;padding:1px 8px}
+a.call{margin-right:46px}
+.err{color:var(--red);font-size:13px;margin-top:8px;min-height:1px}
+.no{color:var(--mute);font-weight:700;margin-right:6px}
+.ev span.tx{white-space:pre-wrap}
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--teal2);color:#fff;padding:10px 18px 10px 10px;border-radius:99px;display:flex;align-items:center;gap:10px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:.25s;z-index:30;max-width:92vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast .ti{width:30px;height:30px;border-radius:50%;background:var(--yel);display:grid;place-items:center;font-size:16px}
+.task{flex-wrap:wrap}.tb{display:flex;gap:6px;margin-left:auto}
+.dst{margin-top:12px;font-size:12px;color:var(--mute)}
+.hero{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;border-radius:14px;padding:18px 20px;border-bottom:4px solid var(--yel)}
+.hero small{opacity:.85;text-transform:uppercase;letter-spacing:.5px;font-size:11px}.hero .big{font-size:32px;font-weight:800;line-height:1.2;margin:4px 0}.hero .big span{font-size:14px;font-weight:600;opacity:.85}.hero .sub{opacity:.92}
+.brk{margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.br{display:flex;align-items:baseline;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}.br:last-child{border:0}
+.br span{flex:1;color:var(--mute)}.br b{font-size:16px}.br b i{font-style:normal;font-weight:500;color:var(--mute);font-size:12px;margin-left:2px}.br em{font-style:normal;color:var(--mute);min-width:96px;text-align:right}
+.fm{margin-top:10px;font-size:12px;color:var(--mute);text-align:center}
+.strip>.edit{position:absolute;top:5px;right:6px;z-index:2;font-size:14px;padding:3px 7px;background:var(--card);border:1px solid var(--line);border-radius:8px}.strip .w{padding-right:40px}
+.t-Call{--c:#16a34a}.t-Meeting{--c:#2563eb}.t-Visit{--c:#ea580c}.t-Message{--c:#7c3aed}.t-Email{--c:#db2777}.t-Demo{--c:#0d9488}.t-Task{--c:#d97706}.t-Note{--c:#ca8a04}.t-Deal{--c:#059669}.t-Update{--c:#64748b}
+.ic{background:color-mix(in srgb,var(--c,#64748b) 20%,var(--card))}
+.abar{display:flex;gap:8px;flex-wrap:wrap}.abar button{padding:9px 16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stats>div{background:var(--soft);border-radius:12px;padding:10px 14px}.stats b{font-size:22px;color:var(--teal2);display:block;line-height:1.1}.stats small{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.4px}.stats .bad{background:#fee2e2}.stats .bad b{color:#b91c1c}
+.task{border-left-color:var(--c,var(--yel));background:var(--bg);gap:12px}
+.task .tx{flex:1;min-width:150px}.task .due{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:3px}
+.tp{font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;background:color-mix(in srgb,var(--c) 18%,var(--card));color:var(--ink)}
+.dchip{font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--mute)}
+.dchip.od{background:#fee2e2;color:#b91c1c}.dchip.td{background:#fef3c7;color:#92400e}.dchip.tmw{background:#dbeafe;color:#1e40af}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}.chips button{background:var(--soft);color:var(--teal2);padding:4px 12px;border-radius:99px;font-size:12px;white-space:nowrap}.chips button.on{background:var(--teal);color:#fff}
+.dg{margin-top:10px}.dl2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mute);margin:0 0 8px 2px}
+.tl{border-left:2px solid var(--line);margin-left:16px;padding-left:24px}
+.ev{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.ev .ic{left:-41px;top:8px;width:32px;height:32px;font-size:16px;border:3px solid var(--card)}
+.evh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.evh b{color:var(--c)}.evh small{color:var(--mute)}
+.evt{white-space:pre-wrap;margin-top:2px}
+.emp{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:18px}
+.tabs button{display:flex;align-items:center;gap:7px}.tabs button svg{flex:none}
+@media(max-width:800px){
+  body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+  header{position:sticky;top:0;z-index:8;padding:12px 16px}
+  .app{display:block;padding:0;max-width:none}
+  .card{border-radius:0;border-left:0;border-right:0;border-bottom:0;min-height:calc(100vh - 50px)}
+  #detail{padding-bottom:96px}
+  input,select,textarea{font-size:16px;padding:11px 12px}
+  button{min-height:42px}
+  #list{padding-bottom:96px}
+  .items{max-height:none;overflow:visible;margin-top:12px}.it{padding:14px;border-radius:14px}
+  .strip>div{flex:1 1 30%;padding:6px 12px}.strip .w{flex:1 1 100%}.strip>div.stg{padding:6px 12px}
+  .ct .ed,.strip>.edit{min-height:0}.ct .ed{padding:3px 10px}
+  .tabs{position:fixed;left:0;right:0;bottom:0;margin:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line);z-index:6;justify-content:space-around;overflow:visible;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+  .tabs button{flex:1;flex-direction:column;gap:2px;font-size:11px;border-bottom:0;border-radius:12px;padding:6px 4px;min-height:52px}
+  .tabs button.on{background:var(--soft);color:var(--teal)}
+  .abar button{flex:1;padding:10px 6px;font-size:12.5px;white-space:nowrap}.abar .ib{gap:5px}.abar .ib svg{width:16px;height:16px}
+  .task .tb{width:100%}.task .tb button{flex:1}
+  .modal{padding:0;align-items:flex-end}.modal .card{max-width:none;min-height:0;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));border:0}
+  #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .ct{padding:12px}a.call{width:44px;height:44px}
+}
+.plus{width:44px;height:44px;padding:0;display:grid;place-items:center;flex:none;border-radius:12px;background:var(--yel);color:#2a2200;min-height:0}
+.gnav{margin:0 0 12px}.gnav button{flex:1;flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;position:relative;justify-content:center}
+.bdg{position:absolute;top:1px;left:calc(50% + 6px);background:#ef4444;color:#fff;font-style:normal;font-size:10px;min-width:16px;height:16px;border-radius:99px;display:grid;place-items:center;padding:0 4px}
+.sch{font-size:12px;color:var(--teal);font-weight:600;cursor:pointer;display:inline-block;margin-top:4px}
+.dv{margin-top:6px;font-weight:700;color:var(--teal)}.dv small{font-weight:500;color:var(--mute)}
+.dtl .tt td{font-size:17px;color:var(--teal);font-weight:800}
+.seg2{display:flex;background:var(--soft);border-radius:12px;padding:3px;gap:3px}.seg2 button{flex:1;background:none;color:var(--teal2);padding:8px 2px;font-size:12.5px;white-space:nowrap}.seg2 button.on{background:var(--teal);color:#fff}
+.it small{display:block}.it .dv small{display:inline}
+.it.sc{display:flex;gap:12px;align-items:flex-start}.it.sc .sb{flex:1;min-width:0}.it.sc .r b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
+.it.sc:active{transform:scale(.99)}
+.mc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mc span{font-size:12px;background:var(--soft);color:var(--teal2);padding:2px 9px;border-radius:99px;font-weight:600}.mc .od{background:#fee2e2;color:#b91c1c}.mc .val{background:var(--yel);color:#2a2200}
+.callic{background:#16a34a!important;color:#fff;text-decoration:none;width:44px;height:44px;font-size:20px;box-shadow:0 2px 8px rgba(22,163,74,.4)}
+.who{font-size:12px;color:var(--mute);margin-top:3px}
+.ib{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.sh{margin-bottom:6px}
+.hero2{position:relative;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;border-radius:18px 18px 0 0;padding:18px 16px;border-bottom:3px solid var(--yel)}
+.hero2 .top{display:flex;gap:14px;align-items:center}
+.av2{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:24px;font-weight:800;flex:none}
+.hero2 h2{margin:0;font-size:20px;line-height:1.2;word-break:break-word}.hero2 .sub{opacity:.9;font-size:13px;margin-top:3px}
+.hero2 .edit{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);padding:0;display:grid;place-items:center;min-height:0}
+.info{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line);border-top:0;border-radius:0 0 18px 18px;background:var(--card);overflow:hidden}
+@media(min-width:801px){.info{grid-template-columns:repeat(3,1fr)}}
+.ci{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line)}.ci.w{grid-column:1/-1}
+.cic{width:32px;height:32px;border-radius:10px;background:var(--soft);color:var(--teal);display:grid;place-items:center;flex:none}
+.ci small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}.ci b{font-weight:600;word-break:break-word}.ci a{color:var(--teal);text-decoration:none}
+.stg2{grid-column:1/-1;display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:10px 14px;background:var(--soft)}.stg2 small{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}.stg2 select{width:auto}
+.dbrow{margin:0 0 8px}.dback{width:38px;height:38px;border-radius:50%;background:var(--soft);color:var(--teal2);border:1px solid var(--line);padding:0;display:grid;place-items:center;min-height:0}
+.hero2.slim{margin-bottom:12px;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;justify-content:space-between}.hero2.slim h2{flex:1;min-width:0}.hero2.slim .edit{position:static;flex:none}
+.on2{background:var(--teal)!important;color:#fff!important}.info.solo{border-top:1px solid var(--line);border-radius:14px;margin-top:12px}.info.solo .ci:nth-last-child(-n+2){border-bottom:0}
+.ph{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding:6px 8px 6px 14px;background:var(--soft);border-bottom:1px solid var(--line)}
+.pedit{width:36px;height:36px;border-radius:50%;background:var(--card);color:var(--teal2);border:1px solid var(--line);padding:0;display:grid;place-items:center;min-height:0}
+.hero2.slim select{width:auto;flex:none;max-width:48%;border:0;font-weight:700;font-size:13px;padding:7px 10px;min-height:0}
+.evn{display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding:8px 10px;background:var(--soft);border-radius:8px;font-size:13px;color:var(--teal2)}.evn svg{flex:none;margin-top:2px}.evn span{white-space:pre-wrap;color:var(--ink)}
+.task.g{background:var(--card);border-radius:16px;padding:14px;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left-width:5px}
+.task.g .tx b{font-size:16px;display:block;line-height:1.3}
+.task.g .sch{display:block;margin-top:4px;font-size:13px;font-weight:700;color:var(--teal);cursor:pointer}
+.who2{font-size:13px;color:var(--mute);margin-top:1px}
+.task.g .ic{width:46px;height:46px;font-size:21px}
+.task.g .tb{gap:8px}.task.g .tb button{min-height:44px;border-radius:12px}
+.task.g .tb .ib{flex:1}
+.task.g{flex-wrap:nowrap;align-items:center}
+.task.g .tb{flex-direction:column;width:98px;flex:none;margin:0;gap:6px}
+.task.g .tb button,.task.g .tb .ib{flex:none;width:100%;min-height:34px;height:34px;padding:0 6px;font-size:12px;border-radius:10px;gap:4px}
+.task.g .tx{min-width:0}.task.g .tb svg{flex:none;width:14px;height:14px}.task.g .tb button{white-space:nowrap}
+.tmx{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--soft);color:var(--teal2)}.tmx.od{background:#fee2e2;color:#b91c1c}
+.task.g .ic{flex:none}
+.callbtn{width:40px;height:40px;border-radius:50%;background:#16a34a;color:#fff;display:grid;place-items:center;text-decoration:none;flex:none;box-shadow:0 2px 8px rgba(22,163,74,.4)}
+.ct .ed~.callbtn{margin-right:46px}
+.ic svg{color:var(--c,var(--ink))}#toast .ti{color:#2a2200}#toast .ti svg{width:16px;height:16px}
+.task.g{padding:9px 12px;gap:10px;border-radius:14px}
+.task.g .tx b{font-size:15px;display:inline}
+.task.g .tb{width:88px;gap:5px}
+.task.g .tb button,.task.g .tb .ib{height:30px;min-height:30px;font-size:11.5px}
+.task.g .ic{width:40px;height:40px;font-size:19px}
+.task.g .sch{margin-top:2px;font-size:12px}.who2{font-size:12px}
+.tmi{display:inline-block;vertical-align:middle;margin-left:6px;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--teal2);white-space:nowrap}.tmi.od{background:#fee2e2;color:#b91c1c}
+.task.g .tb{width:84px}.task.g .tx b{font-size:14px}.tmi{font-size:11px;padding:1px 7px;margin-left:5px}.task.g{gap:9px}.task.g .tb button,.task.g .tb .ib{font-size:11px}
+.task.g .tr{display:flex;align-items:center;gap:6px;min-width:0}.task.g .tr b{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.task.g .tr .tmi{flex:none;margin:0}.task.g .tb{width:82px}
+.task.g .tr{align-items:flex-start}.task.g .tr b{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}.task.g .tr .tmi{margin-top:1px}
+.it.sc{padding:8px 10px 8px 12px;gap:10px;align-items:center;border-radius:14px;border-left:4px solid var(--sc);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.it.sc>svg{color:var(--mute);flex:none;margin-left:-2px}
+.it.sc.on{border-color:var(--sc);background:color-mix(in srgb,var(--sc) 7%,var(--card))}
+.ha{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;font-weight:800;font-size:15px;color:var(--sc);background:color-mix(in srgb,var(--sc) 15%,var(--card))}
+.it.sc .sb b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14.5px;line-height:1.25}
+.it.sc .sb small{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it.sc .rt{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none}.it.sc .rt .pill{font-size:11px;padding:1px 9px}
+.stu{font-size:11px;font-weight:700;color:var(--mute)}
+.it.sc .sb b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.it.sc .sb small{white-space:normal;overflow:visible}
+.bk{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);padding:0;display:grid;place-items:center;flex:none;min-height:0}
+.isg{margin-bottom:12px}.isg button{display:flex;align-items:center;justify-content:center;gap:6px}
+.sx{display:flex;flex-direction:column;gap:10px}
+.sxh{display:flex;align-items:center;gap:12px;padding:16px;border-radius:18px;color:#fff;background:linear-gradient(135deg,var(--teal2),var(--teal));border-bottom:3px solid var(--yel)}
+.sxa{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-weight:800;font-size:20px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);flex:none}
+.sxt{flex:1;min-width:0}.sxt b{display:block;font-size:17px;line-height:1.25}.sxt small{display:block;opacity:.85;margin:2px 0 6px;font-size:13px}
+.sxh .pedit{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.4);flex:none}
+.sxg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(min-width:801px){.sxg{grid-template-columns:repeat(4,1fr)}}
+.sxf,.sxc{display:flex;gap:10px;align-items:center;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);text-decoration:none;color:inherit;min-width:0}
+.sxf small,.sxc small{display:block;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+.sxf b,.sxc b{font-weight:600;word-break:break-word;font-size:14px}
+.sxc.off{align-items:flex-start}.na{color:var(--mute);font-weight:400;font-style:normal;opacity:.8}
+.sxgo{margin-left:auto;background:#16a34a;color:#fff;font-weight:700;font-size:13px;padding:7px 16px;border-radius:99px;box-shadow:0 2px 8px rgba(22,163,74,.35)}
+.hero2.slim{padding:9px 10px;gap:10px;margin-bottom:10px;border-radius:16px}.hero2.slim h2{font-size:18px}
+@media(max-width:800px){#detail{padding-top:10px}}
+.hero2.slim h2{font-size:16px;line-height:1.2}.hero2.slim select{max-width:38%;font-size:12px;padding:6px 8px}
+#auth{display:none;position:fixed;inset:0;z-index:60;overflow:auto;background:linear-gradient(160deg,#0a5f5b 0%,#0d7f7a 60%,#12302f 100%);padding:20px;align-items:center;justify-content:center}#auth.show{display:flex}
+.authbox{background:var(--card);color:var(--ink);width:100%;max-width:400px;border-radius:22px;padding:26px 22px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.logo{font-size:24px;font-weight:800;color:var(--teal2);text-align:center}.logo span{color:#d9a400}
+.authbox h2{margin:16px 0 4px;font-size:20px}.authbox p{margin:0 0 6px;color:var(--mute);font-size:13px}
+.pw{position:relative}.pw input{padding-right:70px}.pw button{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:none;color:var(--teal);padding:6px 12px;font-size:13px;border-radius:8px;min-height:0}.pw button:hover{background:var(--soft)}
+#auth{background:radial-gradient(circle at 15% 10%,rgba(247,197,45,.16),transparent 38%),radial-gradient(circle at 90% 95%,rgba(255,255,255,.28),transparent 45%),linear-gradient(160deg,#0a5f5b 0%,#0d7f7a 55%,#0c2524 100%)}
+.authbox{max-width:410px;padding:32px 26px 26px;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.authbox .logo{font-size:30px;letter-spacing:-.5px}
+.authbox .logo+h2{margin-top:22px}
+.authbox label{display:block;margin:14px 0 6px;font-size:12px;font-weight:600;letter-spacing:.3px;color:var(--mute)}
+.authbox input{height:48px;padding:0 14px;font-size:15px;border-radius:12px;transition:border-color .15s,box-shadow .15s}
+.authbox input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 28%,transparent)}
+.authbox .big{height:50px;padding:0;margin-top:20px;font-size:16px;border-radius:12px;box-shadow:0 6px 18px color-mix(in srgb,var(--teal) 40%,transparent);transition:transform .1s,filter .15s}
+.authbox .big:hover{filter:brightness(1.08)}.authbox .big:active{transform:scale(.98)}
+.authbox .err{min-height:18px;margin-top:10px}
+.big{width:100%;margin-top:14px;padding:12px;font-size:15px;border-radius:12px}
+.spin{width:34px;height:34px;border:4px solid var(--soft);border-top-color:var(--teal);border-radius:50%;margin:14px auto;animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.meb{width:34px;height:34px;border-radius:50%;background:var(--yel);color:#2a2200;font-weight:800;padding:0;min-height:0;display:grid;place-items:center;flex:none}.meb[hidden]{display:none}
+header small#mode{margin-left:auto}
+.tmrow .av{flex:none}.tmrow small{display:block}
+.hback{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);padding:0;display:grid;place-items:center;min-height:0;flex:none}.hback[hidden]{display:none}
+.flt{display:flex;gap:6px;margin-top:8px}.flt select,.flt input{flex:1;min-width:0;padding:8px 10px;font-size:13px}
+.kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}@media(min-width:801px){.kgrid{grid-template-columns:repeat(2,1fr)}}
+.kc{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:14px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.kic{color:var(--c);display:flex}.kn{font-size:26px;font-weight:800;line-height:1.1;margin-top:4px}.kl{font-size:12px;font-weight:700}.ks{font-size:11px;color:var(--mute)}
+.lb{width:100%;border-collapse:collapse;font-size:13px;min-width:330px}.lb th{font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:var(--mute);text-align:center;padding:6px 3px}
+.lb td{padding:8px 3px;text-align:center;border-bottom:1px solid var(--line);font-weight:500}.lb td+td{text-align:center}.lb td:first-child{text-align:left;font-weight:600}.lb td small{display:block;font-weight:400;font-size:10.5px;color:var(--mute);margin-left:30px}
+.lb tr[data-pick]{cursor:pointer}.lb tr.on td{background:var(--soft)}
+.fav{width:34px;height:34px;border-radius:50%;color:#fff;display:grid;place-items:center;font-weight:800;flex:none}.fav.sm{width:24px;height:24px;font-size:12px;display:inline-grid;vertical-align:middle;margin-right:6px}
+.fe{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}.fb{min-width:0;flex:1}.ft{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.kl2{font-size:11px;font-weight:700;padding:1px 9px;border-radius:99px;background:color-mix(in srgb,var(--c) 16%,var(--card));color:var(--c)}
+.fx{margin-top:2px;white-space:pre-wrap;word-break:break-word}.fe small{color:var(--mute);display:block;margin-top:2px;font-size:12px}
+.lb{min-width:0!important}.lb th{font-size:9.5px;padding:6px 2px}.lb td{padding:8px 2px!important}.lb td:first-child{width:38%}.mn{display:flex;align-items:center;gap:6px}.mn b{display:block;font-size:13px;line-height:1.2;word-break:break-word}.lb td small{margin:0!important;font-size:10px!important}.lb .fav.sm{margin:0;flex:none}
+header b{white-space:nowrap;font-size:17px}header{gap:10px}header small#mode{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;font-size:11px;flex:1;text-align:right}
+.ct .ed{width:26px;height:26px;padding:0!important;border-radius:50%;display:grid;place-items:center;top:6px;right:6px}.ct .ed~.callbtn{margin-right:30px!important}
+.sxh{padding:8px 12px;gap:10px;border-radius:14px;border-bottom-width:2px}
+.sxa{width:34px;height:34px;border-radius:10px;font-size:14px;border-width:1px}
+.sxt b{font-size:15px}.sxt small{display:inline;margin:0 6px 0 0;font-size:12px}
+.sxt .pill{font-size:11px;padding:1px 8px;margin-top:2px}
+.sxh .pedit{width:28px;height:28px}
+.hero2.slim{position:relative;overflow:hidden;padding:10px 12px;gap:10px;border-radius:16px;border-bottom:3px solid var(--yel);background:radial-gradient(circle at 92% -30%,rgba(247,197,45,.35),transparent 45%),linear-gradient(135deg,var(--teal2),var(--teal));box-shadow:0 4px 14px rgba(10,95,91,.25)}
+.hav{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;font-weight:800;font-size:14px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4)}
+.hti{flex:1;min-width:0}.hero2.slim .hti h2{font-size:16px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hti small{display:block;font-size:12px;opacity:.85;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hst{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex:none;max-width:42%;margin:0}
+.hst small{font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;opacity:.8}
+.hero2.slim .hst select{max-width:100%;font-size:12px;font-weight:700;padding:5px 26px 5px 11px;border-radius:99px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.18);-webkit-appearance:none;appearance:none;background-repeat:no-repeat;background-position:right 9px center;background-size:10px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}
+body{background:radial-gradient(circle at 0 0,#fff3dc,transparent 40%),var(--bg)}
+.card,.ct,.ev,.kc,.sxf,.sxc{box-shadow:0 1px 3px rgba(120,80,30,.08)}
+input,select,textarea{background:#fffaf1}
+.authbox{background:#fffaf1;border-color:rgba(10,95,91,.15)}
+.stats .bad,.dchip.od,.mc .od,.tmx.od,.tmi.od{background:#fde4d6}
+header{background:#0a5f5b}
+.tlist{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:0 14px;margin-bottom:12px;box-shadow:0 1px 4px rgba(120,80,30,.08)}
+.trow{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.tlist .trow:last-child{border-bottom:0}
+.tchk{flex:none;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;background:transparent;color:var(--mute);border:2px solid var(--line);box-shadow:none;transition:.15s}
+.tchk:hover,.tchk:active{background:#16a34a;border-color:#16a34a;color:#fff;transform:scale(1.06)}
+.tmain{flex:1;min-width:0}.tgo[data-sel]{cursor:pointer}
+.ttl{font-size:16px;font-weight:600;line-height:1.3;color:var(--ink);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tsub{font-size:13px;color:var(--mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpills{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.dpill,.kpill{font-size:12px;font-weight:600;line-height:1;padding:5px 10px;border-radius:99px;border:1.5px solid;min-height:0;height:auto;width:auto;white-space:nowrap}
+.dpill{background:var(--soft);color:var(--teal2);border-color:color-mix(in srgb,var(--teal) 55%,transparent);cursor:pointer}
+.dpill.od{background:#fee2e2;color:#b91c1c;border-color:#ef4444}
+.kpill{background:color-mix(in srgb,var(--c,#2563eb) 12%,transparent);color:var(--c,#2563eb);border-color:var(--c,#2563eb)}
+.trow .callbtn{width:44px;height:44px;margin:0!important;background:transparent;color:#16a34a;border:1.5px solid var(--line);box-shadow:none}
+.trow .callbtn:hover,.trow .callbtn:active{background:#16a34a;color:#fff;border-color:#16a34a}
+.t-Call .kpill{--c:#2563eb}
+
+/* Educlawd CRM · Task cards (polish + compact) */
+/* ---- task card polish ---- */
+.tlist{background:none;border:0;box-shadow:none;padding:0;border-radius:0;display:grid;gap:10px;margin-bottom:14px}
+.trow{position:relative;gap:14px;padding:14px 14px 14px 18px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 2px 8px rgba(120,80,30,.08);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.trow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,var(--teal))}
+.trow.od::before{background:#ef4444}
+.trow.od{background:linear-gradient(90deg,rgba(239,68,68,.07),transparent 55%),var(--card)}
+.trow:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(120,80,30,.14)}
+.tlist .trow:last-child{border-bottom:1px solid var(--line)}
+.tchk{width:38px;height:38px;border:2px solid color-mix(in srgb,var(--c,var(--teal)) 45%,var(--line));color:color-mix(in srgb,var(--c,var(--teal)) 70%,var(--mute));background:color-mix(in srgb,var(--c,var(--teal)) 8%,transparent)}
+.ttl{font-size:16.5px;font-weight:700;letter-spacing:-.1px}
+.tsub{font-size:13px;margin-top:3px}
+.tpills{gap:8px;margin-top:9px}
+.dpill,.kpill{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 9px;font-size:12px}
+.dpill svg,.kpill svg{width:12px;height:12px;flex:none}
+.kpill{border-width:1.5px}
+.trow .callbtn{width:46px;height:46px;background:#16a34a;color:#fff;border-color:#16a34a;box-shadow:0 4px 12px rgba(22,163,74,.35)}
+.trow .callbtn:hover,.trow .callbtn:active{filter:brightness(1.08);transform:scale(1.05)}
+
+/* ---- compact task cards (~15% smaller) ---- */
+.tlist{gap:8px;margin-bottom:12px}
+.trow{gap:11px;padding:10px 12px 10px 15px;border-radius:15px}
+.trow::before{width:4px}
+.tchk{width:33px;height:33px}
+.tchk svg{width:16px;height:16px}
+.ttl{font-size:15px;line-height:1.25}
+.tsub{font-size:12px;margin-top:2px}
+.tpills{gap:6px;margin-top:7px}
+.dpill,.kpill{font-size:11px;padding:4px 9px 4px 8px;gap:4px}
+.dpill svg,.kpill svg{width:11px;height:11px}
+.trow .callbtn{width:40px;height:40px}
+.trow .callbtn svg{width:17px;height:17px}
+.trow .smsbtn{background:#7c3aed;border-color:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,.35)}
+.callbtn.smsbtn{background:#7c3aed}
+.s-Contract{background:#e0e7ff;color:#3730a3}
+.greet{margin:0 2px 8px;line-height:1.1}
+.gdate{font:500 10.5px/1.2 ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.3px;color:var(--mute)}
+.ghi{font:500 17px/1.2 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;letter-spacing:-.2px;color:var(--ink);margin-top:2px}
+
+/* Educlawd CRM · Team analytics: metric cards, leaderboard, feed */
+/* ---- dashboard ---- */
+.greet{margin:2px 2px 12px}
+.gdate{font-size:12px;letter-spacing:0;color:var(--mute);font-family:inherit}
+.ghi{font:600 24px/1.15 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;letter-spacing:-.3px;margin-top:3px}
+/* analytics cards */
+.kgrid{gap:10px}
+.kc{position:relative;overflow:hidden;border-left-width:1px;border-radius:16px;padding:12px 14px 12px 16px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,var(--card)),var(--card) 72%)}
+.kc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.kic{width:34px;height:34px;border-radius:11px;align-items:center;justify-content:center;background:color-mix(in srgb,var(--c) 15%,var(--card))}
+.kn{font-size:30px;font-weight:800;letter-spacing:-.6px;margin-top:8px}
+.kl{margin-top:1px}
+.lb{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.lb th{background:var(--soft);padding:8px 3px}
+.lb tr:last-child td{border-bottom:0}
+.fe{padding:12px 4px;border-radius:10px;transition:background .12s}.fe:hover{background:var(--soft)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Educlawd CRM · Header, greeting and search row */
+/* ---- greeting + search row ---- */
+.topbar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}
+.topbar .greet{margin:0}
+.topbar #greet:empty{display:none}
+.topbar .ghi{font-size:20px;margin-top:1px}
+#sbar{flex:1 1 170px;min-width:0;flex-wrap:nowrap}
+#sbar input{min-width:0;flex:1}
+
+/* ---- header + greeting row polish ---- */
+header{position:relative;gap:12px;padding:13px 18px;background:linear-gradient(135deg,#0a5f5b 0%,#0c6d68 60%,#0d7f7a 100%);box-shadow:0 2px 14px rgba(10,95,91,.28)}
+header b{font-size:19px;letter-spacing:-.3px}
+header b span.crm{color:#fff;opacity:.72;font-weight:500;letter-spacing:.4px;font-size:15px;margin-left:2px}
+header small#mode{flex:0 1 auto;margin-left:auto;display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 10px;border-radius:99px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);opacity:1;color:rgba(255,255,255,.92);font-size:11.5px;font-weight:500}
+header small#mode:empty{display:none}
+header small#mode::before{content:"";width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25);flex:none}
+.meb{width:36px;height:36px;font-size:15px;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 3px 8px rgba(0,0,0,.2);transition:transform .12s}
+.meb:active{transform:scale(.94)}
+.topbar{gap:12px 16px;margin:2px 0 4px}
+.gdate{font-size:12px;font-weight:500;letter-spacing:.2px;color:var(--mute)}
+.topbar .ghi{font-size:22px;font-weight:600;letter-spacing:-.4px;line-height:1.15;margin-top:2px}
+#sbar{gap:10px}
+#sbar input{height:46px;padding:0 16px 0 44px;border-radius:14px;font-size:15px;border:1px solid var(--line);background-color:#fffaf1;background-repeat:no-repeat;background-position:15px 50%;background-size:18px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a7560' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");box-shadow:inset 0 1px 2px rgba(120,80,30,.08);transition:border-color .15s,box-shadow .15s}
+#sbar input::placeholder{color:var(--mute);opacity:.75}
+#sbar input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 24%,transparent)}
+.plus{width:46px;height:46px;border-radius:14px;box-shadow:0 4px 12px rgba(217,164,0,.38),inset 0 -2px 0 rgba(0,0,0,.08);transition:transform .12s,box-shadow .12s}
+.plus:hover{transform:translateY(-1px);box-shadow:0 7px 16px rgba(217,164,0,.45),inset 0 -2px 0 rgba(0,0,0,.08)}
+.plus:active{transform:scale(.95)}
+.dl2.hl{display:flex;align-items:center;gap:8px;margin:6px 2px 8px;font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink)}
+.dl2.hl .cnt{font-size:11px;font-weight:700;padding:1px 9px;border-radius:99px;background:var(--soft);color:var(--teal2);border:1px solid var(--line)}
+
+/* Educlawd CRM · Team module: compact filters and cards */
+/* ---- team module: compact ---- */
+.seg2{padding:3px;border-radius:12px}.seg2 button{padding:7px 2px;border-radius:9px}
+.flt{gap:8px;margin-top:8px}
+.flt select,.flt input{height:38px;padding:0 10px;font-size:13px;border-radius:10px;min-height:0}
+.kgrid{gap:8px;margin:10px 0 12px}
+.kc{display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:10px;align-items:center;padding:9px 11px 9px 15px;border-radius:14px;box-shadow:0 1px 3px rgba(120,80,30,.08)}
+.kc>*{min-width:0}
+.kic{grid-area:1/1/4/2;width:32px;height:32px;border-radius:10px;display:grid;place-items:center}
+.kic svg{width:17px;height:17px}
+.kn{grid-area:1/2;font-size:21px;font-weight:800;letter-spacing:-.4px;line-height:1.1;margin:0}
+.kl{grid-area:2/2;font-size:11.5px;font-weight:700;line-height:1.25;margin:0}
+.ks{grid-area:3/2;font-size:10.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb td{padding:7px 2px!important}
+.dl2{margin-top:14px}
+.tmrow{padding:9px 12px;gap:10px}
+.tmrow .av{width:36px;height:36px;font-size:15px}
+
+/* Educlawd CRM · Activity feed pagination */
+/* ---- pagination ---- */
+.pgn{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:14px 0 4px}
+.pg{min-width:36px;height:36px;min-height:0;padding:0 8px;border-radius:10px;background:var(--card);color:var(--teal2);border:1px solid var(--line);font-weight:600;font-size:13px;display:inline-grid;place-items:center;box-shadow:0 1px 2px rgba(120,80,30,.06)}
+.pg:hover:not(:disabled):not(.on){background:var(--soft)}
+.pg.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.pg:disabled{opacity:.4;cursor:default}
+.pge{color:var(--mute);padding:0 2px}
+.pgi{text-align:center;font-size:12px;color:var(--mute);margin:8px 0 4px}
+
+/* Educlawd CRM · Wordmark, profile card at top, avatar */
+/* ---- wordmark + profile at top ---- */
+header b{font-size:22px;font-weight:800;letter-spacing:-.8px;line-height:1}
+header b span{color:var(--yel)}
+header b span.crm{display:inline-block;vertical-align:middle;position:relative;top:-1px;margin-left:8px;padding:3px 7px 3px 8px;font-size:10.5px;font-weight:700;letter-spacing:1.5px;line-height:1.2;color:#fff;opacity:1;border:1px solid rgba(255,255,255,.4);border-radius:7px;background:rgba(255,255,255,.12)}
+.logo span.crm{display:inline-block;vertical-align:middle;position:relative;top:-2px;margin-left:8px;padding:3px 8px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--teal2);border:1.5px solid color-mix(in srgb,var(--teal2) 35%,transparent);border-radius:8px}
+.modal.top{align-items:flex-start;justify-content:flex-end;padding:calc(env(safe-area-inset-top,0px) + 64px) 14px 14px;background:rgba(18,48,47,.4)}
+.modal.top .card{width:100%;max-width:340px;min-height:0;max-height:none;padding:18px;border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 44px rgba(10,60,57,.3);animation:ddn .18s ease-out}
+@media(max-width:800px){.modal.top{justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 64px) 12px 12px}.modal.top .card{max-width:none}}
+@keyframes ddn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.modal.top .card{animation:none}}
+
+/* ---- avatar pinned to the right corner ---- */
+header .meb{margin-left:auto}
+header small#mode:not(:empty)~.meb{margin-left:0}
+
+/* Educlawd CRM · Bottom icon bar (mobile) */
+/* ---- bottom nav: sit flush to the bottom edge (no content showing beneath) ---- */
+.tabs.gnav{margin:0;bottom:0;background:var(--card)}
+
+/* ---- bottom icon bar polish (all screen sizes) ---- */
+@media all{
+  .tabs.gnav{border-top:0;border-radius:22px 22px 0 0;padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));gap:2px;box-shadow:0 -1px 0 var(--line),0 -8px 26px rgba(10,60,57,.13)}
+  .tabs.gnav button{background:none;min-height:56px;padding:4px 2px 2px;gap:3px;font-size:11px;font-weight:600;letter-spacing:.1px;color:var(--mute);transition:color .15s}
+  .tabs.gnav button svg{box-sizing:border-box;width:48px;height:30px;padding:4px 14px;border-radius:15px;transition:background .18s,color .15s,transform .15s}
+  .tabs.gnav button.on{background:none;color:var(--teal2);font-weight:700}
+  .tabs.gnav button.on svg{background:var(--yel);color:#2a2200;box-shadow:0 3px 8px rgba(217,164,0,.35)}
+  .tabs.gnav button:not(.on):hover svg{background:var(--soft)}
+  .tabs.gnav button:active svg{transform:scale(.9)}
+  .tabs.gnav .bdg{top:1px;left:calc(50% + 8px);box-sizing:content-box;border:2px solid var(--card)}
+}
+
+/* ---- bottom bar, round 2 ---- */
+@media all{
+  .tabs.gnav{background:linear-gradient(180deg,#fffefb 0%,#fff8ea 100%);padding-top:9px}
+  .tabs.gnav button{position:relative}
+  .tabs.gnav button svg{stroke-width:1.9}
+  .tabs.gnav button.on svg{stroke-width:2.4;animation:navpop .38s cubic-bezier(.3,1.5,.5,1)}
+  .tabs.gnav button.on span{animation:navlbl .3s ease-out}
+}
+@keyframes navpop{0%{transform:scale(.72) translateY(5px)}100%{transform:none}}
+@keyframes navlbl{0%{opacity:.4;transform:translateY(3px)}100%{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.tabs.gnav button.on svg,.tabs.gnav button.on span{animation:none}}
+
+/* Educlawd CRM · Search + add below the greeting */
+/* ---- search + add sit below the greeting ---- */
+.topbar{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:12px;margin:2px 0 6px}
+.topbar #sbar{flex:none;width:100%}
+.topbar .ghi{font-size:24px}
+
+/* Educlawd CRM · 12-hour date and time picker */
+/* ---- 12-hour time picker ---- */
+.dtp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.modal .dtp input{flex:1 1 150px;width:auto;min-width:0}
+.dtp .tm{display:flex;align-items:center;gap:5px}
+.dtp .tm b{color:var(--mute);font-weight:700}
+.modal .dtp select{width:auto;min-width:64px}
+
+/* Educlawd CRM · Contacts list cards */
+/* ---- contacts list: compact cards ---- */
+.ct.cl{padding:9px 12px;gap:11px;margin-bottom:8px;align-items:center;border-radius:14px;transition:background .12s,box-shadow .12s}
+.ct.cl:hover{background:#fffaf0;box-shadow:0 4px 14px rgba(120,80,30,.1)}
+.ct.cl .av{width:34px;height:34px;font-size:14px;background:linear-gradient(135deg,var(--teal),var(--teal2));box-shadow:0 2px 6px rgba(13,127,122,.28)}
+.ct.cl b{font-size:14.5px;line-height:1.25;letter-spacing:-.1px}
+.ct.cl .pill{font-size:11px;padding:1px 8px;margin-left:4px;vertical-align:1px}
+.ct.cl small{display:inline;font-size:12px;line-height:1.5}
+.ct.cl small+small::before{content:"·";margin:0 6px;opacity:.6}
+.ct.cl small+small{font-variant-numeric:tabular-nums}
+.ct.cl div[data-sel]{display:block}
+.ct.cl .cm{margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ct.cl .callbtn{width:34px;height:34px;box-shadow:0 2px 6px rgba(22,163,74,.32);transition:transform .12s,filter .12s}
+.ct.cl .callbtn svg{width:16px;height:16px}
+.ct.cl .callbtn:hover{filter:brightness(1.07);transform:scale(1.06)}
+.ct.cl .callbtn:active{transform:scale(.94)}
+
+/* Educlawd CRM · Header menu button and slide-in modules panel */
+/* ---- header menu button + modules drawer ---- */
+.hbtn{width:38px;height:38px;min-height:0;padding:0;border-radius:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;display:grid;place-items:center;flex:none;box-shadow:none;transition:background .15s,transform .12s}
+.hbtn:hover{background:rgba(255,255,255,.2)}.hbtn:active{transform:scale(.93)}.hbtn[hidden]{display:none}
+header{gap:12px}
+.dwr{position:fixed;inset:0;z-index:20;pointer-events:none}
+.dwr.open{pointer-events:auto}
+.dsc{position:absolute;inset:0;background:rgba(18,48,47,.45);opacity:0;transition:opacity .22s}
+.dwr.open .dsc{opacity:1}
+.dpn{position:absolute;top:0;bottom:0;left:0;width:min(300px,84vw);background:var(--card);border-radius:0 22px 22px 0;box-shadow:8px 0 32px rgba(10,60,57,.28);transform:translateX(-104%);transition:transform .25s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+.dwr.open .dpn{transform:none}
+.dph2{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 14px}
+.dbrand{font-weight:800;font-size:21px;letter-spacing:-.8px;color:var(--teal2);line-height:1}
+.dbrand span{color:#d9a400}
+.dbrand span.crm{display:inline-block;vertical-align:middle;position:relative;top:-1px;margin-left:7px;padding:3px 7px;font-size:10.5px;font-weight:700;letter-spacing:1.5px;color:var(--teal2);border:1.5px solid color-mix(in srgb,var(--teal2) 35%,transparent);border-radius:7px}
+.dx{width:36px;height:36px;min-height:0;padding:0;border-radius:50%;background:var(--soft);color:var(--ink);border:0;box-shadow:none;display:grid;place-items:center}
+.dus{display:flex;align-items:center;gap:11px;padding:10px 12px;margin-bottom:14px;background:var(--soft);border-radius:14px}
+.dus .av{width:38px;height:38px;font-size:16px;background:linear-gradient(135deg,var(--teal),var(--teal2))}
+.dus b{display:block;font-size:14.5px;line-height:1.2}
+.dus small{display:block;color:var(--mute);font-size:12px}
+.dnav{display:flex;flex-direction:column;gap:5px}
+.dnav button{display:flex;align-items:center;justify-content:flex-start;gap:12px;width:100%;min-height:50px;padding:6px 12px;border:0;border-radius:14px;background:none;color:var(--ink);font-size:15px;font-weight:600;text-align:left;box-shadow:none;transition:background .15s}
+.dnav .di{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--soft);color:var(--teal2);flex:none;transition:background .15s}
+.dnav .di svg{width:19px;height:19px}
+.dnav button:hover:not(.on){background:var(--soft)}
+.dnav button.on{background:color-mix(in srgb,var(--yel) 22%,var(--card));color:var(--teal2);font-weight:700}
+.dnav button.on .di{background:var(--yel);color:#2a2200;box-shadow:0 3px 8px rgba(217,164,0,.35)}
+.bdg2{margin-left:auto;background:#ef4444;color:#fff;font-style:normal;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:99px;display:grid;place-items:center;padding:0 6px}
+
+/* ---- profile now lives in the slide-in panel ---- */
+#meb{display:none!important}
+.dsep{height:1px;background:var(--line);margin:8px 6px}
+
+/* Educlawd CRM · App shell: header + bottom bar stay put, only the content scrolls */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+:root{padding-top:0!important;padding-bottom:0!important}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;position:fixed;inset:0;width:100%}
+header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.app{flex:1 1 auto;min-height:0;width:100%;max-width:none;margin:0;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px max(16px,calc((100vw - 1280px)/2))}
+@media(max-width:800px){
+  .app{padding:0}
+  .card{min-height:100%}
+  .tabs.gnav{position:fixed;left:0;right:0;bottom:0;z-index:8;transform:translateZ(0)}
+}
+
+/* ---- bottom icon bar on every screen size (centred on wide screens) ---- */
+.tabs.gnav{position:fixed;left:0;right:0;bottom:0;z-index:8;justify-content:space-around;overflow:visible;border-bottom:0}
+@media(min-width:801px){.tabs.gnav{left:50%;right:auto;width:min(620px,calc(100% - 32px));transform:translateX(-50%);border:1px solid var(--line);border-bottom:0}.tabs.gnav button{border-radius:12px}.app{padding-bottom:110px}#toast{bottom:104px}}
+.tabs.gnav button,.tabs.gnav button.on{border-bottom:0}
+/* ---- slimmer, refined bottom bar ---- */
+.tabs.gnav button{transition:background .18s,color .15s}
+@media(max-width:800px){
+  .tabs.gnav{padding:9px 12px calc(9px + env(safe-area-inset-bottom,0px));gap:4px;border-radius:26px 26px 0 0;background:linear-gradient(180deg,rgba(255,254,251,.96),rgba(255,248,234,.97));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 -1px 0 var(--line),0 -12px 32px rgba(10,60,57,.18)}
+  .tabs.gnav button{min-height:57px;padding:3px 2px 2px;gap:4px;font-size:11px;font-weight:600;letter-spacing:.1px;border-radius:18px}
+  .tabs.gnav button svg{width:62px;height:33px;padding:4px 19px;border-radius:17px}
+  .tabs.gnav button.on{font-weight:700}
+  .tabs.gnav button.on svg{box-shadow:0 4px 12px rgba(217,164,0,.42)}
+  .tabs.gnav .bdg{top:1px;left:calc(50% + 12px);min-width:18px;height:18px;font-size:10.5px}
+  #list,#detail{padding-bottom:124px}
+  #toast{bottom:calc(112px + env(safe-area-inset-bottom,0px))}
+}
+/* ---- PC: permanent left rail, label under each icon (phones keep the bottom bar) ---- */
+#side{display:none}
+@media(min-width:801px){
+  .tabs.gnav{display:none!important}
+  #menu{display:none!important}
+  #side{display:flex;flex-direction:column;align-items:stretch;position:fixed;left:0;top:55px;bottom:0;width:92px;padding:12px 8px 12px;background:var(--card);border-right:1px solid var(--line);overflow-y:auto;z-index:7}
+  #side .dnav{gap:4px}
+  #side .dnav.bot{margin-top:auto}
+  #side .dnav button{position:relative;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:70px;padding:7px 2px 6px;border-radius:16px;font-size:11.5px;font-weight:600;text-align:center;line-height:1.15;color:var(--mute);background:none}
+  #side .dnav .di{width:54px;height:36px;border-radius:18px;background:none;color:var(--teal2);transition:background .18s,transform .15s}
+  #side .dnav .di svg{width:25px;height:25px;stroke-width:1.9}
+  #side .dnav button:hover:not(.on) .di{background:var(--soft)}
+  #side .dnav button:active .di{transform:scale(.92)}
+  #side .dnav button.on{background:none;color:var(--teal2);font-weight:700}
+  #side .dnav button.on .di{background:var(--yel);color:#2a2200;box-shadow:0 3px 8px rgba(217,164,0,.35)}
+  #side .dnav button.on .di svg{stroke-width:2.3}
+  #side .dnav .bdg2{position:absolute;top:5px;left:calc(50% + 8px);margin:0;min-width:17px;height:17px;font-size:10px;padding:0 4px;border:2px solid var(--card);box-sizing:content-box}
+  #side .sgl{display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--mute);margin:12px 2px 6px}
+  #side .sgl::before,#side .sgl::after{content:"";flex:1;height:1px;background:var(--line)}
+  .app{margin-left:92px;width:calc(100% - 92px);padding:16px 20px}
+}
+/* ---- PC: Profile page uses the full width ---- */
+.hide{display:none!important}
+@media(min-width:801px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  #list{max-width:1280px;width:100%;margin:0 auto}
+  #detail{max-width:1000px;width:100%;margin:0 auto}
+  .pwide{max-width:560px;margin:0 auto;padding-top:8px}
+  .topbar #sbar{max-width:620px}
+  .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px;align-items:start;max-height:none;overflow:visible}
+  .items>*{grid-column:1/-1;min-width:0}
+  .items>.it,.items>.ct{grid-column:auto;margin:0}
+  .items .tlist{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+  .items .kgrid{grid-template-columns:repeat(4,1fr)}
+  .kc.money .kn{font-size:21px}.kc.money{padding:12px 14px}
+}
+/* ---- Team module ---- */
+.tseg{max-width:440px}
+.tfl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tfl select,.tfl input{flex:1 1 150px;width:auto;min-width:0}
+.tfl .tex{flex:none;width:auto;padding:0 18px;height:40px}
+.tcols{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.tbar{height:4px;border-radius:99px;background:var(--soft);margin:5px auto 0;max-width:60px;overflow:hidden}.tbar i{display:block;height:100%;background:var(--teal);border-radius:99px}
+.mbar{display:flex;gap:8px;align-items:center}
+.msearch{position:relative;flex:1;min-width:0}.msearch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}.msearch input{padding-left:40px;height:44px;border-radius:14px}
+.madd{flex:none;white-space:nowrap;height:44px;border-radius:14px;padding:0 16px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(120,80,30,.08);display:flex;flex-direction:column;gap:12px;min-width:0}
+.mcard.off{opacity:.78}
+.mtop{display:flex;align-items:center;gap:10px}.mtop .av{width:44px;height:44px;font-size:18px;flex:none}.mtop .pill{flex:none}
+.mid{flex:1;min-width:0}.mid b{display:block;font-size:15.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mid small{display:block;color:var(--mute)}
+.mst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.mst>div{background:var(--soft);border-radius:12px;padding:8px 4px;text-align:center}
+.mst b{display:block;font-size:15.5px;color:var(--teal2);line-height:1.15;white-space:nowrap}.mst small{display:block;font-size:10.5px;color:var(--mute);margin-top:2px}
+.mst .bad{background:#fde4d6}.mst .bad b{color:#b91c1c}
+.mfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.mfoot small{color:var(--mute);font-size:12px}
+.mact{display:flex;gap:6px}.mact button{padding:6px 14px;font-size:12.5px;min-height:34px;border-radius:10px}
+@media(min-width:1000px){.tcols{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:start}}
+@media(min-width:801px){.items>.mcard{grid-column:auto}}
+/* ---- hide scrollbars everywhere (scrolling still works) ---- */
+*{scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
+header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+
+/* Educlawd CRM · Payments module (admin only) */
+.kc.money .kn{font-size:19px;letter-spacing:-.3px;white-space:nowrap}
+.pseg{margin-bottom:10px}.pseg button{font-size:12px}
+.pcard{display:block}.pcard .r b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14.5px}
+.pamt{margin-top:6px}.pamt b{font-size:17px;color:var(--teal2)}.pamt small{display:inline!important;color:var(--mute)}
+.pbar{height:7px;border-radius:99px;background:var(--soft);overflow:hidden;margin:7px 0 6px}.pbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#16a34a,#22c55e);transition:width .3s}
+.hero .pbar{background:rgba(255,255,255,.25);margin:12px 0 2px}.hero .pbar i{background:var(--yel)}
+.pcard small.od{color:#b91c1c;font-weight:600}
+.ps-paid{background:#d1fae5;color:#065f46}.ps-over{background:#fee2e2;color:#991b1b}.ps-pend{background:#fef3c7;color:#92400e}
+.inst{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:8px;background:var(--card);border:1px solid var(--line);border-left:4px solid #d97706;border-radius:14px;box-shadow:0 1px 3px rgba(120,80,30,.08)}
+.inst.st-paid{border-left-color:#16a34a}.inst.st-over{border-left-color:#dc2626;background:linear-gradient(90deg,rgba(239,68,68,.07),transparent 55%),var(--card)}
+.inum{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:var(--soft);color:var(--teal2);flex:none}
+.inst.st-paid .inum{background:#d1fae5;color:#065f46}
+.ibody{flex:1;min-width:0}.ibody .r{display:flex;justify-content:space-between;gap:8px;align-items:center}.ibody b{font-size:16px}
+.ibody small{display:block;color:var(--mute);font-size:12px;margin-top:2px}.ibody small.pd{color:#065f46;font-weight:600}
+.inst>button{flex:none;padding:7px 12px;font-size:12.5px;min-height:34px;border-radius:10px}
+.prow{display:grid;grid-template-columns:26px 1fr 1fr;gap:8px;align-items:center;margin-top:6px}
+.prow.ph{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--mute);margin-top:12px}
+.pno{font-weight:800;color:var(--teal2);text-align:center}
+.plock{padding:8px 10px;background:var(--soft);border-radius:8px;font-size:13px;font-weight:600}.plock em{font-style:normal;color:#065f46;font-weight:700;font-size:11px;margin-left:4px}
+.psum{margin-top:10px;padding:8px 12px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.psum.ok{background:#d1fae5;color:#065f46}.psum.bad{background:#fef3c7;color:#92400e}.psum.nil{background:var(--soft);color:var(--mute)}
+.psum button{padding:4px 10px;font-size:12px;min-height:0;margin-left:auto}
+.chips.pn{flex-wrap:wrap;overflow:visible;margin:0}.chips.pn button{min-height:0;padding:7px 15px;font-size:13px;font-weight:700}
+.phint{margin-top:6px;font-size:12.5px;color:var(--mute)}.phint b{color:var(--teal2)}.phint button{background:none;color:var(--teal);font-weight:700;padding:0 2px;min-height:0;font-size:12.5px}
+.phist{font-size:12.5px;color:var(--mute);padding:6px 0;border-bottom:1px solid var(--line)}.phist b{color:var(--ink);font-weight:600}
+.pdeal{margin-top:16px;max-width:520px}
+</style>
+</head>
+<body>
+<header><button id="menu" class="hbtn" hidden aria-label="Open menu" title="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><img src="icons/logo-96.png" alt="" class="applogo"><b>Educ<span>lawd</span> <span class="crm">CRM</span></b><small id="mode">Loading…</small><button id="meb" class="meb" hidden aria-label="My account"></button></header>
+<aside id="side" aria-label="Modules"></aside>
+<div class="app">
+  <section class="card" id="list">
+    <nav class="tabs gnav" id="gnav"></nav>
+    <div class="topbar"><div id="greet"></div><div class="row" id="sbar"><input id="q" placeholder="Search school, city, board…" style="flex:1"><button id="add" class="plus" aria-label="Add school" title="Add school"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+    <div class="items" id="items"></div>
+  </section>
+  <section class="card" id="detail"></section>
+</div>
+<div id="auth"></div>
+<div id="drawerRoot"></div>
+<div id="modalRoot"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* Educlawd CRM · Constants: activity types, icons, states, stages */
+const ACT=["Call","Meeting","Visit","Message","Email","Demo"];
+const ICON={Call:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',Meeting:"🤝",Visit:"📍",Message:"💬",Email:"✉️",Demo:"🖥️",Task:"✅",Note:"📝",Deal:"💰",Update:"🔄"};
+const IN_STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
+const STAGES=["Lead","Contacted","Meeting done","Demo done","Proposal sent","Negotiation","Contract Signed","Won","Lost"];
+
+/* Educlawd CRM · Utilities: DOM helper, escaping, ids, date and currency formatting */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+const fmt=d=>d?new Date(d).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",hour12:true}):"";
+const inr=n=>"₹"+(Number(n)||0).toLocaleString("en-IN",{maximumFractionDigits:2});
+const sc=s=>"s-"+(s||"Lead").split(" ")[0];
+
+/* Educlawd CRM · State, local cache, sync queue, save / merge */
+let schools=[],sel=null,tab="activity",dbc=null,filter="";
+let payments=[],psel=null; // admin-only payment plans (stored as their own admin-owned docs)
+const LS="educlawd_crm_v2";
+
+function norm(s){ // migrate old role-keyed contacts to a list
+  if(s.contacts&&!Array.isArray(s.contacts))s.contacts=Object.entries(s.contacts).map(([k,p])=>({id:uid(),designation:k.replace("_"," "),...p}));
+  if(s.notes){(s.timeline=s.timeline||[]).push(...s.notes.map(n=>({id:n.id,type:"Note",text:n.text,at:n.at})));s.timeline.sort((a,b)=>(b.at||"").localeCompare(a.at||""));delete s.notes}
+  return s;
+}
+const cache=()=>{if(!me)return;try{localStorage.setItem(cacheKey(),JSON.stringify(schools))}catch(e){}};
+
+/* local-first: the screen and browser copy update instantly; the shared database syncs in the background */
+const dirty=new Set(),busy={},again={};
+function setMode(t,bad){const m=$("#mode");m.textContent=t;m.style.cssText=bad?"background:#f7c52d;color:#2a2200;padding:3px 10px;border-radius:99px;opacity:1;font-weight:600":""}
+function push(s){
+  if(!dbc)return;
+  if(busy[s.id]){again[s.id]=1;return}
+  busy[s.id]=1;dirty.add(s.id);
+  const cur_=schools.find(x=>x.id===s.id)||payments.find(x=>x.id===s.id)||s;
+  dbc.doc(s.id).set(JSON.parse(JSON.stringify(cur_))).then(()=>{
+    if(cur_._assign){cur_._owner=cur_._assign;delete cur_._assign}
+    busy[s.id]=0;if(again[s.id]){again[s.id]=0;push(s);return}
+    dirty.delete(s.id);setMode(LOCAL?"":"Shared database ✓")
+  }).catch(e=>{busy[s.id]=0;again[s.id]=0;if(e&&e.code==="unauthorized")return endSession("Your access changed — please sign in again.");setMode("⚠ Not synced ("+((e&&e.message)||"error")+") – saved in this browser",true);console.error("sync",e)});
+}
+function save(s){
+  s.updated=new Date().toISOString();
+  const i=schools.findIndex(x=>x.id===s.id);i<0?schools.push(s):schools[i]=s;
+  cache();render();push(s);
+}
+function removeSchool(s){schools=schools.filter(x=>x.id!==s.id);sel=null;cache();render();if(dbc)dbc.doc(s.id).delete().catch(()=>{})}
+function merge(docs){
+  const loc=new Map(schools.map(s=>[s.id,s])),out=[];
+  docs.forEach(d=>{const r=norm({id:d.id,...JSON.parse(JSON.stringify(d.data())),_owner:d.owner||null}),l=loc.get(d.id);
+    out.push(l&&(dirty.has(d.id)||(l.updated||"")>(r.updated||""))?l:r);loc.delete(d.id)});
+  loc.forEach(l=>{if(dirty.has(l.id))out.push(l)}); // local-only items still waiting to sync
+  schools=out;
+}
+
+/* Educlawd CRM · Backend: Supabase config, local preview database, RPC layer */
+/* ================= team accounts & login ================= */
+/* ================= secure backend (Supabase functions) =================
+   Supabase dashboard -> Project Settings -> API: copy the Project URL and the anon/publishable key.
+   The key is public by design: the database only exposes the crm_* functions (see supabase.sql),
+   which check your login token and only return YOUR schools (admin: everyone's). */
+const SUPABASE_URL="";
+const SUPABASE_ANON_KEY="";
+const SLS="educlawd_token_v3";
+let team=[],teamReady=false,me=null,TOKEN="",authKind="",hadMe=false,dbErr="",syncTimer=null,syncing=false,lastSig={s:"",t:""};
+const isAdmin=()=>!!me&&me.role==="admin"&&me.active!==false;
+const genPw=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),x=>"abcdefghjkmnpqrstuvwxyz23456789"[x%31]).join("");
+const MSG={unauthorized:"Your session has expired – please sign in again.",forbidden:"You don't have permission to do that.",username_taken:"That username is already taken",weak_password:"Password must be at least 6 characters",bad_username:"Username: at least 3 letters, numbers, . _ or -",name_required:"Enter the full name",wrong_current:"Current password is wrong",admin_locked:"The admin account can't be edited or deleted here",bad_owner:"That member can't be assigned (disabled or missing)",too_large:"This record is too large",not_found:"Not found",bad_request:"Invalid request"};
+
+/* ===== Preview mode: no database configured -> everything runs inside this browser (same rules, not secure) ===== */
+/* API_URL: our own server (server.js + MySQL on Railway). "/api" = same website. Set "" for browser-only preview. */
+const API_URL="/api";
+const LOCAL=!API_URL&&(!SUPABASE_URL||!SUPABASE_ANON_KEY),LDB_KEY="educlawd_local_db_v1";
+const lerr=c=>{const e=new Error(MSG[c]||c);e.code=c;return e};
+function ldb(){let d=null;try{d=JSON.parse(localStorage.getItem(LDB_KEY)||"null")}catch(e){}
+  if(!d||!d.users){d={users:[{id:"u-admin",username:"educlawdcrm",name:"Educlawd Admin",role:"admin",active:true,pw:"admin123",created:new Date().toISOString(),createdBy:"setup"}],sessions:{},docs:[]};lsave(d)}return d}
+const lsave=d=>{try{localStorage.setItem(LDB_KEY,JSON.stringify(d))}catch(e){}};
+const lpub=u=>({id:u.id,name:u.name,username:u.username,role:u.role,active:u.active,created:u.created,createdBy:u.createdBy});
+const lrand=()=>Array.from(crypto.getRandomValues(new Uint8Array(24)),x=>x.toString(16).padStart(2,"0")).join("");
+async function rpcLocal(fn,a){
+  const d=ldb(),clone=x=>JSON.parse(JSON.stringify(x));
+  const auth=()=>{const id=d.sessions[a.p_token],u=d.users.find(x=>x.id===id&&x.active);if(!u)throw lerr("unauthorized");return u};
+  switch(fn){
+    case"crm_login":{const un=String(a.p_username||"").trim().toLowerCase(),u=d.users.find(x=>x.username===un);
+      if(!u||(u.pw!==a.p_password&&u.pw!==String(a.p_password||"").trim()))return{error:"invalid_login"};
+      if(!u.active)return{error:"disabled"};const t=lrand();d.sessions[t]=u.id;lsave(d);return{token:t,user:lpub(u)}}
+    case"crm_me":return lpub(auth());
+    case"crm_logout":delete d.sessions[a.p_token];lsave(d);return true;
+    case"crm_list":{const u=auth();return clone(d.docs.filter(x=>u.role==="admin"||x.owner===u.id).map(x=>({id:x.id,owner:x.owner,data:x.data})))}
+    case"crm_put":{const u=auth(),id=String(a.p_id||"");if(!id||!a.p_data||typeof a.p_data!=="object")throw lerr("bad_request");
+      if(a.p_owner&&u.role==="admin"&&!d.users.some(x=>x.id===a.p_owner&&x.active))throw lerr("bad_owner");
+      const r=d.docs.find(x=>x.id===id);
+      if(r){if(u.role!=="admin"&&r.owner!==u.id)throw lerr("forbidden");if(u.role==="admin"&&a.p_owner)r.owner=a.p_owner;r.data=clone(a.p_data)}
+      else d.docs.push({id,owner:u.role==="admin"&&a.p_owner?a.p_owner:u.id,data:clone(a.p_data)});
+      lsave(d);return true}
+    case"crm_delete":{const u=auth();d.docs=d.docs.filter(x=>!(x.id===a.p_id&&(u.role==="admin"||x.owner===u.id)));lsave(d);return true}
+    case"crm_team_list":{const u=auth();return d.users.filter(x=>u.role==="admin"||x.id===u.id).map(lpub)}
+    case"crm_team_save":{const u=auth();if(u.role!=="admin")throw lerr("forbidden");
+      const un=String(a.p_username||"").toLowerCase().replace(/\s+/g,""),pw=String(a.p_password||"").trim(),name=String(a.p_name||"").trim();
+      if(!name)throw lerr("name_required");if(!/^[a-z0-9._-]{3,}$/.test(un))throw lerr("bad_username");
+      if(d.users.some(x=>x.username===un&&x.id!==a.p_id))throw lerr("username_taken");
+      let t;if(!a.p_id){if(pw.length<6)throw lerr("weak_password");t={id:"u-"+lrand().slice(0,12),username:un,name,role:"member",active:true,pw,created:new Date().toISOString(),createdBy:u.name};d.users.push(t)}
+      else{t=d.users.find(x=>x.id===a.p_id);if(!t)throw lerr("not_found");if(t.role==="admin")throw lerr("admin_locked");if(pw&&pw.length<6)throw lerr("weak_password");
+        t.name=name;t.username=un;if(a.p_active!==null&&a.p_active!==undefined)t.active=!!a.p_active;if(pw)t.pw=pw;
+        if(pw||!t.active)for(const k of Object.keys(d.sessions))if(d.sessions[k]===t.id)delete d.sessions[k]}
+      lsave(d);return lpub(t)}
+    case"crm_team_delete":{const u=auth();if(u.role!=="admin")throw lerr("forbidden");const t=d.users.find(x=>x.id===a.p_id);if(!t)return true;
+      if(t.role==="admin"||t.id===u.id)throw lerr("admin_locked");d.docs.forEach(x=>{if(x.owner===t.id)x.owner=u.id});
+      d.users=d.users.filter(x=>x.id!==t.id);for(const k of Object.keys(d.sessions))if(d.sessions[k]===t.id)delete d.sessions[k];lsave(d);return true}
+    case"crm_change_password":{const u=auth();if(u.pw!==a.p_current&&u.pw!==String(a.p_current||"").trim())throw lerr("wrong_current");
+      const n=String(a.p_new||"").trim();if(n.length<6)throw lerr("weak_password");u.pw=n;lsave(d);return true}
+  }
+  throw lerr("unknown function "+fn);
+}
+async function rpc(fn,args){
+  if(LOCAL)return rpcLocal(fn,args);
+  if(API_URL){
+    let r;try{r=await fetch(API_URL.replace(/\/+$/,"")+"/rpc/"+fn,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(args||{})})}
+    catch(x){const e=new Error("No connection to the server. Check your internet.");e.code="network";throw e}
+    let j=null;try{j=await r.json()}catch(x){}
+    if(!r.ok){const m=(j&&j.message)||("HTTP "+r.status);const e=new Error(MSG[m]||m);e.code=m;throw e}
+    return j;
+  }
+  const h={apikey:SUPABASE_ANON_KEY,"Content-Type":"application/json"};if(SUPABASE_ANON_KEY.startsWith("eyJ"))h.Authorization="Bearer "+SUPABASE_ANON_KEY;
+  let r;try{r=await fetch(SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:h,body:JSON.stringify(args||{})})}
+  catch(x){const e=new Error("No connection to the server. Check your internet.");e.code="network";throw e}
+  let j=null;try{j=await r.json()}catch(x){}
+  if(!r.ok){const m=(j&&j.message)||("HTTP "+r.status);
+    const e=new Error(MSG[m]||(/Could not find the function|schema cache/i.test(m)?"Database not set up – run supabase.sql in the Supabase SQL editor.":/Invalid API key|JWT/i.test(m)?"Invalid Supabase key – check SUPABASE_ANON_KEY.":m));e.code=m;throw e}
+  return j;
+}
+
+/* Educlawd CRM · Session, token, background sync */
+const saveTok=()=>{try{localStorage.setItem(SLS,TOKEN)}catch(e){}};
+const cacheKey=()=>LS+":"+(me?me.id:"none");
+const loadCache=()=>{try{schools=JSON.parse(localStorage.getItem(cacheKey())||"[]").map(norm)}catch(e){schools=[]}
+  try{payments=isAdmin()?JSON.parse(localStorage.getItem(payKey())||"[]"):[]}catch(e){payments=[]}};
+const mkDbc=()=>({doc:id=>({
+  set:obj=>{const {_owner,_assign,...data}=obj;return rpc("crm_put",{p_token:TOKEN,p_id:String(id),p_data:data,p_owner:_assign||null})},
+  delete:()=>rpc("crm_delete",{p_token:TOKEN,p_id:String(id)})})});
+function stopSync(){clearInterval(syncTimer);syncTimer=null}
+function startSync(){stopSync();syncTimer=setInterval(()=>{if(!document.hidden)syncNow()},5000)}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&me)syncNow()});
+function endSession(msg){
+  stopSync();const w=!!me;TOKEN="";me=null;dbc=null;team=[];schools=[];sel=null;payments=[];psel=null;lastSig={s:"",t:""};dirty.clear();
+  try{localStorage.removeItem(SLS)}catch(e){}
+  hadMe=w;kickMsg=msg||"";route();
+}
+let kickMsg="";
+async function syncNow(first){
+  if(!me||syncing)return;syncing=true;const who=me.id;
+  try{
+    const docs=await rpc("crm_list",{p_token:TOKEN});
+    if(!me||me.id!==who)return;
+    let changed=false;const sg=JSON.stringify(docs);
+    if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
+      if(isAdmin()){mergePay(docs.filter(isPayDoc));cachePay()}else payments=[];changed=true}
+    if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
+    else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
+    if(!dirty.size)setMode(LOCAL?"":"Shared database ✓");
+    if(changed)render();
+  }catch(e){
+    if(e&&e.code==="unauthorized")endSession("Your access changed — please sign in again.");
+    else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
+  }finally{syncing=false}
+}
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);startSync()}
+const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
+
+/* Educlawd CRM · Login screen, sign out, profile card, change password */
+const authErr=m=>{const e=document.getElementById("au_err");if(e)e.textContent=m};
+const logo='<div class="logo">Educ<span>lawd</span> <span class="crm">CRM</span></div>';
+const loadHTML=()=>`<div class="authbox">${logo}<div class="spin"></div><p style="text-align:center">Loading…</p></div>`;
+const loginHTML=()=>`<div class="authbox">${logo}<h2>Sign in</h2><p>Use the username and password your admin gave you.</p>${LOCAL?`<p style="background:#fff3cd;color:#664d03;border-radius:10px;padding:8px 10px;font-size:12.5px">Preview mode (no database): sign in with <b>educlawdcrm</b> / <b>admin123</b>. Data stays in this browser only.</p>`:""}<label>Username</label><input id="au_u" autocomplete="username" autocapitalize="none" spellcheck="false"><label>Password</label><div class="pw"><input id="au_p" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="alt" data-au="eye">Show</button></div><div class="err" id="au_err"></div><button class="big" data-au="login">Sign in</button></div>`;
+function showAuth(kind,html){const a=$("#auth");if(authKind!==kind){a.innerHTML=html;authKind=kind}a.classList.add("show");$("#meb").hidden=true;$("#menu").hidden=true;0}
+function route(){
+  if(!teamReady)return showAuth("load",loadHTML());
+  if(!me){const was=hadMe;hadMe=false;showAuth("login",loginHTML());
+    if(was||kickMsg){authErr(kickMsg||"Your access changed — please sign in again.");kickMsg=""}
+    else if(dbErr)authErr("⚠ "+dbErr);return}
+  hadMe=true;authKind="";$("#auth").classList.remove("show");
+  $("#menu").hidden=false;const b=$("#meb");b.hidden=false;b.textContent=(me.name||"?")[0].toUpperCase();b.title=me.name;
+  render();
+}
+const okUser=(un)=>/^[a-z0-9._-]{3,}$/.test(un);
+async function doLogin(){
+  const un=val("au_u").toLowerCase(),pw=document.getElementById("au_p").value;
+  if(!un||!pw)return authErr("Enter your username and password");
+  const btn=document.querySelector('[data-au="login"]');btn.disabled=true;btn.textContent="Signing in…";
+  try{
+    const r=await rpc("crm_login",{p_username:un,p_password:pw});
+    if(r.error)return authErr(r.error==="locked"?"Too many attempts. Try again in "+r.seconds+"s":r.error==="disabled"?"This account is disabled. Please contact your admin.":"Wrong username or password");
+    TOKEN=r.token;saveTok();me=r.user;dbErr="";loadCache();hadMe=true;route();toast("👋","Welcome, "+me.name);beginSession();
+  }catch(x){authErr(x.message||"Could not sign in")}
+  finally{btn.disabled=false;btn.textContent="Sign in"}
+}
+function signOut(){
+  const t=TOKEN,k=cacheKey(),pk=payKey(),keep=dirty.size>0;
+  rpc("crm_logout",{p_token:t}).catch(()=>{});
+  if(!keep){try{localStorage.removeItem(k);localStorage.removeItem(pk)}catch(e){}}
+  stopSync();TOKEN="";me=null;dbc=null;team=[];schools=[];payments=[];psel=null;lastSig={s:"",t:""};dirty.clear();
+  try{localStorage.removeItem(SLS)}catch(e){}
+  hadMe=false;kickMsg="";sel=null;gtab="home";filter="";close();route();
+}
+function profileSheet(){modal(`<div class="row" style="gap:12px;flex-wrap:nowrap"><div class="av" style="width:48px;height:48px;font-size:20px">${esc((me.name||"?")[0].toUpperCase())}</div><div style="min-width:0"><b style="font-size:16px">${esc(me.name)}</b><small style="display:block;color:var(--mute)">@${esc(me.username)} · ${me.role==="admin"?"Admin":"Sales"}</small></div></div><p style="margin:12px 0 0;font-size:12px;color:var(--mute)">${me.role==="admin"?"You can see every member's schools.":"You can only see the schools you added."}</p><div class="row" style="margin-top:16px"><button class="alt" data-m="chpw">Change password</button><button data-m="signout">Sign out</button></div><div style="margin-top:8px"><button class="ghost" data-m="close">Close</button></div>`,"top")}
+function pwForm(){modal(`<h3>Change password</h3><label>Current password</label><input id="p_cur" type="password" autocomplete="current-password"><label>New password (min 6 characters)</label><input id="p_new" type="password" autocomplete="new-password"><label>Confirm new password</label><input id="p_new2" type="password" autocomplete="new-password">${btns("savePw","Update password")}`)}
+const savePw=safe(async()=>{
+  const c=document.getElementById("p_cur").value,n1=document.getElementById("p_new").value.trim(),n2=document.getElementById("p_new2").value.trim();
+  if(n1.length<6)return err("New password must be at least 6 characters");if(n1!==n2)return err("New passwords do not match");
+  try{await rpc("crm_change_password",{p_token:TOKEN,p_current:c,p_new:n1})}catch(x){return err(x.message)}
+  close();toast("🔒","Password changed successfully");
+});
+
+/* Educlawd CRM · Team analytics view, filters, feed pagination */
+let tsub="analytics",an={m:"all",p:"7d",t:"all",from:"",to:"",lim:30,pg:1};
+const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
+const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
+const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
+const PL={today:"today","7d":"last 7 days","30d":"last 30 days",month:"this month",all:"all time",custom:"selected dates"};
+const evKind=e=>e.kind||inferKind(e.type,e.text);
+const evUser=e=>e.byId||((team.find(u=>u.name===e.by)||{}).id)||(e.by?"name:"+e.by:"none");
+const ulabel=k=>k==="root-admin"?"Admin":k==="none"?"Before sign-in (no user)":k.startsWith("name:")?k.slice(5):((team.find(u=>u.id===k)||{}).name||"Unknown");
+const mcol=k=>["#0d7f7a","#7c3aed","#2563eb","#ea580c","#db2777","#059669","#d97706"][[...String(k)].reduce((a,c)=>a+c.charCodeAt(0),0)%7];
+const allEvents=()=>schools.flatMap(s=>(s.timeline||[]).map(e=>({e,s,k:evKind(e),u:evUser(e),t:new Date(e.at).getTime()})));
+function anRange(){
+  const n=new Date(),sod=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),p=an.p;
+  if(p==="today")return[sod,Infinity];if(p==="7d")return[Date.now()-7*864e5,Infinity];if(p==="30d")return[Date.now()-30*864e5,Infinity];
+  if(p==="month")return[new Date(n.getFullYear(),n.getMonth(),1).getTime(),Infinity];
+  if(p==="custom")return[an.from?new Date(an.from+"T00:00").getTime():0,an.to?new Date(an.to+"T23:59:59").getTime():Infinity];
+  return[0,Infinity];
+}
+const mOK=u=>an.m==="all"||an.m===u;
+const owner=o=>o.byId||o.createdById||"none";
+const PS=10;
+function pager(pg,pages,total){
+  if(pages<2)return"";
+  const set=new Set([1,pages,pg-1,pg,pg+1]);if(pg<=2)[2,3].forEach(x=>set.add(x));if(pg>=pages-1)[pages-2,pages-1].forEach(x=>set.add(x));
+  const nums=[...set].filter(x=>x>=1&&x<=pages).sort((a,b)=>a-b),out=[];
+  nums.forEach((x,i)=>{if(i&&x-nums[i-1]>1)out.push('<span class="pge">…</span>');out.push(`<button class="pg ${x===pg?"on":""}" data-pg="${x}" ${x===pg?'aria-current="page"':""} aria-label="Page ${x}">${x}</button>`)});
+  const ar=d=>`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+  return `<div class="pgn"><button class="pg" data-pg="${pg-1}" ${pg<=1?"disabled":""} aria-label="Previous page">${ar("m15 18-6-6 6-6")}</button>${out.join("")}<button class="pg" data-pg="${pg+1}" ${pg>=pages?"disabled":""} aria-label="Next page">${ar("m9 18 6-6-6-6")}</button></div><div class="pgi">${(pg-1)*PS+1}–${Math.min(pg*PS,total)} of ${total}</div>`;
+}
+function analyticsView(){
+  const[from,to]=anRange(),all=allEvents(),ev=all.filter(x=>x.t>=from&&x.t<=to),evm=ev.filter(x=>mOK(x.u)),cnt=k=>evm.filter(x=>x.k===k).length;
+  const sod=new Date();sod.setHours(0,0,0,0);const eod=new Date();eod.setHours(23,59,59,999);
+  const tasks=allTasks().filter(({t})=>mOK(owner(t))),today=tasks.filter(({t})=>{const d=new Date(t.due);return d>=sod&&d<=eod}).length,over=tasks.filter(({t})=>new Date(t.due)<sod).length;
+  const sch=schools.filter(s=>mOK(owner(s))).length,pl=PL[an.p];
+  const cards=[[GI.home,"Total schools",sch,cnt("school_added")+" added "+pl,"#0d7f7a"],[GI.tasks,"Today's tasks",today,"due today","#d97706"],[sv(P.alert,22),"Overdue tasks",over,"before today","#dc2626"],[sv(P.userp,22),"Schools added",cnt("school_added"),pl,"#0d7f7a"],[TI.activity,"Activities & notes",cnt("activity")+cnt("note"),pl,"#2563eb"],[TI.contacts,"Contacts added",cnt("contact_added"),pl,"#7c3aed"],[sv(P.check,22),"Tasks completed",cnt("task_done"),pl,"#16a34a"],[TI.deal,"Deal updates",cnt("deal"),pl,"#059669"]];
+  const keys=[...new Set([...team.map(u=>u.id),...all.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||all.some(x=>x.u===k));
+  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`;
+  const rows=keys.map(k=>{const mine=ev.filter(x=>x.u===k),c=kk=>mine.filter(x=>x.k===kk).length,tot=mine.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).length,last=all.filter(x=>x.u===k).reduce((a,x)=>Math.max(a,x.t),0);return{k,s:c("school_added"),c:c("contact_added"),a:c("activity")+c("note"),d:c("task_done"),tot,last}}).filter(r=>team.some(u=>u.id===r.k)||r.tot>0).sort((a,b)=>b.tot-a.tot);
+  const mx=Math.max(1,...rows.map(q=>q.tot));
+  const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
+  const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
+  const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
+  return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
+  <div class="kgrid">${cards.map(([ic,l,n,s,c])=>`<div class="kc" style="--c:${c}"><div class="kic">${ic}</div><div class="kn">${n}</div><div class="kl">${l}</div><div class="ks">${esc(s)}</div></div>`).join("")}</div>
+  <div class="tcols"><div class="tcol"><div class="dl2" style="margin:6px 2px 6px">Team performance · ${pl}</div>
+  <div style="overflow-x:auto"><table class="lb"><tr><th style="text-align:left">Member</th><th>Schools</th><th>Contacts</th><th>Activity</th><th>Done</th><th>Total</th></tr>${rows.map(r=>`<tr data-pick="${esc(r.k)}" class="${an.m===r.k?"on":""}"><td><div class="mn"><span class="fav sm" style="background:${mcol(r.k)}">${esc(ulabel(r.k)[0].toUpperCase())}</span><div><b>${esc(ulabel(r.k))}</b>${r.last?`<small>${dt(r.last)}</small>`:""}</div></div></td><td>${r.s}</td><td>${r.c}</td><td>${r.a}</td><td>${r.d}</td><td><b>${r.tot}</b><div class="tbar"><i style="width:${Math.round(r.tot*100/mx)}%"></i></div></td></tr>`).join("")}</table></div></div>
+  <div class="tcol"><div class="dl2" id="feedtop" style="margin:14px 2px 6px">Activity feed · ${evf.length}</div>
+  ${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div>`;
+}
+
+/* Educlawd CRM · Excel (.xlsx) export: writer + member / period filters */
+/*EXPORT-START*/
+const XCOL=n=>{let s="";for(n++;n>0;n=Math.floor((n-1)/26))s=String.fromCharCode(65+(n-1)%26)+s;return s};
+const XESC=v=>String(v).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const xDT=v=>v?{k:"dt",v}:"",xDD=v=>v?{k:"d",v}:"",xR=n=>({k:"r",v:Math.round((+n||0)*100)/100}),xW=v=>v?{k:"w",v}:"";
+function xCell(r,c,v,hdr){
+  if(v===""||v==null)return"";
+  const ref=XCOL(c)+r;
+  if(hdr)return `<c r="${ref}" s="1" t="inlineStr"><is><t>${XESC(v)}</t></is></c>`;
+  if(typeof v==="number")return isFinite(v)?`<c r="${ref}"><v>${v}</v></c>`:"";
+  if(typeof v==="object"){
+    if(v.k==="dt"||v.k==="d"){
+      let n;
+      if(v.k==="d"){const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(v.v);if(!m)return"";n=Date.UTC(+m[1],+m[2]-1,+m[3])/864e5+25569}
+      else{const d=new Date(v.v);if(isNaN(d))return"";n=(d.getTime()-d.getTimezoneOffset()*6e4)/864e5+25569}
+      return `<c r="${ref}" s="${v.k==="dt"?2:3}"><v>${n}</v></c>`;
+    }
+    if(v.k==="r")return `<c r="${ref}" s="4"><v>${v.v}</v></c>`;
+    if(v.k==="w")return `<c r="${ref}" s="5" t="inlineStr"><is><t xml:space="preserve">${XESC(v.v)}</t></is></c>`;
+  }
+  return `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${XESC(v)}</t></is></c>`;
+}
+const CRCT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=b=>{let c=-1;for(let i=0;i<b.length;i++)c=CRCT[(c^b[i])&255]^(c>>>8);return(c^-1)>>>0};
+function zipStore(files){
+  const enc=new TextEncoder(),now=new Date(),dd=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate(),tm=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+  const u16=n=>[n&255,(n>>8)&255],u32=n=>[n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255],parts=[],cen=[];let off=0;
+  files.forEach(f=>{
+    const nm=enc.encode(f.name),d=f.data,crc=crc32(d);
+    const lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(tm),...u16(dd),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0)]);
+    parts.push(lh,nm,d);
+    cen.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(tm),...u16(dd),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=lh.length+nm.length+d.length;
+  });
+  const cs=cen.reduce((a,b)=>a+b.length,0);
+  parts.push(...cen,new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cs),...u32(off),...u16(0)]));
+  return new Blob(parts,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function makeXlsx(sheets){
+  const enc=new TextEncoder(),NS='xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"',H='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',used=new Set();
+  const names=sheets.map(s=>{const b=s.name.replace(/[\[\]:*?\/\\]/g," ").slice(0,31);let n=b,i=2;while(used.has(n.toLowerCase()))n=b.slice(0,28)+" "+i++;used.add(n.toLowerCase());return n});
+  const sheetXml=(s,first)=>{
+    const nc=s.cols.length,nt=s.tableRows!=null?s.tableRows:s.rows.length;
+    let x=`${H}<worksheet ${NS}><sheetViews><sheetView workbookViewId="0"${first?' tabSelected="1"':""}><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>${s.cols.map((c,i)=>`<col min="${i+1}" max="${i+1}" width="${c.w}" customWidth="1"/>`).join("")}</cols><sheetData>`;
+    x+=`<row r="1" ht="24" customHeight="1">${s.cols.map((c,i)=>xCell(1,i,c.h,true)).join("")}</row>`;
+    s.rows.forEach((r,ri)=>{x+=`<row r="${ri+2}">${r.map((v,ci)=>xCell(ri+2,ci,v)).join("")}</row>`});
+    x+=`</sheetData>`;if(nt>0)x+=`<autoFilter ref="A1:${XCOL(nc-1)}${nt+1}"/>`;
+    return x+`</worksheet>`;
+  };
+  const R="http://schemas.openxmlformats.org/officeDocument/2006/relationships",files=[
+    {name:"[Content_Types].xml",x:`${H}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`},
+    {name:"_rels/.rels",x:`${H}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+    {name:"xl/workbook.xml",x:`${H}<workbook ${NS} xmlns:r="${R}"><bookViews><workbookView activeTab="0"/></bookViews><sheets>${names.map((n,i)=>`<sheet name="${XESC(n)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`},
+    {name:"xl/_rels/workbook.xml.rels",x:`${H}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((_,i)=>`<Relationship Id="rId${i+1}" Type="${R}/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}<Relationship Id="rId${sheets.length+1}" Type="${R}/styles" Target="styles.xml"/></Relationships>`},
+    {name:"xl/styles.xml",x:`${H}<styleSheet ${NS}><numFmts count="3"><numFmt numFmtId="164" formatCode="dd\\-mmm\\-yyyy\\ hh:mm"/><numFmt numFmtId="165" formatCode="dd\\-mmm\\-yyyy"/><numFmt numFmtId="166" formatCode="&quot;₹&quot;#,##0.00"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0D7F7A"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="6"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`},
+    ...sheets.map((s,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,x:sheetXml(s,i===0)}))
+  ].map(f=>({name:f.name,data:enc.encode(f.x)}));
+  return zipStore(files);
+}
+const XTL={all:"Everything",schools:"Schools",contacts:"Contacts",activities:"Activities & notes",tasks:"Tasks",deals:"Deals & stages"};
+function buildExport(){
+  const[from,to]=anRange(),inP=t=>t>=from&&t<=to,tt=an.t,want=k=>tt==="all"||tt===k,now=Date.now();
+  const oid=s=>s._owner||s.createdById||"none",oname=s=>{const k=oid(s);return k==="none"?"Unassigned":ulabel(k)};
+  const addedAt=s=>s.created||(s.timeline&&s.timeline.length?s.timeline[s.timeline.length-1].at:"")||"";
+  const inScope=s=>(an.m==="all"||oid(s)===an.m)&&(an.p==="all"||(addedAt(s)&&inP(new Date(addedAt(s)).getTime()))||(s.timeline||[]).some(e=>inP(new Date(e.at).getTime())));
+  const sc=schools.filter(inScope).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  const hasDeal=s=>!!(s.deal&&+s.deal.students>0&&+s.deal.price>0),st=s=>s.stage||"Lead";
+  const lastAct=s=>(s.timeline||[]).reduce((a,e)=>e.at>a?e.at:a,"");
+  const evs=allEvents().filter(x=>inP(x.t)),sheets=[];
+  const pl=an.p==="custom"?(an.from||"start")+" to "+(an.to||"today"):(PL[an.p]||"").replace(/^./,c=>c.toUpperCase()),ml=an.m==="all"?"All members":ulabel(an.m);
+  if(want("all")&&tt==="all"){
+    const mk=[...new Set([...team.map(u=>u.id),...sc.map(oid),...evs.map(x=>x.u)])].filter(k=>an.m==="all"||k===an.m);
+    const rows=mk.map(k=>{
+      const u=team.find(x=>x.id===k),ss=sc.filter(s=>oid(s)===k),me_=evs.filter(x=>x.u===k),c=kk=>me_.filter(x=>x.k===kk).length;
+      const open=ss.filter(s=>!["Won","Lost"].includes(st(s))&&hasDeal(s)).reduce((a,s)=>a+calc(s.deal).yt,0),won=ss.filter(s=>st(s)==="Won"&&hasDeal(s)).reduce((a,s)=>a+calc(s.deal).yt,0);
+      return{keep:!!u&&u.active!==false||ss.length>0||me_.length>0,r:[k==="none"?"Unassigned / no user":ulabel(k),u?(u.role==="admin"?"Admin":"Sales"):"",ss.length,ss.filter(s=>st(s)==="Won").length,xR(open),xR(won),ss.reduce((a,s)=>a+(s.contacts||[]).length,0),ss.reduce((a,s)=>a+(s.tasks||[]).length,0),c("school_added"),c("contact_added"),c("activity")+c("note"),c("task_done"),me_.length]};
+    }).filter(x=>x.keep).map(x=>x.r);
+    const nt=rows.length;
+    rows.push([],["Exported on",xDT(new Date().toISOString())],["Exported by",(me&&me.name)||""],["Member",ml],["Period",pl],["Showing",XTL[tt]]);
+    sheets.push({name:"Summary",tableRows:nt,cols:[{h:"Member",w:26},{h:"Role",w:10},{h:"Schools",w:10},{h:"Won",w:8},{h:"Open pipeline / year (incl. GST)",w:24},{h:"Won value / year (incl. GST)",w:24},{h:"Contacts",w:10},{h:"Pending tasks",w:13},{h:"Schools added",w:13},{h:"Contacts added",w:14},{h:"Activities & notes",w:16},{h:"Tasks done",w:11},{h:"Total activity",w:13}],rows});
+  }
+  if(want("schools"))sheets.push({name:"Schools",cols:[{h:"School",w:34},{h:"Stage",w:16},{h:"Assigned to",w:20},{h:"Board",w:12},{h:"City",w:18},{h:"State / UT",w:20},{h:"Strength (students)",w:12},{h:"Phone",w:16},{h:"Address",w:42},{h:"Added by",w:18},{h:"Added on",w:20},{h:"Contacts",w:10},{h:"Pending tasks",w:13},{h:"Last activity",w:20}],
+    rows:sc.map(s=>[s.name||"",st(s),oname(s),s.board||"",s.city||"",s.state||"",+s.strength||"",s.phone||"",s.address||"",s.createdBy||(s.createdById?ulabel(s.createdById):""),xDT(addedAt(s)),(s.contacts||[]).length,(s.tasks||[]).length,xDT(lastAct(s))])});
+  if(want("deals"))sheets.push({name:"Deals",cols:[{h:"School",w:34},{h:"Stage",w:16},{h:"Assigned to",w:20},{h:"Students",w:10},{h:"Pricing basis",w:22},{h:"Price per student",w:16},{h:"Yearly amount (ex-GST)",w:22},{h:"GST (18%) / year",w:18},{h:"Total / year (incl. GST)",w:22},{h:"Monthly (incl. GST)",w:19},{h:"Signing date",w:15}],
+    rows:sc.filter(hasDeal).map(s=>{const d=s.deal,c=calc(d);return[s.name||"",st(s),oname(s),+d.students,d.basis==="year"?"Per student / year":"Per student / month",xR(d.price),xR(c.y),xR(c.yg),xR(c.yt),xR(c.mt),xDD(d.signing)]})});
+  if(want("contacts"))sheets.push({name:"Contacts",cols:[{h:"School",w:34},{h:"Assigned to",w:20},{h:"Contact name",w:24},{h:"Designation",w:20},{h:"Phone",w:16},{h:"Email",w:30}],
+    rows:sc.flatMap(s=>(s.contacts||[]).map(p=>[s.name||"",oname(s),p.name||"",p.designation||"",p.phone||"",p.email||""]))});
+  if(want("tasks"))sheets.push({name:"Tasks",cols:[{h:"School",w:34},{h:"Assigned to",w:20},{h:"Type",w:12},{h:"Task",w:44},{h:"Due",w:20},{h:"Status",w:11},{h:"Contact",w:22},{h:"Contact phone",w:16},{h:"Created by",w:18}],
+    rows:sc.flatMap(s=>(s.tasks||[]).slice().sort((a,b)=>(a.due||"").localeCompare(b.due||"")).map(t=>{const c=(s.contacts||[]).find(x=>x.id===t.contactId);return[s.name||"",oname(s),t.type||"",t.title||"",xDT(t.due),new Date(t.due).getTime()<now?"Overdue":"Upcoming",(c&&c.name)||"",(c&&c.phone)||s.phone||"",t.by||(t.byId?ulabel(t.byId):"")]}))});
+  if(want("activities"))sheets.push({name:"Activity log",cols:[{h:"Date & time",w:20},{h:"Member",w:20},{h:"School",w:34},{h:"Type",w:16},{h:"Details",w:70}],
+    rows:evs.filter(x=>mOK(x.u)).sort((a,b)=>b.t-a.t).map(({e,s,k,u})=>[xDT(e.at),ulabel(u),s.name||"",KL[k]||e.type||"Update",xW(e.text||"")])});
+  return{sheets,ml,pl};
+}
+function doExport(){
+  if(!isAdmin())return;
+  const b=buildExport(),data=b.sheets.filter(s=>s.name!=="Summary");
+  if(!data.some(s=>s.rows.length)){toast("📭","Nothing to export for these filters");return}
+  const sl=v=>String(v).replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,""),d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const blob=makeXlsx(b.sheets),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=`Educlawd-CRM_${sl(b.ml)}_${sl(b.pl)}_${ds}.xlsx`;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  toast("📥","Excel file downloaded · "+b.sheets.length+(b.sheets.length>1?" sheets":" sheet"));
+}
+/*EXPORT-END*/
+
+/* Educlawd CRM · Team members: list, add / edit / remove users */
+function teamView(){
+  if(!isAdmin())return noMatch("Only the admin can manage the team");
+  return `<div class="seg2 tseg" style="margin-bottom:12px"><button class="${tsub==="analytics"?"on":""}" data-ts="analytics">Analytics</button><button class="${tsub==="members"?"on":""}" data-ts="members">Members (${team.length})</button></div>`+(tsub==="analytics"?analyticsView():membersView());
+}
+let mq="",mst="all";
+function membersView(){
+  if(!isAdmin())return noMatch("Only the admin can manage the team");
+  const q=mq.trim().toLowerCase(),act=team.filter(u=>u.active!==false).length,dis=team.length-act;
+  const bar=`<div class="mbar"><div class="msearch">${sv('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',16)}<input id="mq" placeholder="Search members…" value="${esc(mq)}" autocomplete="off" aria-label="Search members"></div><button class="ib madd" data-adduser="1">${sv(P.userp,18)} Add member</button></div>`;
+  const chips=`<div class="chips">${[["all","All ("+team.length+")"],["on","Active ("+act+")"],["off","Deactivated ("+dis+")"]].map(([k,l])=>`<button class="${mst===k?"on":""}" data-mst="${k}">${l}</button>`).join("")}</div>`;
+  const list=team.filter(u=>(mst==="all"||(mst==="on")===(u.active!==false))&&(!q||((u.name||"")+" "+(u.username||"")).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.role==="admin")-(a.role==="admin")||(a.name||"").localeCompare(b.name||""));
+  const cards=list.map(u=>{const off=u.active===false,adm=u.role==="admin";
+    return `<div class="mcard ${off?"off":""}"><div class="mtop"><div class="av" style="background:${off?"#94a3b8":mcol(u.id)}">${esc((u.name||"?")[0].toUpperCase())}</div><div class="mid"><b>${esc(u.name)}${u.id===me.id?' <span class="pill">You</span>':""}</b><small>@${esc(u.username)}</small></div><span class="pill ${adm?"s-Won":""}">${adm?"Admin":"Sales"}</span></div>
+    <div class="mfoot"><span class="pill ${off?"s-Lost":"s-Won"}">${off?"Deactivated":"Active"}</span><div class="mact"><button class="alt" data-viewm="${u.id}">Activity</button>${adm?"":`<button class="alt" data-edituser="${u.id}">Edit</button>`}</div></div></div>`}).join("");
+  return bar+chips+(cards||noMatch(q||mst!=="all"?"No members match":"No team members yet"));
+}
+const lastAdmin=u=>!!u&&u.role==="admin"&&u.active!==false&&team.filter(x=>x.role==="admin"&&x.active!==false).length<=1;
+function userForm(u){
+  const lock=false;
+  modal(`<h3>${u?"Edit":"Add"} team member</h3>${fld("u_name","Full name",u?u.name:"")}${fld("u_user","Username (used to sign in)",u?u.username:"")}
+  <label>Role</label><input value="Sales — can use the CRM (there is only one admin)" disabled>
+  ${u?`<label>Status</label><select id="u_act" ${lock?"disabled":""}><option value="1" ${u.active!==false?"selected":""}>Active</option><option value="0" ${u.active===false?"selected":""}>Disabled</option></select>`:""}
+  <label>${u?"New password (leave blank to keep the current one)":"Password (min 6 characters)"}</label><div class="pw"><input id="u_pw" type="text" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false"><button type="button" class="alt" data-m="genpw">Generate</button></div>
+  <div class="dst">Share the username and password with the team member. Passwords can't be viewed later — only reset.</div>
+  ${btns("saveUser","Save",u?u.id:"")}${u&&!lock?`<button class="ghost" style="margin-top:6px;color:var(--red)" data-m="delUser" data-id="${u.id}">Delete member</button>`:""}`);
+}
+const saveUser=safe(async el=>{
+  const id=el.dataset.id,old=team.find(x=>x.id===id),name=val("u_name"),un=val("u_user").toLowerCase().replace(/\s+/g,""),pw=document.getElementById("u_pw").value.trim();
+  if(!name)return err("Enter the full name");if(!okUser(un))return err("Username: at least 3 letters, numbers, . _ or -");
+  if(team.some(x=>x.username===un&&x.id!==id))return err("That username is already taken");
+  if(!old&&pw.length<6)return err("Password must be at least 6 characters");if(old&&pw&&pw.length<6)return err("New password must be at least 6 characters");
+  if(old&&old.role==="admin")return err("The admin account can't be edited");
+  el.disabled=true;
+  try{
+    const u=await rpc("crm_team_save",{p_token:TOKEN,p_id:old?old.id:null,p_name:name,p_username:un,p_password:pw||null,p_active:old?val("u_act")!=="0":true});
+    const i=team.findIndex(x=>x.id===u.id);i<0?team.push(u):team[i]=u;lastSig.t=JSON.stringify(team);
+  }catch(x){el.disabled=false;return err(x.message)}
+  close();route();toast("👤",old?"Team member updated":"Team member added");
+});
+const delUser=safe(async el=>{
+  if(!armed(el,"Click again to confirm delete"))return;
+  const u=team.find(x=>x.id===el.dataset.id);if(!u||u.id===me.id||u.role==="admin")return err("This account can't be deleted");
+  try{await rpc("crm_team_delete",{p_token:TOKEN,p_id:u.id})}catch(x){return err(x.message)}
+  team=team.filter(x=>x.id!==u.id);lastSig={s:"",t:""};close();route();toast("🗑️","Team member deleted — their schools moved to you");syncNow(true);
+});
+
+/* Educlawd CRM · App start-up (init) */
+async function init(){
+  try{localStorage.removeItem(LS)}catch(e){}            // old shared cache from earlier versions
+  setMode("");
+  try{TOKEN=localStorage.getItem(SLS)||""}catch(e){}
+  if(TOKEN){
+    try{me=await rpc("crm_me",{p_token:TOKEN});loadCache();hadMe=true;teamReady=true;route();return beginSession()}
+    catch(e){if(e&&e.code==="unauthorized"){TOKEN="";try{localStorage.removeItem(SLS)}catch(x){}}else dbErr=(e&&e.message)||"Could not reach the server"}
+  }
+  teamReady=true;route();
+}
+
+/* Educlawd CRM · Data helpers: current school, activity log, deal maths, tasks list */
+const cur=()=>schools.find(s=>s.id===sel);
+function inferKind(type,text){
+  if(type==="Deal")return"deal";if(type==="Note")return"note";
+  if(type==="Task")return /^Rescheduled/.test(text)?"task_rescheduled":"task_added";
+  if(type==="Update"){if(/^School added/.test(text))return"school_added";if(/^Details/.test(text))return"school_updated";if(/^Contact added/.test(text))return"contact_added";if(/^Contact updated/.test(text))return"contact_updated";if(/^Stage changed/.test(text))return"stage";return"update"}
+  return /^Completed: /.test(text)?"task_done":"activity";
+}
+function log(s,type,text,kind){(s.timeline=s.timeline||[]).unshift({id:uid(),type,text,at:new Date().toISOString(),by:me?me.name:undefined,byId:me?me.id:undefined,kind:kind||inferKind(type,text)})}
+function calc(d){const n=+d?.students||0,p=+d?.price||0,y=d?.basis==="year"?n*p:n*p*12,m=y/12;return{m,g:m*.18,mt:m*1.18,y,yg:y*.18,yt:y*1.18}}
+
+let gtab="home";
+const allTasks=()=>schools.flatMap(s=>(s.tasks||[]).map(t=>({t,s}))).sort((a,b)=>a.t.due.localeCompare(b.t.due));
+const noMatch=(m)=>`<div class="empty emp">${m}</div>`;
+const STC={Lead:"#64748b",Contacted:"#7c3aed","Meeting done":"#2563eb","Demo done":"#0d9488","Proposal sent":"#d97706","Contract Signed":"#4f46e5",Negotiation:"#ea580c",Won:"#059669",Lost:"#dc2626"};
+
+/* Educlawd CRM · Home: greeting and school list */
+function greetHtml(){
+  const n=new Date(),h=n.getHours(),g=h<12?"Good morning":h<17?"Good afternoon":"Good evening",
+  fn=((me&&me.name)||"").trim().split(/\s+/)[0]||"",
+  dt=n.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  return `<div class="greet"><div class="gdate">${esc(dt)}</div><div class="ghi">${g}${fn?", "+esc(fn):""}</div></div>`;
+}
+const homeView=f=>homeList(f);
+function homeList(f){
+  const ord=a=>a.created||(a.timeline&&a.timeline.length?a.timeline[a.timeline.length-1].at:"")||"";
+  const rows=schools.slice().sort((a,b)=>ord(a).localeCompare(ord(b))).filter(s=>[s.name,s.city,s.board,s.state].join(" ").toLowerCase().includes(f));
+  if(!rows.length)return noMatch(schools.length?"No schools match your search":"<div style='font-size:34px'>🏫</div>No schools yet.<br><small>Tap the yellow + button to add your first school</small>");
+  const now=Date.now();
+  return `<div class="dl2 hl">All schools <span class="cnt">${rows.length}</span></div>`+rows.map(s=>{
+    const st=s.stage||"Lead",loc=[s.city,s.state].filter(Boolean).join(", "),tk=s.tasks||[],od=tk.some(t=>new Date(t.due)<now),dv=s.deal&&s.deal.students&&s.deal.price?calc(s.deal).yt:0,stu=s.strength||(s.deal&&s.deal.students);
+    return `<div class="it sc ${s.id===sel?"on":""}" data-sel="${s.id}" style="--sc:${STC[st]||"#64748b"}"><div class="ha">${esc((s.name||"?")[0].toUpperCase())}</div>
+    <div class="sb"><b>${esc(s.name)}</b><small>${esc(loc||"No location")}${s.board?" · "+esc(s.board):""}</small></div>
+    <div class="rt"><span class="pill ${sc(st)}">${esc(st)}</span>${stu?`<span class="stu">👥 ${esc(stu)}</span>`:""}</div>${sv('<path d="m9 18 6-6-6-6"/>',16)}</div>`}).join("");
+}
+
+/* Educlawd CRM · Tasks: cards, Today / Upcoming tabs */
+const taskPhone=(t,s)=>{const c=(s.contacts||[]).find(x=>x.id===t.contactId);return{c,phone:(c&&c.phone)||s.phone||""}};
+const callHref=p=>"tel:"+String(p).replace(/[^\d+]/g,"");
+const smsHref=p=>"sms:"+String(p).replace(/[^\d+]/g,"");
+const smsIcon='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6A8.4 8.4 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8v.5z"/></svg>';
+const smsBtn=(phone,label)=>`<a class="callbtn smsbtn" href="${esc(smsHref(phone))}" target="_top" title="Message ${esc(label||phone)}" aria-label="Message ${esc(label||phone)}">${smsIcon}</a>`;
+const actBtn=(t,phone,label)=>!phone?"":t.type==="Message"?smsBtn(phone,label):callBtn(phone,label);
+const callBtn=(phone,label)=>`<a class="callbtn" href="${esc(callHref(phone))}" target="_top" title="Call ${esc(label||phone)}" aria-label="Call ${esc(label||phone)}">${sv(P.phone,18)}</a>`;
+function taskIc(t,s){const{c,phone}=taskPhone(t,s);return t.type==="Message"&&phone?smsBtn(phone,c&&c.name):t.type==="Call"&&phone?callBtn(phone,c&&c.name):`<div class="ic">${ICON[t.type]||"✅"}</div>`}
+function taskWho(t,s){const{c,phone}=taskPhone(t,s);return t.type==="Call"&&phone?`<div class="who">${c?"👤 "+esc(c.name)+" · ":""}${esc(phone)}</div>`:(c?`<div class="who">👤 ${esc(c.name)}</div>`:"")}
+function taskCard({t,s},inS){
+  const{c,phone}=taskPhone(t,s),d=new Date(t.due),n=new Date(),od=d<n,today=d.toDateString()===n.toDateString(),
+  dt=d.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}),
+  pill=today&&!od?tm(t.due):dt+" · "+tm(t.due),
+  sub=[c&&c.name,inS?"":s.name].filter(Boolean).map(esc).join(", ");
+  return `<div class="trow ${TC(t.type)} ${od?"od":""}"><button class="tchk" data-done="${t.id}" data-sid="${s.id}" title="Mark as done" aria-label="Mark as done">${sv(P.check,18)}</button>
+  <div class="tmain"><div class="tgo"${inS?"":` data-sel="${s.id}" data-tabto="activity"`}><div class="ttl">${esc(t.title)}</div>${sub?`<div class="tsub">${sub}</div>`:""}</div>
+  <div class="tpills"><button class="dpill ${od?"od":""}" data-resch="${t.id}" data-sid="${s.id}" title="Tap to reschedule">${sv(P.cal,12)}<span>${esc(pill)}</span></button><span class="kpill">${ICON[t.type]||""}<span>${esc(t.type||"Task")}</span></span></div></div>
+  ${actBtn(t,phone,c&&c.name)}</div>`}
+const taskList=(a,inS)=>`<div class="tlist">${a.map(r=>taskCard(r,inS)).join("")}</div>`;
+let ttab="today";
+function tasksView(){
+  const all=allTasks(),now=Date.now(),eod=new Date();eod.setHours(23,59,59,999);
+  const od=all.filter(r=>new Date(r.t.due)<now),td=all.filter(r=>{const d=new Date(r.t.due);return d>=now&&d<=eod}),up=all.filter(r=>new Date(r.t.due)>eod);
+  const seg=`<div class="seg2"><button class="${ttab==="today"?"on":""}" data-tt="today">Today (${od.length+td.length})</button><button class="${ttab==="upcoming"?"on":""}" data-tt="upcoming">Upcoming (${up.length})</button></div>`;
+  const hd=t=>`<div class="dl2" style="margin:12px 0 8px${t.startsWith("Overdue")?";color:#b91c1c":""}">${t}</div>`;
+  let body="";
+  if(ttab==="today"){
+    body=(od.length?hd("Overdue · "+od.length)+taskList(od):"")+(td.length?hd("Today · "+td.length)+taskList(td):"");
+    if(!body)body=noMatch("🎉 Nothing due today<br><small>Open a school and tap “Add task”</small>");
+  }else{
+    const tm_=new Date(Date.now()+864e5).toDateString(),gs=[];
+    up.forEach(r=>{const d=new Date(r.t.due),k=d.toDateString(),lab=k===tm_?"Tomorrow":d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});let g=gs[gs.length-1];if(!g||g.k!==k)gs.push(g={k,lab,items:[]});g.items.push(r)});
+    body=gs.map(g=>hd(g.lab+" · "+g.items.length)+taskList(g.items)).join("")||noMatch("No upcoming tasks");
+  }
+  return seg+body;
+}
+
+/* Educlawd CRM · Contacts tab and Deals tab */
+function contactsView(f){
+  const rows=schools.flatMap(s=>(s.contacts||[]).map(p=>({p,s}))).filter(({p,s})=>[p.name,p.designation,p.phone,s.name].join(" ").toLowerCase().includes(f)).sort((a,b)=>(a.p.name||"").localeCompare(b.p.name||""));
+  return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small><small>${esc(p.phone||"—")}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
+}
+let dtab="month";
+function dealsView(f){
+  const eom=new Date();eom.setMonth(eom.getMonth()+1,0);eom.setHours(23,59,59,999);
+  const all=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
+  const closed=r=>r.s.stage==="Won"||r.s.stage==="Lost";
+  const open=all.filter(r=>!closed(r)),
+    month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),cl=all.filter(closed);
+  const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15);
+  const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),closed:cl.sort((x,y)=>(y.sd||0)-(x.sd||0))};
+  const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>`;
+  const rows=sets[dtab].filter(r=>(r.s.name||"").toLowerCase().includes(f));
+  if(!rows.length)return seg+noMatch(f?"No deals match your search":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
+  const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
+  const lab={month:"This month",upcoming:"Upcoming",closed:"Closed"}[dtab];
+  return seg+`<div class="hero" style="margin:10px 0"><small>${lab} · total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="pill ${sc(s.stage)}">${esc(s.stage||"Lead")}</span></div><small>${s.deal.students} students × ${inr(s.deal.price)} per ${s.deal.basis==="year"?"year":"month"}</small><small>${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small><div class="dv">${inr(c.yt)} <small>/ yr incl. GST</small></div></div>`).join("");
+}
+
+/* Educlawd CRM · Navigation list and main render() */
+const GN=[["home","Home"],["tasks","Tasks"],["contacts","Contacts"],["deals","Deals"]];
+const gnList=()=>[...(isAdmin()?[...GN,["payments","Payments"],["team","Team"]]:GN),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
+const PH={home:"Search school, city, board…",tasks:"Search tasks or schools…",contacts:"Search contacts…",deals:"Search deals…",payments:"Search payment plans by school…",profile:""};
+function render(){
+  if(!me)return;
+  if((gtab==="team"||gtab==="payments")&&!isAdmin())gtab="home";
+  const f=filter.toLowerCase(),n=allTasks().length;
+  $("#q").placeholder=PH[gtab];$("#add").style.display=gtab==="home"||gtab==="payments"?"":"none";$("#add").title=$("#add").ariaLabel=gtab==="payments"?"Add payment plan":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="profile"?"none":"";
+  $("#greet").innerHTML=gtab==="home"?greetHtml():"";
+  $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,payments:paymentsView,profile:profileView}[gtab])(f);
+  const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,nv=GN.map(([k,l])=>`<button class="${gtab===k?"on":""}" data-g="${k}">${GI[k]}<span>${l}</span>${k==="tasks"&&ov?`<i class="bdg">${ov>9?"9+":ov}</i>`:""}</button>`).join("");
+  if(nv!==navSig||!$("#gnav").firstChild){navSig=nv;$("#gnav").innerHTML=nv}
+  const narrow=matchMedia("(max-width:800px)").matches;
+  const pm=gtab==="payments",pp=pm?payments.find(p=>p.id===psel):null,open=pm?!!pp:!!sel;
+  const show=gtab==="profile"?!narrow:open;$("#list").classList.toggle("hide",show);$("#detail").classList.toggle("hide",!show);
+  const s=cur();
+  $("#detail").innerHTML=gtab==="profile"?(narrow?"":`<div class="pwide">${profileView()}</div>`):pm?(pp?payDetail(pp):`<div class="empty">Select a payment plan or tap + to add one.</div>`):s?detail(s):`<div class="empty">Select a school or add a new one.</div>`;
+  renderSide();
+}
+
+/* ---- Profile module ---- */
+function profileView(){
+  const adm=isAdmin(),ini=esc((me.name||"?")[0].toUpperCase());
+  return `<div class="sx"><div class="sxh"><div class="sxa">${ini}</div><div class="sxt"><b>${esc(me.name||"")}</b><small>@${esc(me.username||"")}</small><span class="pill ${adm?"s-Won":""}">${adm?"Admin":"Sales"}</span></div></div>
+  <div class="sxc off"><span class="cic">${sv(P.users,16)}</span><div><small>Access</small><b>${adm?"You can see every member's schools and the payments module.":"You can only see the schools you added."}</b></div></div>
+  <button class="ib big" data-m="chpw" style="margin-top:4px">${sv('<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',18)} Change password</button>
+  <button class="alt ib big" data-m="signout" style="margin-top:8px">${sv('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',18)} Sign out</button></div>`;
+}
+/* ---- PC sidebar ---- */
+let sideSig="";
+function renderSide(){
+  const el=$("#side");if(!el)return;
+  if(!me){el.innerHTML="";sideSig="";return}
+  const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,adm=isAdmin();
+  const b=(k,l)=>`<button class="${gtab===k?"on":""}" data-dm="${k}" title="${l}" aria-label="${l}"><span class="di">${GI[k]}</span><span class="sl">${l}</span>${k==="tasks"&&ov?`<i class="bdg2">${ov>9?"9+":ov}</i>`:""}</button>`;
+  const h=`<nav class="dnav">${GN.map(([k,l])=>b(k,l)).join("")}</nav>${adm?`<div class="sgl">Admin</div><nav class="dnav">${b("payments","Payments")}${b("team","Team")}</nav>`:""}<nav class="dnav bot">${b("profile","Profile")}</nav>`;
+  if(h!==sideSig){sideSig=h;el.innerHTML=h}
+}
+const TI={contacts:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,activity:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,deal:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12"/><path d="M6 8h12"/><path d="m6 13 8.5 8"/><path d="M6 13h3"/><path d="M9 13c6.667 0 6.667-10 0-10"/></svg>`};
+
+/* Educlawd CRM · Slide-in modules panel */
+/* ---- modules menu (drawer) ---- */
+function openDrawer(){
+  if(!me)return;
+  const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length;
+  $("#drawerRoot").innerHTML=`<div class="dwr"><div class="dsc" data-dclose="1"></div><aside class="dpn" role="dialog" aria-modal="true" aria-label="Modules"><div class="dph2"><div class="dbrand">Educ<span>lawd</span> <span class="crm">CRM</span></div><button class="dx" data-dclose="1" aria-label="Close menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="dus"><div class="av">${esc((me.name||"?")[0].toUpperCase())}</div><div><b>${esc(me.name||"")}</b><small>${isAdmin()?"Admin":"Sales"}</small></div></div><nav class="dnav">${gnList().map(([k,l])=>`<button class="${gtab===k?"on":""}" data-dm="${k}"><span class="di">${GI[k]}</span><span>${l}</span>${k==="tasks"&&ov?`<i class="bdg2">${ov>9?"9+":ov}</i>`:""}</button>`).join("")}</nav></aside></div>`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const d=$("#drawerRoot .dwr");if(d)d.classList.add("open")}));
+}
+function closeDrawer(){
+  const d=$("#drawerRoot .dwr");if(!d)return;d.classList.remove("open");
+  setTimeout(()=>{const x=$("#drawerRoot");if(x&&!x.querySelector(".dwr.open"))x.innerHTML=""},240);
+}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
+let navSig="";
+
+/* Educlawd CRM · Icon sets */
+const GI={home:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>`,tasks:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,contacts:TI.contacts,deals:TI.deal,team:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>'};
+const sv=(p,z=18)=>`<svg viewBox="0 0 24 24" width="${z}" height="${z}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const P={phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+ users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ cap:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+ pin:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+ map:'<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/>',
+ home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+ pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+ back:'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+ calp:'<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18M12 14v4M10 16h4"/>',
+ list:'<path d="M11 12H3M16 6H3M16 18H3M18 9v6M21 12h-6"/>',
+ note:'<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/>',
+ userp:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+ cal:'<path d="M8 2v4M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
+ info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+ flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>'};
+
+/* Educlawd CRM · Payments (admin only): payment plans, installments, collections
+   Each plan is saved as its own document (id "pay_…") through the same crm_put / crm_list functions.
+   New docs created by the admin are owned by the admin, and crm_list only returns a member's own docs,
+   so payment data never reaches sales members. */
+const PAY_FREQ=[["1","Monthly"],["3","Quarterly"],["6","Half-yearly"],["12","Yearly"]];
+const PAY_MODES=["UPI","Bank transfer","Cheque","Cash","Card","Other"];
+const PAY_N=[1,2,3,4,5];
+const PST={paid:["Paid","ps-paid"],over:["Overdue","ps-over"],pend:["Pending","ps-pend"],done:["Fully paid","ps-paid"]};
+GI.profile=sv(P.user='<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',22);
+GI.payments=sv(P.wallet='<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',22);
+let ptab="all",pf=null;const payGone=new Set();
+const payKey=()=>LS+":pay:"+(me?me.id:"none");
+const cachePay=()=>{if(!me||!isAdmin())return;try{localStorage.setItem(payKey(),JSON.stringify(payments))}catch(e){}};
+const isPayDoc=d=>String(d.id||"").startsWith("pay_")||!!(d.data&&d.data._kind==="payment");
+const toP=x=>Math.round((+x||0)*100),fromP=p=>p/100;           // money maths in paise (no float drift)
+const todayISO=()=>localISO(new Date()).slice(0,10);
+const inrS=n=>{n=+n||0;const a=Math.abs(n);return a>=1e7?"₹"+(n/1e7).toFixed(2).replace(/\.?0+$/,"")+" Cr":a>=1e5?"₹"+(n/1e5).toFixed(2).replace(/\.?0+$/,"")+" L":inr(n)};
+const freqLabel=f=>(PAY_FREQ.find(x=>x[0]===String(f))||[0,"Custom"])[1];
+const payName=p=>{const s=p.schoolId&&schools.find(x=>x.id===p.schoolId);return(s&&s.name)||p.schoolName||"Untitled"};
+const paidAmt=i=>i.paidOn?(i.paidAmt??i.amount):i.amount;
+function addMonths(iso,m){const[y,mo,d]=String(iso).split("-").map(Number);if(!y)return"";const t=new Date(y,mo-1+m,1),last=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();t.setDate(Math.min(d,last));return localISO(t).slice(0,10)}
+/* equal split in whole rupees; the last installment absorbs the remainder so the total always matches */
+function splitP(totalP,n){if(n<1)return[];const base=Math.floor(totalP/n/100)*100,a=Array(n).fill(base);a[n-1]=totalP-base*(n-1);return a}
+const instSt=(i,td=todayISO())=>i.paidOn?"paid":i.due&&i.due<td?"over":"pend";
+function planSum(p){
+  const td=todayISO(),ins=p.installments||[],tot=toP(p.total);let paid=0,over=0,oc=0,next=null;
+  ins.forEach(i=>{const st=instSt(i,td);if(st==="paid")paid+=toP(paidAmt(i));else{if(st==="over"){over+=toP(i.amount);oc++}if(!next||(i.due||"9")<(next.due||"9"))next=i}});
+  const status=ins.length&&ins.every(i=>i.paidOn)?"done":oc?"over":"pend";
+  return{tot,paid,due:Math.max(0,tot-paid),over,oc,next,status,pc:tot?Math.min(100,Math.round(paid*100/tot)):0,n:ins.length,np:ins.filter(i=>i.paidOn).length};
+}
+function mergePay(docs){
+  const loc=new Map(payments.map(p=>[p.id,p])),out=[],ids=new Set(docs.map(d=>d.id));
+  docs.forEach(d=>{if(payGone.has(d.id))return;const r={...JSON.parse(JSON.stringify(d.data||{})),id:d.id},l=loc.get(d.id);
+    out.push(l&&(dirty.has(d.id)||(l.updated||"")>(r.updated||""))?l:r);loc.delete(d.id)});
+  loc.forEach(l=>{if(dirty.has(l.id))out.push(l)});
+  payGone.forEach(id=>{if(!ids.has(id))payGone.delete(id)});
+  payments=out;
+}
+function payLog(p,text){(p.log=p.log||[]).unshift({at:new Date().toISOString(),by:me?me.name:"",text})}
+function savePay(p){p.updated=new Date().toISOString();const i=payments.findIndex(x=>x.id===p.id);i<0?payments.push(p):payments[i]=p;cachePay();render();push(p)}
+function removePay(p){payments=payments.filter(x=>x.id!==p.id);payGone.add(p.id);psel=null;cachePay();render();toast("🗑️","Payment plan deleted");if(dbc)dbc.doc(p.id).delete().catch(()=>{})}
+
+/* ---- list view ---- */
+function paymentsView(f){
+  if(!isAdmin())return noMatch("Only the admin can see payments");
+  const td=todayISO(),lim=addMonths(td,1),rows=payments.map(p=>({p,m:planSum(p)}));
+  const T=rows.reduce((a,{m})=>(a.t+=m.tot,a.c+=m.paid,a.d+=m.due,a.o+=m.over,a.oc+=m.oc,a),{t:0,c:0,d:0,o:0,oc:0});
+  let up=0,upc=0;payments.forEach(p=>(p.installments||[]).forEach(i=>{if(!i.paidOn&&i.due>=td&&i.due<=lim){up+=toP(i.amount);upc++}}));
+  const kc=(c,ic,n,l,sub)=>`<div class="kc money" style="--c:${c}" title="${esc(inr(n))}"><div class="kic">${sv(ic,18)}</div><div class="kn">${inrS(n)}</div><div class="kl">${l}</div><div class="ks">${sub}</div></div>`;
+  const kpi=`<div class="kgrid">${kc("#0d7f7a",P.wallet,fromP(T.t),"Total payment",rows.length+" plan"+(rows.length===1?"":"s"))}${kc("#16a34a",P.check,fromP(T.c),"Collected",(T.t?Math.round(T.c*100/T.t):0)+"% of total")}${kc("#d97706",P.cal,fromP(T.d),"Outstanding",upc?inrS(fromP(up))+" due in 30 days":"Nothing due in 30 days")}${kc("#dc2626",P.alert,fromP(T.o),"Overdue",T.oc+" installment"+(T.oc===1?"":"s"))}</div>`;
+  const cnt=k=>rows.filter(r=>k==="all"||r.m.status===k).length;
+  const seg=`<div class="seg2 pseg">${[["all","All"],["pend","Pending"],["over","Overdue"],["done","Paid"]].map(([k,l])=>`<button class="${ptab===k?"on":""}" data-pt="${k}">${l} (${cnt(k)})</button>`).join("")}</div>`;
+  const ord={over:0,pend:1,done:2};
+  const list=rows.filter(r=>(ptab==="all"||r.m.status===ptab)&&payName(r.p).toLowerCase().includes(f))
+    .sort((a,b)=>ord[a.m.status]-ord[b.m.status]||((a.m.next&&a.m.next.due)||"9").localeCompare((b.m.next&&b.m.next.due)||"9")||payName(a.p).localeCompare(payName(b.p)));
+  if(!payments.length)return kpi+noMatch("<div style='font-size:34px'>💳</div>No payment plans yet.<br><small>Tap the yellow + button to add one</small>");
+  if(!list.length)return kpi+seg+noMatch(f?"No payment plans match your search":"Nothing here");
+  return kpi+seg+list.map(({p,m})=>{const[sl,scl]=PST[m.status],nx=m.next,nxo=nx&&instSt(nx,td)==="over";
+    return `<div class="it pcard ${p.id===psel?"on":""}" data-psel="${p.id}"><div class="r"><b>${esc(payName(p))}</b><span class="pill ${scl}">${sl}</span></div>
+    <div class="pamt"><b>${inr(fromP(m.paid))}</b> <small>of ${inr(fromP(m.tot))} collected</small></div>
+    <div class="pbar"><i style="width:${m.pc}%"></i></div>
+    <small>${m.np}/${m.n} installment${m.n===1?"":"s"} paid · ${esc(freqLabel(p.freq))}</small>${nx?`<small class="${nxo?"od":""}">Next: ${inr(nx.amount)} ${nxo?"overdue since":"due"} ${fmtDate(nx.due)}</small>`:""}</div>`}).join("");
+}
+
+/* ---- detail view ---- */
+function payDetail(p){
+  const m=planSum(p),ins=p.installments||[],s=p.schoolId&&schools.find(x=>x.id===p.schoolId),nm=payName(p);
+  return `<div class="dbrow"><button class="dback" data-pay="back" aria-label="Back" title="Back">${sv(P.back,20)}</button></div>
+  <div class="hero2 slim"><div class="hav">${esc(nm.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><h2>${esc(nm)}</h2><small>${m.n} installment${m.n===1?"":"s"} · ${esc(freqLabel(p.freq))} · ${PST[m.status][0]}</small></div><button class="edit" data-pay="edit" title="Edit payment plan" aria-label="Edit payment plan">${sv(P.pencil,17)}</button></div>
+  <div class="hero"><small>Total payment</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
+  <h4>Installments</h4>${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
+    return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Due ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
+    ${i.paidOn?`<button class="alt" data-pay="unpaid" data-i="${i.id}">Undo</button>`:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
+  ${p.notes?`<h4>Notes</h4><div class="note">${esc(p.notes)}</div>`:""}
+  ${(p.log||[]).length?`<h4>History</h4>${p.log.slice(0,15).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
+  <div class="row" style="margin-top:16px">${s?`<button class="alt" data-pschool="${s.id}">Open school</button>`:""}<button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div>`;
+}
+/* small summary on a school's Deal tab (admin only) */
+function payDealBlock(s){
+  if(!isAdmin())return"";const ps=payments.filter(p=>p.schoolId===s.id);
+  if(!ps.length)return `<div class="pdeal"><button class="alt ib" data-pnew="${s.id}">${sv(P.wallet,16)} Create payment plan</button></div>`;
+  return `<div class="pdeal"><div class="dl2">Payments</div>`+ps.map(p=>{const m=planSum(p);return `<div class="it pcard" data-psel="${p.id}" data-go="1"><div class="r"><b>${inr(fromP(m.paid))} <small style="display:inline;font-weight:500">of ${inr(p.total)}</small></b><span class="pill ${PST[m.status][1]}">${PST[m.status][0]}</span></div><div class="pbar"><i style="width:${m.pc}%"></i></div><small>${m.np}/${m.n} installments paid · tap to open</small></div>`}).join("")+`</div>`;
+}
+
+/* ---- create / edit form with automatic installment split ---- */
+const dealTotal=s=>s&&s.deal&&s.deal.students&&s.deal.price?Math.round(calc(s.deal).yt*100)/100:0;
+function payForm(p,presetSchool){
+  const e=p?structuredClone(p):{id:"pay_"+uid(),_kind:"payment",schoolId:presetSchool||"",schoolName:"",total:"",count:2,freq:"1",start:todayISO(),installments:[],notes:""};
+  if(!p&&presetSchool){const dv=dealTotal(schools.find(x=>x.id===presetSchool));if(dv)e.total=dv}
+  pf={d:e,rows:(e.installments||[]).map(i=>({...i}))};
+  if(!pf.rows.length)payRebuild(+e.count||1);
+  const other=!e.schoolId&&!!e.schoolName,ss=schools.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  modal(`<h3>${p?"Edit":"New"} payment plan</h3>
+  <label>School</label><select id="pf_school"><option value="">Select school</option>${ss.map(s=>`<option value="${s.id}" ${s.id===e.schoolId?"selected":""}>${esc(s.name)}${s.stage==="Won"?" · Won":""}</option>`).join("")}<option value="__other" ${other?"selected":""}>Other (not in CRM)…</option></select>
+  <input id="pf_sname" placeholder="School / client name" value="${esc(other?e.schoolName:"")}" style="margin-top:6px;${other?"":"display:none"}">
+  <div class="phint" id="pf_hint"></div>
+  <div class="grid">${fld("pf_total","Total payment (₹)",e.total,"number")}${fld("pf_start","First installment date",e.start||todayISO(),"date")}<div><label>Installment every</label><select id="pf_freq">${PAY_FREQ.map(([v,l])=>`<option value="${v}" ${String(e.freq)===v?"selected":""}>${l}</option>`).join("")}</select></div></div>
+  <label>Number of installments</label><div class="chips pn" id="pf_n">${PAY_N.map(n=>`<button type="button" data-pn="${n}" class="${pf.rows.length===n?"on":""}">${n===1?"Full (1)":n}</button>`).join("")}</div>
+  <div id="pf_rows"></div>
+  <label>Notes (optional)</label><textarea id="pf_notes" placeholder="e.g. invoice no., terms, GST details">${esc(e.notes||"")}</textarea>
+  <div class="row" style="margin-top:12px"><button data-pay="save">${p?"Save changes":"Create plan"}</button><button class="alt" data-m="close">Cancel</button></div>`);
+  const t=document.getElementById("pf_total");t.setAttribute("inputmode","decimal");t.min="0";t.step="0.01";
+  payDraw();payHint();
+}
+function payRebuild(n){const old=pf.rows,rows=[];for(let k=0;k<n;k++){const o=old[k];rows.push(o&&o.paidOn?o:{id:(o&&o.id)||uid(),due:"",amount:0})}pf.rows=rows;pf.d.count=n;payDates();payAmounts()}
+function payDates(){const st=pf.d.start||todayISO(),fq=+pf.d.freq||1;pf.rows.forEach((r,k)=>{if(!r.paidOn)r.due=addMonths(st,k*fq)})}
+/* paid installments stay as they are; whatever is left of the total is split equally over the unpaid ones */
+function payAmounts(){const paid=pf.rows.filter(r=>r.paidOn).reduce((a,r)=>a+toP(paidAmt(r)),0),un=pf.rows.filter(r=>!r.paidOn),sp=splitP(Math.max(0,toP(pf.d.total)-paid),un.length);un.forEach((r,k)=>r.amount=fromP(sp[k]||0))}
+function payDraw(){const el=document.getElementById("pf_rows");if(!el)return;
+  el.innerHTML=`<div class="prow ph"><span>#</span><span>Due date</span><span>Amount (₹)</span></div>`+pf.rows.map((r,k)=>`<div class="prow"><span class="pno">${k+1}</span>${r.paidOn?`<span class="plock">${fmtDate(r.due)}</span><span class="plock">${inr(paidAmt(r))}<em>PAID</em></span>`:`<input type="date" data-pr="due" data-k="${k}" value="${esc(r.due)}" aria-label="Installment ${k+1} due date"><input type="number" inputmode="decimal" min="0" step="0.01" data-pr="amt" data-k="${k}" value="${r.amount}" aria-label="Installment ${k+1} amount">`}</div>`).join("")+`<div class="psum" id="pf_sum"></div>`;
+  document.querySelectorAll("#pf_n [data-pn]").forEach(b=>b.classList.toggle("on",+b.dataset.pn===pf.rows.length));
+  paySum()}
+function paySum(){const e=document.getElementById("pf_sum");if(!e)return;const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0),t=toP(pf.d.total);
+  if(!t){e.className="psum nil";e.textContent="Enter the total payment — the installment amounts are calculated automatically";return}
+  const ok=s===t,n=pf.rows.length;e.className="psum "+(ok?"ok":"bad");
+  e.innerHTML=ok?`✓ ${n===1?"Full payment":n+" installments"} · total ${inr(fromP(t))}`:`Installments add up to ${inr(fromP(s))} — ${s>t?"over":"short"} by ${inr(fromP(Math.abs(s-t)))}<button type="button" class="alt" data-pay="resplit">Split equally</button>`}
+function payHint(){const h=document.getElementById("pf_hint");if(!h||!pf)return;const sid=val("pf_school"),s=schools.find(x=>x.id===sid),dv=dealTotal(s),dup=sid&&payments.some(p=>p.schoolId===sid&&p.id!==pf.d.id);
+  h.innerHTML=(dv?`Deal value: <b>${inr(dv)}</b> / year incl. 18% GST${toP(pf.d.total)!==toP(dv)?` · <button type="button" data-pay="usedeal">Use this amount</button>`:""}`:"")+(dup?`<div style="color:#92400e;margin-top:3px">⚠ This school already has a payment plan.</div>`:"")}
+function payCount(n){if(!pf)return;const lastPaid=pf.rows.reduce((a,r,k)=>r.paidOn?k+1:a,0);
+  if(n<lastPaid)return err(`Installment ${lastPaid} is already paid — choose ${lastPaid} or more`);err("");payRebuild(n);payDraw()}
+function payInput(e){const t=e.target;if(!pf||!t)return;
+  if(t.id==="pf_total"){pf.d.total=t.value;payAmounts();payDraw();payHint();return}
+  if(t.dataset&&t.dataset.pr){const r=pf.rows[+t.dataset.k];if(!r)return;if(t.dataset.pr==="amt")r.amount=t.value===""?0:+t.value;else r.due=t.value;paySum()}}
+function payChange(e){const t=e.target;if(!pf||!t)return;
+  if(t.id==="pf_start"||t.id==="pf_freq"){if(t.id==="pf_start")pf.d.start=t.value;else pf.d.freq=t.value;payDates();payDraw();return}
+  if(t.id==="pf_school"){const o=document.getElementById("pf_sname");o.style.display=t.value==="__other"?"":"none";if(t.value==="__other")o.focus();
+    const dv=dealTotal(schools.find(x=>x.id===t.value));if(dv&&!toP(pf.d.total)){pf.d.total=dv;document.getElementById("pf_total").value=dv;payAmounts();payDraw()}payHint()}}
+function savePlan(){
+  const d=pf.d,sid=val("pf_school"),nm=sid==="__other"?val("pf_sname"):((schools.find(s=>s.id===sid)||{}).name||"");
+  if(!sid)return err("Select a school");if(!nm)return err("Enter the school / client name");
+  const t=toP(d.total);if(t<=0)return err("Enter the total payment amount");
+  if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
+  if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
+  const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0);if(s!==t)return err(`Installments add up to ${inr(fromP(s))} but the total is ${inr(fromP(t))}. Tap “Split equally” or adjust the amounts.`);
+  const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:val("pf_start"),freq:val("pf_freq"),notes:val("pf_notes"),
+    installments:pf.rows.map(r=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
+  payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
+  psel=p.id;pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);
+}
+function paidForm(p,i){const k=p.installments.indexOf(i);
+  modal(`<h3>Record payment</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">Installment ${k+1} of ${p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
+  <div class="grid">${fld("pp_amt","Amount received (₹)",i.amount,"number")}${fld("pp_date","Payment date",todayISO(),"date")}<div><label>Payment mode</label><select id="pp_mode">${opts(PAY_MODES)}</select></div>${fld("pp_ref","Reference / UTR / cheque no.")}</div>
+  <div class="dst">If the amount differs from ${inr(i.amount)}, the remaining unpaid installments are re-balanced so the plan still adds up to ${inr(p.total)}.</div>
+  <div class="row" style="margin-top:12px"><button data-pay="savepaid" data-i="${i.id}">Save payment</button><button class="alt" data-m="close">Cancel</button></div>`)}
+function payAct(el){
+  const a=el.dataset.pay;
+  if(a==="save")return pf&&savePlan();
+  if(a==="resplit"){if(pf){payAmounts();payDraw()}return}
+  if(a==="usedeal"){const dv=dealTotal(schools.find(x=>x.id===val("pf_school")));if(pf&&dv){pf.d.total=dv;document.getElementById("pf_total").value=dv;payAmounts();payDraw();payHint()}return}
+  if(a==="back"){psel=null;return render()}
+  const p=payments.find(x=>x.id===psel);if(!p)return;
+  if(a==="edit")return payForm(p);
+  if(a==="del"){if(!armed(el,"Tap again to delete"))return;return removePay(p)}
+  const i=(p.installments||[]).find(x=>x.id===el.dataset.i),k=p.installments.indexOf(i);if(!i)return;
+  if(a==="paid")return paidForm(p,i);
+  if(a==="unpaid"){if(!armed(el,"Confirm"))return;delete i.paidOn;delete i.paidAmt;delete i.mode;delete i.ref;payLog(p,`Installment ${k+1} marked unpaid`);toast("↩️","Installment marked unpaid");return savePay(p)}
+  if(a==="savepaid"){
+    const amt=toP(val("pp_amt")),dt=val("pp_date");if(amt<=0)return err("Enter the amount received");if(!dt)return err("Pick the payment date");
+    const diff=amt!==toP(i.amount);Object.assign(i,{paidOn:dt,paidAmt:fromP(amt),amount:fromP(amt),mode:val("pp_mode"),ref:val("pp_ref")});
+    const un=p.installments.filter(x=>!x.paidOn);
+    if(diff&&un.length){const rest=Math.max(0,toP(p.total)-p.installments.filter(x=>x.paidOn).reduce((s,x)=>s+toP(paidAmt(x)),0)),sp=splitP(rest,un.length);un.forEach((x,j)=>x.amount=fromP(sp[j]))}
+    payLog(p,`Installment ${k+1} paid · ${inr(fromP(amt))}${i.mode?" via "+i.mode:""}`);close();
+    toast("✅",diff&&un.length?"Payment saved · remaining installments re-balanced":"Payment recorded");return savePay(p)}
+}
+
+/* Educlawd CRM · School detail: info, contacts, activity, deal */
+function detail(s){
+  const tabs=[["activity","Activity"],["deal","Deal"],["contacts","Info"]];
+  return `<div class="dbrow"><button class="dback" data-act="back" aria-label="Back" title="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button></div><div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><h2>${esc(s.name)}</h2><small>${[s.city,s.state].filter(Boolean).map(esc).join(", ")||"Location not added"}</small></div><label class="hst"><small>Stage</small><select data-act="stage" class="pill ${sc(s.stage)}" aria-label="Deal stage" title="Deal stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></label></div>
+  <div class="tabs">${tabs.map(([k,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}">${k==="contacts"?sv(P.info,22):TI[k]}<span>${l}</span></button>`).join("")}</div>`+({contacts,activity,deal}[tab]||activity)(s);
+}
+function schoolInfo(s){
+  const st=s.stage||"Lead",v=x=>x?esc(x):'<em class="na">Not added</em>',
+  ini=esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase()),
+  loc=[s.city,s.state].filter(Boolean).map(esc).join(", "),
+  facts=[["users","Strength",v(s.strength)],["cap","Board",v(s.board)],["pin","City",v(s.city)],["map","State",v(s.state)]];
+  return `<div class="sx"><div class="sxh"><div class="sxa">${ini}</div><div class="sxt"><b>${esc(s.name)}</b><small>${loc||"Location not added"}</small><span class="pill ${sc(st)}">${esc(st)}</span></div><button class="pedit" data-act="edit" title="Edit school details" aria-label="Edit school">${sv(P.pencil,17)}</button></div>
+  ${s.phone?`<a class="sxc" href="${esc(callHref(s.phone))}" target="_top"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b>${esc(s.phone)}</b></div><span class="sxgo">Call</span></a>`:`<div class="sxc off"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b><em class="na">Not added</em></b></div></div>`}
+  <div class="sxg">${facts.map(([i,l,x])=>`<div class="sxf"><span class="cic">${sv(P[i],16)}</span><div><small>${l}</small><b>${x}</b></div></div>`).join("")}</div>
+  ${isAdmin()?`<div class="sxc off"><span class="cic">${sv(P.userp,16)}</span><div><small>Assigned to</small><b>${esc(s._owner?((team.find(u=>u.id===s._owner)||{}).name||"Unknown"):"Unassigned")}</b></div></div>`:""}<div class="sxc off"><span class="cic">${sv(P.home,16)}</span><div><small>Address</small><b>${v(s.address)}</b></div></div></div>`;
+}
+function contacts(s){
+  const c=s.contacts||[],seg=[["school","School information",P.home],["contacts","Contacts ("+c.length+")",P.userp]];
+  const head=`<div class="seg2 isg">${seg.map(([k,l,ic])=>`<button class="${itab===k?"on":""}" data-act="itab" data-v="${k}">${sv(ic,16)} ${l}</button>`).join("")}</div>`;
+  if(itab==="school")return head+schoolInfo(s);
+  return head+`<div class="row" style="margin-top:12px"><button class="ib" data-act="addContact">${sv(P.userp)} Add contact</button></div><div style="margin-top:12px">${c.length?c.map(p=>`<div class="ct"><button class="alt ed" data-editc="${p.id}" aria-label="Edit contact" title="Edit contact">${sv(P.pencil,13)}</button><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<small>${esc(p.phone||"—")}${p.email?" · "+esc(p.email):""}</small></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):`<div class="empty">No contacts yet</div>`}</div>`;
+}
+const TC=t=>"t-"+(ICON[t]?t:"Update");
+const tm=d=>new Date(d).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});
+function dayLabel(d){const x=new Date(d),n=new Date(),k=a=>a.toDateString();return k(x)===k(n)?"Today":k(x)===k(new Date(n-864e5))?"Yesterday":x.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
+function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
+  if(d-n<0){const h=Math.max(1,Math.round((n-d)/36e5));return{c:"od",t:"Overdue · "+(h<24?h+"h":Math.round(h/24)+"d")}}
+  if(k(d)===k(new Date()))return{c:"td",t:"Today · "+tm(due)};
+  if(k(d)===k(new Date(n+864e5)))return{c:"tmw",t:"Tomorrow · "+tm(due)};
+  return{c:"",t:fmt(due)}}
+function activity(s){
+  const now=Date.now(),tasks=(s.tasks||[]).slice().sort((a,b)=>a.due.localeCompare(b.due)),od=tasks.filter(t=>new Date(t.due)<now).length;
+  const tl=s.timeline||[],list=tl,groups=[];
+  list.forEach(e=>{const k=dayLabel(e.at);let g=groups[groups.length-1];if(!g||g.k!==k)groups.push(g={k,items:[]});g.items.push(e)});
+  return `<div class="abar"><button class="ib" data-act="addTask">${sv(P.calp)} Add task</button><button class="alt ib" data-act="logAct">${sv(P.list)} Log activity</button></div>
+  <h4>Upcoming tasks</h4>${tasks.length?taskList(tasks.map(t=>({t,s})),true):`<div class="empty emp">🎉 No open tasks<br><small>Use “Add task” to schedule a call, meeting or visit</small></div>`}
+  <h4>Timeline</h4>  ${groups.length?groups.map(g=>`<div class="dg"><div class="dl2">${g.k}</div><div class="tl">${g.items.map(e=>`<div class="ev ${TC(e.type)}"><div class="ic">${ICON[e.type]||"•"}</div><div class="evh"><b>${esc(e.type)}</b><small>${tm(e.at)}${e.by?" · "+esc(e.by):""}</small></div><div class="evt">${esc(e.text)}</div>${e.note?`<div class="evn">${sv(P.note,14)}<span>${esc(e.note)}</span></div>`:""}</div>`).join("")}</div></div>`).join(""):`<div class="empty emp">Nothing logged yet</div>`}`;
+}
+const dealTable=(c,v)=>`<div class="hero"><small>Total incl. 18% GST</small><div class="big">${inr(c.yt)}<span> / year</span></div><div class="sub">${inr(c.mt)} per month</div></div>
+<div class="brk"><div class="br"><span>Amount</span><b>${inr(c.y)}<i>/yr</i></b></div><div class="br"><span>GST @ 18%</span><b>${inr(c.yg)}<i>/yr</i></b></div></div>
+<div class="fm">${v.students} students × ${inr(v.price)} per student / ${v.basis==="year"?"year":"month"}</div>`;
+const dealVal=s=>{const c=calc(s.deal);return s.deal&&s.deal.price&&s.deal.students?`${inr(c.yt)} <small style="display:inline;text-transform:none">/ yr incl. GST</small>`:"—"};
+const fmtDate=d=>d?new Date(d+"T00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}):"—";
+function deal(s){
+  const d=s.deal;
+  if(!d||!d.students||!d.price)return `<div class="empty">No deal details yet.<br>Tap the ✏️ icon at the top right of the strip to add students, price and signing date.</div>`;
+  const yr=d.basis==="year",c=calc({students:+d.students,price:+d.price,basis:yr?"year":"month"});
+  return `<table class="dtl" style="max-width:520px"><tr><td>Total students</td><td>${esc(d.students)}</td></tr>
+  <tr><td>Price per student</td><td>${inr(d.price)} / ${yr?"year":"month"}</td></tr>
+  <tr><td>Amount</td><td>${inr(c.y)} / yr</td></tr>
+  <tr><td>GST @ 18%</td><td>${inr(c.yg)} / yr</td></tr>
+  <tr class="tt"><td>Total incl. GST</td><td>${inr(c.yt)} / yr</td></tr>
+  <tr><td>Signing date</td><td>${fmtDate(d.signing)}</td></tr></table>`+payDealBlock(s);
+}
+
+/* Educlawd CRM · Modal, form helpers, school / contact / task forms, date picker */
+const modal=(h,cls="")=>{$("#modalRoot").innerHTML=`<div class="modal ${cls}"><div class="card">${h}<div class="err" id="err"></div></div></div>`};
+const close=()=>{$("#modalRoot").innerHTML=""};
+const err=m=>{const e=document.getElementById("err");if(e)e.textContent=m};
+const phoneNorm=v=>{let d=String(v||"").replace(/\D/g,"");if(d.length===12&&d.startsWith("91"))d=d.slice(2);else if(d.length===11&&d[0]==="0")d=d.slice(1);return d};
+const fld=(id,l,v="",t="text")=>`<div><label>${l}</label><input id="${id}" type="${t}" value="${esc(t==="tel"?phoneNorm(v):v)}"${t==="tel"?' inputmode="numeric" maxlength="10" pattern="[0-9]{10}" autocomplete="tel-national"':""}></div>`;
+document.addEventListener("input",e=>{const t=e.target;if(t&&t.type==="tel"){const v=phoneNorm(t.value).slice(0,10);if(v!==t.value)t.value=v}});
+const opts=a=>a.map(x=>`<option>${x}</option>`).join("");
+const val=id=>document.getElementById(id).value.trim();
+const btns=(m,l,id="")=>`<div class="row" style="margin-top:12px"><button data-m="${m}" data-id="${id}">${l}</button><button class="alt" data-m="close">Cancel</button></div>`;
+let tt;
+function toast(icon,msg){const t=$("#toast");t.innerHTML=`<span class="ti">${icon}</span>${esc(msg)}`;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2800)}
+function armed(el,txt){if(el.dataset.armed)return true;el.dataset.armed=1;el.textContent=txt;return false}
+const cityList=extra=>{const m=new Map();schools.map(x=>x.city).concat(extra||[]).forEach(c=>{c=String(c||"").trim().replace(/\s+/g," ");if(c&&!m.has(c.toLowerCase()))m.set(c.toLowerCase(),c)});return[...m.values()].sort((a,b)=>a.localeCompare(b))};
+function cityField(cur){
+  const list=cityList([cur]),none=!list.length;
+  return `<div><label>City</label><select id="f_city_sel" onchange="cityPick(this)"><option value="">Select city</option>${list.map(c=>`<option ${c.toLowerCase()===String(cur||"").trim().toLowerCase()?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new" ${none?"selected":""}>➕ Add new city…</option></select><input id="f_city_new" placeholder="Type the new city name" autocomplete="off" style="margin-top:6px;${none?"":"display:none"}"></div>`;
+}
+function cityPick(sel){const i=document.getElementById("f_city_new");if(!i)return;const nw=sel.value==="__new";i.style.display=nw?"":"none";if(nw)i.focus()}
+function getCity(){
+  const sel=document.getElementById("f_city_sel"),inp=document.getElementById("f_city_new");
+  if(!sel)return"";
+  if(sel.value!=="__new")return sel.value;
+  const t=(inp.value||"").trim().replace(/\s+/g," ");if(!t)return"";
+  return cityList().find(c=>c.toLowerCase()===t.toLowerCase())||t.replace(/\b([a-z])/g,m=>m.toUpperCase());
+}
+function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}${fld("f_board","Board",s.board)}<div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city)}</div><label>Address</label><textarea id="f_address">${esc(s.address||"")}</textarea>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
+function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
+  if(t)t.value=ok?inr(c.yt)+" / year":"";
+  e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
+function contactForm(p={}){modal(`<h3>${p.id?"Edit":"Add"} contact</h3>${fld("c_name","Full name",p.name)}${fld("c_phone","Phone",p.phone,"tel")}${fld("c_email","Email",p.email,"email")}${fld("c_des","Designation (Principal, Accountant, IT Head…)",p.designation)}${btns("saveContact","Save",p.id||"")}${p.id?`<button class="ghost" style="margin-top:6px;color:var(--red)" data-m="delContact" data-id="${p.id}">Delete contact</button>`:""}`)}
+function taskForm(){const s0=cur(),cs=(s0&&s0.contacts)||[];const d=new Date(Date.now()+864e5);d.setHours(9,0,0,0);const iso=new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);modal(`<h3>Add task</h3><label>Task type</label><select id="t_type">${opts(ACT)}</select>${cs.length>=2?`<label>Contact</label><select id="t_contact">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}${c.designation?" ("+esc(c.designation)+")":""}</option>`).join("")}<option value="">No specific contact</option></select>`:""}${fld("t_title","What needs to be done")}<label>Date & time</label>${dueFields("t_due",d)}${btns("saveTask","Add task")}`)}
+const localISO=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);
+/* 12-hour date & time picker (date + hour : minute + AM/PM) */
+function dueFields(id,d){
+  if(isNaN(d))d=new Date();
+  const h24=d.getHours(),h=h24%12||12,m=d.getMinutes(),pm=h24>=12,mins=[...new Set([...Array(12).keys()].map(i=>i*5).concat(m))].sort((a,b)=>a-b);
+  return `<div class="dtp"><input id="${id}_d" type="date" value="${localISO(d).slice(0,10)}" aria-label="Date"><div class="tm"><select id="${id}_h" aria-label="Hour">${[...Array(12)].map((_,i)=>`<option ${i+1===h?"selected":""}>${i+1}</option>`).join("")}</select><b>:</b><select id="${id}_m" aria-label="Minute">${mins.map(x=>{const v=String(x).padStart(2,"0");return `<option ${x===m?"selected":""}>${v}</option>`}).join("")}</select><select id="${id}_p" aria-label="AM or PM"><option ${pm?"":"selected"}>AM</option><option ${pm?"selected":""}>PM</option></select></div></div>`;
+}
+const dueVal=id=>{const g=k=>document.getElementById(id+"_"+k),d=g("d").value;if(!d)return"";let h=(+g("h").value)%12;if(g("p").value==="PM")h+=12;return `${d}T${String(h).padStart(2,"0")}:${g("m").value}`};
+function reschedForm(t){modal(`<h3>Reschedule task</h3><p style="margin:0 0 4px"><b>${esc(t.title)}</b><br><small style="color:var(--mute)">Currently ${fmt(t.due)}</small></p><label>New date & time</label>${dueFields("r_due",new Date(t.due))}${btns("saveResched","Reschedule",t.id)}`)}
+function actForm(){modal(`<h3>Log activity</h3><label>Type</label><select id="a_type">${opts([...ACT,"Note"])}</select><label>What happened?</label><textarea id="a_text"></textarea>${btns("saveAct","Save to timeline")}`)}
+
+/* Educlawd CRM · Click, keyboard and input handlers; boot */
+let reschSid=null,itab="school";
+function onClick(e){
+  const t=e.target,g=a=>t.closest&&t.closest(`[${a}]`);let el;
+  if(el=g("data-au")){const a=el.dataset.au;if(a==="login")doLogin();else if(a==="eye"){const i=document.getElementById("au_p");i.type=i.type==="password"?"text":"password";el.textContent=i.type==="password"?"Show":"Hide"}return}
+  if(!me)return;
+  if(t.classList&&t.classList.contains("top")&&t.classList.contains("modal"))return close();
+  if(g("data-export"))return doExport();
+  if(el=g("data-pay"))return payAct(el);
+  if(el=g("data-pn"))return payCount(+el.dataset.pn);
+  if(el=g("data-pt")){ptab=el.dataset.pt;return render()}
+  if(el=g("data-psel")){psel=el.dataset.psel;if(el.dataset.go){gtab="payments";filter="";$("#q").value=""}return render()}
+  if(el=g("data-pnew")){gtab="payments";filter="";$("#q").value="";render();return payForm(null,el.dataset.pnew)}
+  if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
+  if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
+  if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;tsub="analytics";return render()}
+  if(el=g("data-mst")){mst=el.dataset.mst;return render()}
+  if(el=g("data-pick")){an.m=an.m===el.dataset.pick?"all":el.dataset.pick;an.lim=30;an.pg=1;return render()}
+  if(el=g("data-pg")){const n=+el.dataset.pg;if(n>=1&&!el.disabled){an.pg=n;render();const f=document.getElementById("feedtop");if(f)f.scrollIntoView({block:"start"})}return}
+  if(t.closest&&t.closest("#menu"))return openDrawer();
+  if(g("data-dclose"))return closeDrawer();
+  if(el=g("data-dm")){gtab=el.dataset.dm;filter="";$("#q").value="";sel=null;psel=null;closeDrawer();return render()}
+  if(g("data-dprof")){closeDrawer();gtab="profile";filter="";$("#q").value="";sel=null;psel=null;return render()}
+  if(t.closest&&t.closest("#meb"))return profileSheet();
+  if(g("data-adduser"))return userForm();
+  if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
+  if(t.closest&&t.closest("#add"))return gtab==="payments"?payForm():schoolForm();
+  if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
+  if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
+  if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
+  if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
+  if(el=g("data-tab")){tab=el.dataset.tab;return render()}
+  const s=cur();
+  if(el=g("data-m")){const m=el.dataset.m;
+    if(m==="close")return close();
+    if(m==="genpw"){document.getElementById("u_pw").value=genPw();return}
+    if(m==="saveUser")return saveUser(el);
+    if(m==="delUser")return delUser(el);
+    if(m==="chpw")return pwForm();
+    if(m==="savePw")return savePw();
+    if(m==="signout")return signOut();
+    if(m==="saveSchool"){const n=val("f_name");if(!n)return err("School name is required");if(val("f_phone")&&!/^\d{10}$/.test(val("f_phone")))return err("Phone number must be exactly 10 digits");
+      const old=schools.find(x=>x.id===el.dataset.id),o=old?structuredClone(old):{id:uid(),stage:"Lead",created:new Date().toISOString(),createdBy:me?me.name:undefined,createdById:me?me.id:undefined};
+      const nw={name:n,phone:val("f_phone"),strength:val("f_strength"),board:val("f_board"),city:getCity(),state:val("f_state"),address:val("f_address")};
+      const ch=Object.keys(nw).filter(k=>String(o[k]||"")!==nw[k]);Object.assign(o,nw);
+      const ns=val("f_stage")||"Lead",stCh=old&&(o.stage||"Lead")!==ns;o.stage=ns;
+      const ds=+val("f_strength")||+((o.deal||{}).students)||0,dp=+val("e_dp")||0,db=val("e_db"),sd=document.getElementById("e_sd").value;let dealCh=false;
+      if(ds>0&&dp>0){const od=o.deal||{};if(od.students!==ds||od.price!==dp||od.basis!==db||(od.signing||"")!==sd){o.deal={students:ds,price:dp,basis:db,signing:sd};dealCh=true}}
+      if(ch.length||!old)log(o,"Update",old?"Details updated: "+ch.join(", "):"School added to CRM");
+      if(stCh)log(o,"Update","Stage changed to "+ns);
+      if(dealCh){const c=calc(o.deal);log(o,"Deal",`${ds} students × ${inr(dp)} per ${db==="year"?"year":"month"} = ${inr(c.m)}/month + 18% GST = ${inr(c.mt)}/month (${inr(c.yt)}/year)${sd?" · signing date "+fmtDate(sd):""}`)}
+      if(isAdmin()){const ow=val("f_owner");if(ow&&ow!==(old?(old._owner||""):me.id))o._assign=ow}
+      sel=o.id;if(!old)tab="activity";close();toast(old?"✏️":"🏫",old?(dealCh?"School & deal details updated successfully":"School details updated successfully"):"School added successfully");return save(o)}
+    if(m==="saveResched"){const ss=schools.find(x=>x.id===reschSid),tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.id),du=dueVal("r_due");if(!tk)return close();if(!du)return err("Pick a date and time");
+      const dt=new Date(du);tk.due=dt.toISOString();log(ss,"Task",`Rescheduled: ${tk.title} → ${fmt(dt)}`);close();toast("🗓️","Task rescheduled successfully");return save(ss)}
+    if(!s)return;
+    if(m==="saveContact"){if(!val("c_name"))return err("Name is required");if(val("c_phone")&&!/^\d{10}$/.test(val("c_phone")))return err("Phone number must be exactly 10 digits");
+      s.contacts=s.contacts||[];const id=el.dataset.id,p=s.contacts.find(x=>x.id===id)||{id:uid()};
+      Object.assign(p,{name:val("c_name"),phone:val("c_phone"),email:val("c_email"),designation:val("c_des")});
+      if(!id)s.contacts.push(p);log(s,"Update",`Contact ${id?"updated":"added"}: ${p.name}${p.designation?" ("+p.designation+")":""}`);close();toast("👤",id?"Contact updated successfully":"Contact added successfully");return save(s)}
+    if(m==="delContact"){if(!armed(el,"Click again to confirm delete"))return;s.contacts=s.contacts.filter(x=>x.id!==el.dataset.id);close();toast("🗑️","Contact deleted");return save(s)}
+    if(m==="saveTask"){const ti=val("t_title"),du=dueVal("t_due");if(!ti)return err("Enter what needs to be done");if(!du)return err("Pick a date and time");
+      const dt=new Date(du),val_t=val("t_type"),cs=s.contacts||[],ce=document.getElementById("t_contact"),cid=ce?ce.value:(cs.length===1?cs[0].id:""),cn=(cs.find(x=>x.id===cid)||{}).name;
+      (s.tasks=s.tasks||[]).push({id:uid(),type:val("t_type"),title:ti,due:dt.toISOString(),contactId:cid,by:me?me.name:undefined,byId:me?me.id:undefined});
+      log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""} (due ${fmt(dt)})`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
+    if(m==="saveAct"){if(!val("a_text"))return err("Describe the activity");const ty=val("a_type");log(s,ty,val("a_text"),ty==="Note"?"note":"activity");close();toast(ICON[ty]||"✅",`${ty} logged successfully`);return save(s)}
+  }
+  if(el=g("data-done")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.done);if(tk){ss.tasks=ss.tasks.filter(x=>x!==tk);log(ss,tk.type,`Completed: ${tk.title}`,"task_done");toast("✅","Task completed");save(ss)}return}
+  if(el=g("data-resch")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.resch);if(tk){reschSid=ss.id;reschedForm(tk)}return}
+  if(!s)return;
+  if(el=g("data-act")){const a=el.dataset.act;
+    if(a==="back"){sel=null;return render()}
+    if(a==="edit")return schoolForm(s);
+    if(a==="itab"){itab=el.dataset.v;return render()}
+    if(a==="addContact")return contactForm();
+    if(a==="addTask")return taskForm();
+    if(a==="logAct")return actForm();
+  }
+  if(el=g("data-editc"))return contactForm((s.contacts||[]).find(x=>x.id===el.dataset.editc));
+}
+document.addEventListener("click",e=>{try{onClick(e)}catch(x){console.error(x);toast("⚠️","Something went wrong: "+x.message)}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&$("#auth").classList.contains("show")){const b=document.querySelector("#auth [data-au=login],#auth [data-au=setup]");if(b){e.preventDefault();b.click()}}});
+document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.an){an[e.target.dataset.an]=e.target.value;an.lim=30;an.pg=1;render();return}
+  const s=cur();if(s&&e.target.dataset&&e.target.dataset.act==="stage"){s.stage=e.target.value;log(s,"Update","Stage changed to "+s.stage);toast("🔄","Stage changed to "+s.stage);save(s)}});
+document.addEventListener("input",e=>{if(["f_strength","e_dp","e_db"].includes(e.target.id))editPrev();payInput(e)});
+document.addEventListener("change",payChange);
+document.addEventListener("input",e=>{if(e.target.id==="mq"){mq=e.target.value;const pos=e.target.selectionStart;render();const i=document.getElementById("mq");if(i){i.focus();try{i.setSelectionRange(pos,pos)}catch(_){}}}});
+$("#q").addEventListener("input",e=>{filter=e.target.value;render()});
+addEventListener("resize",render);
+init();
+
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body>
+</html>
