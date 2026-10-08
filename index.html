@@ -945,6 +945,21 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 @media(max-width:800px){.grid.pq{grid-template-columns:1fr 1fr;column-gap:8px}.prow{grid-template-columns:70px minmax(0,1.15fr) minmax(0,1fr);gap:6px}.prow input{padding-left:8px;padding-right:6px;font-size:14px}.pno{font-size:11.5px}}
 .phint.pqb{font-size:13.5px;margin:2px 0 6px}.phint.pqb:empty{display:none}
 input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;cursor:default;pointer-events:none}
+
+/* finance enhancements */
+.rcv{margin:10px 0 12px;padding:12px 14px;border:1px solid color-mix(in srgb,#2563eb 18%,var(--line));border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,#2563eb 8%,var(--card)),color-mix(in srgb,#2563eb 3%,var(--card)))}
+.rcv .brkt{color:#1d4ed8}
+.rck{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 6px}
+.rck>div{--c:#64748b;border-radius:12px;padding:7px 10px;background:color-mix(in srgb,var(--c) 9%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line));min-width:0}
+.rck>div.o{--c:#dc2626}.rck>div.s{--c:#d97706}
+.rck small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}.rck b{display:block;font-size:15px;font-weight:800;color:color-mix(in srgb,var(--c) 70%,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rck span{font-size:11px;color:var(--mute)}
+.rcr{display:flex;align-items:center;gap:10px;padding:8px 2px;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent);cursor:pointer}
+.rcr .rca{font-weight:800;white-space:nowrap}.rcr.o .exm small,.rcr.o .rca{color:#b91c1c}.rcr.t .exm small{color:#b45309}
+.rcm{font-size:12px;color:var(--mute);padding-top:6px;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.ety{display:flex;gap:6px;margin:10px 0 2px}.ety button{min-height:0;padding:6px 13px;font-size:12.5px;font-weight:700;border-radius:99px;background:var(--card);color:var(--mute);border:1px solid var(--line);box-shadow:none}
+.ety button.on{background:var(--teal);color:#fff;border-color:var(--teal)}.ety button.on.o{background:#dc2626;border-color:#dc2626}.ety button.on.i{background:#16a34a;border-color:#16a34a}
+.mbf .dl{display:block;font-size:10.5px;font-weight:700;margin-top:1px}.mbf .dl.up{color:#15803d}.mbf .dl.dn{color:#b91c1c}.mbf .dl.nil{color:var(--mute)}
+.mbsr{display:flex;justify-content:space-between;gap:8px;margin-top:8px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--line) 90%,transparent);font-size:12px;color:var(--mute);font-weight:600}.mbsr b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1946,7 +1961,7 @@ function payAct(el){
    A record (and a category) carries flow:"in" for income or "out" for an expense (missing = expense). */
 const EXP_MODES=["UPI","Bank transfer","Cheque","Cash","Card","Auto-debit","Other"];
 GI.expenses=sv(P.receipt='<path d="M4 2v20l2.5-1.5L9 22l2.5-1.5L14 22l2.5-1.5L19 22V2l-2.5 1.5L14 2l-2.5 1.5L9 2 6.5 3.5z"/><path d="M8 7h8M8 11h8M8 15h5"/>',22);
-let etab="tx",exm="all",exc="all",efd=null,efEdit=false;
+let etab="tx",exm="all",exc="all",efd=null,efEdit=false,ety="all";
 const expGone=new Set();
 const expKey=()=>LS+":exp:"+(me?me.id:"none");
 const cacheExp=()=>{if(!me||!isAdmin())return;try{localStorage.setItem(expKey(),JSON.stringify({e:expenses,c:excats}))}catch(e){}};
@@ -2009,18 +2024,43 @@ function expensesView(f){
   const list=all.filter(keep),ilist=mine.filter(keep);
   const mOut=sumP(all.filter(e=>exm==="all"||monKey(e.date)===exm)),mIn=incomeTot(exm),net=mIn-mOut;
   const mv=mOut+mIn,ow=mv?Math.round(mOut*100/mv):0;
+  const pm=exm==="all"?null:prevMon(exm),pOut=pm?sumP(all.filter(e=>monKey(e.date)===pm)):0,pIn=pm?incomeTot(pm):0;
+  const dl=(c,p,good)=>{if(!pm)return"";const d=dPct(c,p);if(d==="")return"";const cls=d==="new"?(good?"up":"dn"):d===0?"nil":(d>0)===good?"up":"dn";return `<span class="dl ${cls}">${d==="new"?"New":(d>0?"▲ ":d<0?"▼ ":"")+Math.abs(d)+"%"} vs ${esc(monChip(pm).split(" ")[0])}</span>`};
+  const sr=mIn?Math.round((mIn-mOut)*100/mIn):null;
   const sumbar=`<div class="mbal">
     <div class="mbh"><div class="mbt">${exm==="all"?"All months":esc(monLabel(exm))}</div>
       <div class="mbn ${net<0?"dn":"up"}"><small>${net<0?"Net shortfall":"Net in hand"}</small><b>${inrSign(fromP(net))}</b></div></div>
     <div class="mbbar">${mv?`<i class="o" style="width:${ow}%"></i><i class="i" style="width:${100-ow}%"></i>`:""}</div>
-    <div class="mbf"><div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b></div></div>
-      <div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b></div></div></div></div>`;
+    <div class="mbf"><div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div>
+      <div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div></div>
+    ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
   const og=(fl,lb)=>{const cs=catsFor(fl);return cs.length?`<optgroup label="${lb}">${cs.map(c=>`<option value="${c.id}" ${exc===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</optgroup>`:""};
   const cf=excats.length>1?`<div class="exbar"><select data-exs="exc" aria-label="Filter by category"><option value="all" ${exc==="all"?"selected":""}>All categories</option>${og("out","Expense")}${og("in","Income")}</select>${exc!=="all"?`<button class="alt ib" data-ex="clear">Clear</button>`:""}</div>`:"";
   const coll=incList().filter(x=>(exm==="all"||monKey(x.date)===exm)&&exc==="all"
     &&(!f||(x.title+" educlawd payment received installment "+x.mode+" "+x.ref).toLowerCase().includes(f)));
-  return kpi+seg+strip+sumbar+cf+(etab==="cat"?expSummary(list,ilist,coll):expTx(list,ilist,coll,f));
+  const nIn=ilist.length+coll.length,nOut=list.length;
+  const chips=`<div class="ety">${[["all","All",nIn+nOut,""],["in","Income",nIn,"i"],["out","Expense",nOut,"o"]].map(([k,l,n,c])=>`<button class="${ety===k?"on ":""}${c}" data-ety="${k}">${l} (${n})</button>`).join("")}</div>`;
+  return kpi+seg+strip+sumbar+(etab==="cat"?cf+expSummary(list,ilist,coll):expRecv()+cf+chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
 }
+/* receivables: unpaid installments from payment plans — overdue, next 30 days, and the next few to collect */
+function expRecv(){
+  const td=todayISO(),lim=localISO(new Date(Date.now()+30*864e5)).slice(0,10),un=[];
+  payments.forEach(p=>(p.installments||[]).forEach((i,k)=>{if(!i.paidOn&&i.due)un.push({p,i,k:k+1,n:p.installments.length})}));
+  if(!un.length)return"";
+  un.sort((a,b)=>a.i.due.localeCompare(b.i.due));
+  const od=un.filter(x=>x.i.due<td),soon=un.filter(x=>x.i.due>=td&&x.i.due<=lim),sm=a=>a.reduce((s,x)=>s+toP(x.i.amount),0);
+  const all=sm(un);
+  return `<div class="rcv">
+    <div class="brkh"><div class="bh1">To collect<small>Unpaid installments from payment plans</small></div><div class="brkt">${inr(fromP(all))}</div></div>
+    <div class="rck"><div class="o"><small>Overdue</small><b>${inr(fromP(sm(od)))}</b><span>${od.length} installment${od.length===1?"":"s"}</span></div>
+      <div class="s"><small>Next 30 days</small><b>${inr(fromP(sm(soon)))}</b><span>${soon.length} installment${soon.length===1?"":"s"}</span></div>
+      <div><small>Later</small><b>${inr(fromP(all-sm(od)-sm(soon)))}</b><span>${un.length-od.length-soon.length} installment${un.length-od.length-soon.length===1?"":"s"}</span></div></div>
+    ${un.slice(0,4).map(x=>{const o=x.i.due<td,t=x.i.due===td;return `<div class="rcr ${o?"o":t?"t":""}" data-psel="${x.p.id}" data-go="1" title="Open the payment plan in School Network">
+      <div class="exm"><b>${esc(payName(x.p))}</b><small>${ordN(x.k)} of ${x.n} · ${o?"overdue since ":t?"due today · ":"due "}${fmtDate(x.i.due)}</small></div><div class="rca">${inr(x.i.amount)}</div></div>`}).join("")}
+    ${un.length>4?`<div class="rcm">+ ${un.length-4} more in School Network</div>`:""}</div>`;
+}
+const prevMon=m=>{const[y,mo]=m.split("-").map(Number),d=new Date(y,mo-2,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
+const dPct=(c,p)=>!p?(c?"new":""):Math.round((c-p)*100/p);
 /* day-by-day transactions, newest first — expenses, income records and payments collected */
 function expTx(list,ilist,coll,f){
   const rows=list.map(e=>({...e,_t:"o"})).concat(ilist.map(e=>({...e,_t:"i"})),coll.map(x=>({...x,_t:"p"})));
@@ -2628,6 +2668,7 @@ function onClick(e){
   if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ex"))return exAct(el);
   if(el=g("data-et")){etab=el.dataset.et;return render()}
+  if(el=g("data-ety")){ety=el.dataset.ety;return render()}
   if(el=g("data-em")){exm=el.dataset.em;return render()}
   if(el=g("data-exf"))return efFlip(el.dataset.exf);
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
