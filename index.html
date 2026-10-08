@@ -674,7 +674,7 @@ header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc
 .chips.pn button.on{background:var(--teal);color:#fff}
 /* school network */
 .ncard .nsub{font-size:12.5px;color:var(--mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ncon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;padding:6px 0 0;border-top:1px dashed var(--line)}
+.ncon{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px;padding:6px 0 0;border-top:1px dashed var(--line)}
 .ncon small{display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.3px}.ncon b{display:block;font-size:12.5px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ngrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
 .ngrid>div{background:var(--soft);border-radius:10px;padding:6px 9px;min-width:0}
@@ -690,7 +690,7 @@ header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc
 .npb i.soon{background:#d97706}.npb i.exp{background:#dc2626}.npb i.live{background:linear-gradient(90deg,#14b8a6,#0d7f7a)}
 .nprog.big{margin:14px 0 2px}.nprog.big .npt{font-size:11.5px}.nprog.big .npb{height:9px}
 .nseg button{font-size:11.5px;padding:7px 1px}
-@media(min-width:801px){.ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}.items>.it.ncard{grid-column:1/-1}.ncard .r b{font-size:16px}}
+@media(min-width:801px){.ncon{grid-template-columns:repeat(4,minmax(0,1fr))}.ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}.items>.it.ncard{grid-column:1/-1}.ncard .r b{font-size:16px}}
 /* team insights */
 .ins{display:grid;gap:12px;margin:12px 0}
 @media(min-width:801px){.items .ins{grid-template-columns:repeat(2,minmax(0,1fr))}.items .ins>.wide{grid-column:1/-1}}
@@ -2219,7 +2219,7 @@ function networkView(f){
     return `<div class="it ncard ${s.id===nsel?"on":""}" data-nsel="${s.id}">
     <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
-    <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Billing from</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Billing to</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
+    <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span><span><small>Term done</small><b>${netPct(s)===null?"—":netPct(s)+"%"}</b></span></div>
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(py.paid))}</b></div>
       <div><small>Outstanding</small><b>${inr(fromP(py.due))}</b></div>
