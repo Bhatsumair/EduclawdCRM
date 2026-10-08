@@ -940,6 +940,8 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .mth span:not(:first-child),.mtr span:not(:first-child){text-align:right}
 .mtr .nmb{font-size:12.5px}.mtr .g{font-weight:800}.mtr .g.up{color:#15803d}.mtr .g.dn{color:#b91c1c}.mtr .g.nil{color:var(--mute)}
 @media(max-width:800px){.mok{gap:6px}.mok>div{padding:6px 8px}.mok b{font-size:16px}.mth,.mtr{padding:6px 8px;gap:4px}}
+.sxn>div{flex:1;min-width:0}.sxn>div b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}.sxn .pill{flex:none}
+.sxe{flex:none;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--teal2);border:1px solid var(--line);box-shadow:none}
 </style>
 </head>
 <body>
@@ -2474,7 +2476,7 @@ function schoolInfo(s){
   ini=esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase()),
   loc=[s.city,s.state].filter(Boolean).map(esc).join(", "),
   facts=[["users","Strength",v(s.strength)],["cap","Board",v(s.board)],["pin","City",v(s.city)],["map","State",v(s.state)]];
-  return `<div class="sx"><div class="sxh"><div class="sxa">${ini}</div><div class="sxt"><b>${esc(s.name)}</b><small>${loc||"Location not added"}</small><span class="pill ${sc(st)}">${esc(st)}</span></div><button class="pedit" data-act="edit" title="Edit school details" aria-label="Edit school">${sv(P.pencil,17)}</button></div>
+  return `<div class="sx"><div class="sxc sxn"><span class="cic">${sv(P.home,16)}</span><div><small>School</small><b>${esc(s.name)}</b></div><span class="pill ${sc(st)}">${esc(st)}</span><button class="sxe" data-act="edit" title="Edit school details" aria-label="Edit school">${sv(P.pencil,16)}</button></div>
   ${s.phone?`<a class="sxc" href="${esc(callHref(s.phone))}" target="_top"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b>${esc(s.phone)}</b></div><span class="sxgo">Call</span></a>`:`<div class="sxc off"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b><em class="na">Not added</em></b></div></div>`}
   <div class="sxg">${facts.map(([i,l,x])=>`<div class="sxf"><span class="cic">${sv(P[i],16)}</span><div><small>${l}</small><b>${x}</b></div></div>`).join("")}</div>
   ${isAdmin()?`<div class="sxc off"><span class="cic">${sv(P.userp,16)}</span><div><small>Assigned to</small><b>${esc(s._owner?((team.find(u=>u.id===s._owner)||{}).name||"Unknown"):"Unassigned")}</b></div></div>`:""}<div class="sxc off"><span class="cic">${sv(P.home,16)}</span><div><small>Address</small><b>${v(s.address)}</b></div></div></div>`;
