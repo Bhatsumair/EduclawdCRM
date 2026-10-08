@@ -828,6 +828,7 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .hero.dh .dhl{min-width:0}.hero.dh small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.07em}.hero.dh .big{width:auto;padding:0;font-size:25px;line-height:1.15;margin:2px 0 0;white-space:nowrap}.hero.dh .big span{font-size:12.5px;margin-left:3px}
 .hero.dh .sub{flex:none;position:relative;z-index:1;padding:6px 13px;border-radius:99px;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.25);font-size:12.5px;font-weight:700;opacity:1;white-space:nowrap;margin:0}
 .pblk{margin:0 0 6px}.pblk .hero{margin:4px 0 10px}.pblk+.pblk{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}.phl{font-size:12px;font-weight:700;color:var(--mute);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em}
+.ndt{margin:12px 0 4px}.nstat{display:flex;align-items:center;gap:10px;margin:12px 0 4px}.nstat small{color:var(--mute);font-size:12.5px}
 </style>
 </head>
 <body>
@@ -2144,10 +2145,10 @@ function clmReject(id,n){
    The extra details live on the school document itself (s.net), so they sync like any other school field. */
 const NET_TERMS=[[12,"1 year"],[24,"2 years"],[36,"3 years"],[6,"6 months"],[60,"5 years"]];
 GI.network=sv(P.net='<circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M12 12 6.8 16.3M12 12l5.2 4.3"/>',22);
-let nsel=null,nst="all",nsrt="value",npf="all";
+let nsel=null,ndt="contract",nst="all",nsrt="value",npf="all";
 const wonSchools=()=>schools.filter(s=>s.stage==="Won");
 const wonOf=p=>p&&p.schoolId?wonSchools().find(s=>s.id===p.schoolId):null; // the network school a payment plan belongs to
-function payFocus(p){const ws=wonOf(p);gtab="network";if(ws){nsel=ws.id;psel=null}else{psel=p.id;nsel=null}}
+function payFocus(p){const ws=wonOf(p);gtab="network";if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=p.id;nsel=null}}
 const netOf=s=>s.net||{};
 const termLabel=m=>(NET_TERMS.find(x=>x[0]===+m)||[0,m?+m+" months":""])[1];
 const netEnd=s=>{const n=netOf(s);if(!(n.billStart&&+n.term))return"";const d=new Date(addMonths(n.billStart,+n.term)+"T12:00");d.setDate(d.getDate()-1); // the contract ends the day before the anniversary
@@ -2221,16 +2222,12 @@ function planBlock(p){const m=planSum(p),ins=p.installments||[];
   <div class="row" style="margin:10px 0 0"><button class="alt ib" data-pay="edit">${sv(P.pencil,15)} Edit plan</button><button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div></div>`}
 /* ---- detail ---- */
 function netDetail(s){
-  const n=netOf(s),c=s.deal?calc(s.deal):null,end=netEnd(s),l=netLeft(s);
+  const n=netOf(s),c=s.deal?calc(s.deal):null,end=netEnd(s),l=netLeft(s),st=netState(s),[sl,scl]=NSTL[st],pc=netPct(s);
   const row=(k,v)=>`<tr><td>${k}</td><td>${v||"—"}</td></tr>`;
-  return `<div class="dbrow"><button class="dback" data-net="back" aria-label="Back" title="Back">${sv(P.back,20)}</button></div>
-  <div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div>
-    <div class="hti"><h2>${esc(s.name||"—")}</h2><small>${esc([s.city,s.board].filter(Boolean).join(" · "))||"In the network"}</small></div>
-    <button class="edit" data-net="edit" title="Edit contract details" aria-label="Edit contract details">${sv(P.pencil,17)}</button></div>
-  <div class="hero"><small>Contract value</small><div class="big">${insVal(s)?inr(insVal(s)):"—"}</div>
-    <div class="sub">per year incl. 18% GST${l===null?" · contract details pending":l<0?" · expired "+fmtDate(end):" · "+l+" day"+(l===1?"":"s")+" left"}</div></div>
-  ${netPct(s)===null?"":`<div class="nprog big"><div class="npt"><span>Billing from ${esc(fmtDate(netOf(s).billStart))}</span><b>${netPct(s)}% of the term done</b><span>${esc(fmtDate(end))}</span></div><div class="npb"><i class="${netState(s)}" style="width:${netPct(s)}%"></i></div></div>`}
-  <h4>Payments</h4>${(()=>{const ps=payments.filter(p=>p.schoolId===s.id);return (ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+`<button class="alt ib" style="margin-top:10px" data-pnew="${s.id}">${sv(P.wallet,16)} ${ps.length?"Add another plan":"Create payment plan"}</button>`})()}
+  const ps=payments.filter(p=>p.schoolId===s.id),pay=ndt==="pay";
+  const tabs=`<div class="seg2 ndt"><button class="${pay?"":"on"}" data-ndt="contract">Contract details</button><button class="${pay?"on":""}" data-ndt="pay">Payment plan${ps.length?" ("+ps.length+")":""}</button></div>`;
+  const contract=`<div class="nstat"><span class="pill ${scl}">${sl}</span><small>${l===null?"Add the billing start, period and authorised person":l<0?"Expired on "+fmtDate(end):l+" day"+(l===1?"":"s")+" left"}</small></div>
+  ${pc===null?"":`<div class="nprog big"><div class="npt"><span>Billing from ${esc(fmtDate(n.billStart))}</span><b>${pc}% of the term done</b><span>${esc(fmtDate(end))}</span></div><div class="npb"><i class="${st}" style="width:${pc}%"></i></div></div>`}
   <h4>Contract</h4><table class="dtl">
   ${row("Signing date",s.deal&&s.deal.signing?fmtDate(s.deal.signing):"")}
   ${row("Billing starts",n.billStart?fmtDate(n.billStart):"")}
@@ -2250,7 +2247,12 @@ function netDetail(s){
   ${row("Total incl. GST",c?`<b>${inr(c.yt)} / yr</b>`:"")}
   ${row("Strength on record",s.strength?esc(String(s.strength))+" students":"")}</table>
   ${n.notes?`<h4>Notes</h4><div class="note">${esc(n.notes)}</div>`:""}
-  <div class="row" style="margin-top:16px"><button class="alt" data-nschool="${s.id}">Open school record</button>${end?`<button class="alt" data-net="remind">${sv(P.cal,16)} Renewal reminder</button>`:""}</div>`;
+  <div class="row" style="margin-top:16px"><button data-net="edit">${sv(P.pencil,16)} ${netDone(s)?"Edit contract details":"Add contract details"}</button><button class="alt" data-nschool="${s.id}">Open school record</button>${end?`<button class="alt" data-net="remind">${sv(P.cal,16)} Renewal reminder</button>`:""}</div>`;
+  const payTab=(ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+`<button class="${ps.length?"alt ":""}ib" style="margin-top:12px" data-pnew="${s.id}">${sv(P.wallet,16)} ${ps.length?"Add another plan":"Create payment plan"}</button>`;
+  return `<div class="dbrow"><button class="dback" data-net="back" aria-label="Back" title="Back">${sv(P.back,20)}</button></div>
+  <div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div>
+    <div class="hti"><h2>${esc(s.name||"—")}</h2><small>${esc([s.city,s.board].filter(Boolean).join(" · "))||"In the network"}</small></div></div>
+  ${tabs}${pay?payTab:contract}`;
 }
 /* ---- edit ---- */
 function netForm(s){
@@ -2421,7 +2423,8 @@ function onClick(e){
   if(el=g("data-ct")){clmT=el.dataset.ct;return render()}
   if(el=g("data-cv")){clmV=el.dataset.cv;return render()}
   if(el=g("data-cc")){const h=document.getElementById("cf_cat");if(h){h.value=el.dataset.cc;document.querySelectorAll("#cf_cats [data-cc]").forEach(b2=>b2.classList.toggle("on",b2.dataset.cc===el.dataset.cc))}return}
-  if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;return render()}
+  if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;ndt="contract";return render()}
+  if(el=g("data-ndt")){ndt=el.dataset.ndt;return render()}
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
   if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ex"))return exAct(el);
@@ -2429,8 +2432,8 @@ function onClick(e){
   if(el=g("data-em")){exm=el.dataset.em;return render()}
   if(el=g("data-exf"))return efFlip(el.dataset.exf);
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
-  if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null}else{psel=el.dataset.psel;nsel=null}return render()}
-  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null}render();return payForm(null,el.dataset.pnew)}
+  if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=el.dataset.psel;nsel=null}return render()}
+  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew)}
   if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
   if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";sel=null;return render()}
