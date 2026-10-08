@@ -2193,7 +2193,7 @@ function networkView(f){
   const m=netMetrics(),won=wonSchools(),pt=payments.reduce((a,p)=>{const q=planSum(p);a.t+=q.tot;a.c+=q.paid;a.d+=q.due;a.oc+=q.oc;return a},{t:0,c:0,d:0,oc:0});
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
   const kpi=`<div class="kgrid lbl">${kc("#0d7f7a",P.net,String(m.n),"Won Schools",payments.length+" payment plan"+(payments.length===1?"":"s"))}
-  ${kc("#0d7f7a",P.wallet,inrS(fromP(pt.t)),"Contract Value","total of all payment plans")}
+  ${kc("#0d7f7a",P.wallet,inrS(fromP(pt.t)),"Total Value","total of all payment plans")}
   ${kc("#16a34a",P.check,inrS(fromP(pt.c)),"Collected",(pt.t?Math.round(pt.c*100/pt.t):0)+"% of contract value")}
   ${kc("#d97706",P.cal,inrS(fromP(pt.d)),"Upcoming Payments",pt.oc?pt.oc+" installment"+(pt.oc===1?"":"s")+" overdue":"nothing overdue")}</div>`;
   if(!m.n&&!payments.length)return kpi+noMatch("<div style='font-size:34px'>🏫</div>No won schools yet.<br><small>A school joins the network as soon as its stage is set to Won</small>");
