@@ -1142,7 +1142,7 @@ const wonOn=s=>(s.deal&&s.deal.signing)||(s.created||"").slice(0,10)||"";
 const lastTouch=s=>Math.max(new Date(s.created||0).getTime()||0,...(s.timeline||[]).map(e=>new Date(e.at).getTime()||0));
 const collectedIn=(from,to,ids)=>{let t=0,n=0;payments.forEach(p=>{if(ids&&!(p.schoolId&&ids.has(p.schoolId)))return;(p.installments||[]).forEach(i=>{if(!i.paidOn)return;
   const d=new Date(i.paidOn+"T12:00").getTime();if(d>=from&&d<=to){t+=toP(paidAmt(i));n++}})});return{t:fromP(t),n}};
-const WR_MIN=5; // win rate needs at least this many closed (Won + Lost) deals
+const WR_MIN=2; // win rate needs at least this many closed (Won + Lost) deals
 const insKc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
 function insFunnel(ss){
   const rows=STAGES.map(st=>{const r=ss.filter(s=>(s.stage||"Lead")===st);return{st,n:r.length,v:r.reduce((a,s)=>a+insVal(s),0)}});
