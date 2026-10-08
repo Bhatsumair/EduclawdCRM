@@ -845,6 +845,28 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .sfld::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);pointer-events:none}
 .sfld:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 18%,transparent)}
 .npt .od{font-style:normal;color:#b91c1c;font-weight:700}.ngrid b.od{color:#b91c1c}
+
+/* enhanced cards: Finance + School Network */
+.kgrid.kx{gap:10px}
+.kgrid.kx .kc{min-height:80px;padding:12px 14px 12px 16px;border-radius:16px;column-gap:12px;transition:transform .15s,box-shadow .15s;
+  background:radial-gradient(120px 80px at 100% 0,color-mix(in srgb,var(--c) 16%,transparent),transparent 70%),linear-gradient(135deg,color-mix(in srgb,var(--c) 9%,var(--card)),var(--card) 75%);
+  box-shadow:0 1px 2px rgba(120,80,30,.06),0 4px 14px -6px color-mix(in srgb,var(--c) 35%,transparent)}
+.kgrid.kx .kc:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(120,80,30,.06),0 10px 22px -8px color-mix(in srgb,var(--c) 45%,transparent)}
+.kgrid.kx .kc .kic{width:38px;height:38px;border-radius:12px;color:#fff;background:linear-gradient(140deg,color-mix(in srgb,var(--c) 82%,#fff),var(--c));box-shadow:0 4px 10px -3px color-mix(in srgb,var(--c) 60%,transparent)}
+.kgrid.kx .kc .kic svg{width:19px;height:19px}
+.kgrid.kx .kc .kl{color:color-mix(in srgb,var(--c) 45%,var(--ink,#2b2118));font-size:12px}
+.kgrid.kx .kc .kn{font-size:21px;letter-spacing:-.4px}
+.kgrid.kx .kc .ks{margin-top:1px}
+.kcard{box-shadow:0 1px 2px rgba(120,80,30,.06),0 6px 16px -10px color-mix(in srgb,var(--c) 45%,transparent);transition:transform .15s,box-shadow .15s,border-color .15s}
+.kcard:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(120,80,30,.06),0 12px 24px -12px color-mix(in srgb,var(--c) 55%,transparent)}
+.ncard.kcard .r b{letter-spacing:-.2px}
+.ncard.kcard .ncon{border-top-style:solid;border-top-color:color-mix(in srgb,var(--c) 18%,var(--line))}
+.ncard.kcard .ngrid>div{background:color-mix(in srgb,var(--card) 70%,transparent);border:1px solid color-mix(in srgb,var(--c) 14%,var(--line));border-radius:12px;padding:7px 10px}
+.ncard.kcard .ngrid>div:first-child b{color:var(--teal2)}
+.ncard.kcard .ngrid>div:nth-child(2) b{color:#15803d}
+.ncard.kcard .npb{height:8px;background:color-mix(in srgb,var(--c) 12%,var(--soft))}
+.exr.kcard .exav{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,var(--card))}
+.exr.kcard .exa{padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--c) 10%,var(--card))}
 </style>
 </head>
 <body>
@@ -1831,7 +1853,7 @@ function expensesView(f){
   const months=[...new Set([...all.map(e=>monKey(e.date)),...mine.map(e=>monKey(e.date)),...payMonths()].filter(Boolean))].sort().reverse();
   const tot=sumP(all),incT=incomeTot("all"),netT=incT-tot,np=incList().length+mine.length;
   const kc=(c,ic,n,l,cls)=>`<div class="kc money" style="--c:${c}" title="${esc(inrSign(n))}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn ${cls||""}">${inrSS(n)}</div></div>`;
-  const kpi=`<div class="kgrid k3 lbl">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}${kc("#16a34a",P.check,fromP(incT),"Income")}</div>`;
+  const kpi=`<div class="kgrid k3 lbl kx">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}${kc("#16a34a",P.check,fromP(incT),"Income")}</div>`;
   const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>`<button class="${exm===k?"on":""}" data-em="${k}">${esc(l)}</button>`).join("")}</div>`;
   const seg=`<div class="seg2 pseg">${[["tx","Transactions"],["cat","Summary"]].map(([k,l])=>`<button class="${etab===k?"on":""}" data-et="${k}">${l}</button>`).join("")}</div>`;
   if(!all.length&&!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No transactions yet.<br><small>Tap the yellow + button to record an expense or income — you can create the category right in the form</small>");
@@ -2196,7 +2218,7 @@ function networkView(f){
   if(!isAdmin())return noMatch("Only the admin can see the school network");
   const m=netMetrics(),won=wonSchools(),pt=payments.reduce((a,p)=>{const q=planSum(p);a.t+=q.tot;a.c+=q.paid;a.d+=q.due;a.oc+=q.oc;return a},{t:0,c:0,d:0,oc:0});
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
-  const kpi=`<div class="kgrid lbl">${kc("#0d7f7a",P.net,String(m.n),"Won Schools",payments.length+" payment plan"+(payments.length===1?"":"s"))}
+  const kpi=`<div class="kgrid lbl kx">${kc("#0d7f7a",P.net,String(m.n),"Won Schools",payments.length+" payment plan"+(payments.length===1?"":"s"))}
   ${kc("#0d7f7a",P.wallet,inrS(fromP(pt.t)),"Total Value","total of all payment plans")}
   ${kc("#16a34a",P.check,inrS(fromP(pt.c)),"Collected",(pt.t?Math.round(pt.c*100/pt.t):0)+"% of contract value")}
   ${kc("#d97706",P.cal,inrS(fromP(pt.d)),"Upcoming Payments",pt.oc?pt.oc+" installment"+(pt.oc===1?"":"s")+" overdue":"nothing overdue")}</div>`;
