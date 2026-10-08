@@ -654,6 +654,7 @@ header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc
 .exa.in{color:#15803d}
 .kgrid.k3>:first-child{grid-column:1/-1}
 .kgrid.k5>:first-child{grid-column:1/-1}
+@media(min-width:801px){.items .kgrid.k6{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(min-width:1180px){.items .kgrid.k6{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(min-width:801px){.items .kgrid.k5{grid-template-columns:repeat(5,minmax(0,1fr))}.items .kgrid.k5>:first-child{grid-column:auto}}
 .lbl .kc .kic{grid-area:1/1/3/2}
 .lbl .kc .kl{grid-area:1/2;margin:0}
@@ -1141,15 +1142,16 @@ const wonOn=s=>(s.deal&&s.deal.signing)||(s.created||"").slice(0,10)||"";
 const lastTouch=s=>Math.max(new Date(s.created||0).getTime()||0,...(s.timeline||[]).map(e=>new Date(e.at).getTime()||0));
 const collectedIn=(from,to,ids)=>{let t=0,n=0;payments.forEach(p=>{if(ids&&!(p.schoolId&&ids.has(p.schoolId)))return;(p.installments||[]).forEach(i=>{if(!i.paidOn)return;
   const d=new Date(i.paidOn+"T12:00").getTime();if(d>=from&&d<=to){t+=toP(paidAmt(i));n++}})});return{t:fromP(t),n}};
+const WR_MIN=5; // win rate needs at least this many closed (Won + Lost) deals
 const insKc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
 function insFunnel(ss){
   const rows=STAGES.map(st=>{const r=ss.filter(s=>(s.stage||"Lead")===st);return{st,n:r.length,v:r.reduce((a,s)=>a+insVal(s),0)}});
   const mx=Math.max(1,...rows.map(r=>r.n)),tot=ss.length;
   const won=rows.find(r=>r.st==="Won")||{n:0},lost=rows.find(r=>r.st==="Lost")||{n:0};
-  const cl=won.n+lost.n,wr=cl?Math.round(won.n*100/cl):0;
+  const cl=won.n+lost.n,wr=cl>=WR_MIN?Math.round(won.n*100/cl)+"%":"—";
   return `<div class="brk wide">
     <div class="brkh"><div class="bh1">Pipeline by stage<small>${tot} school${tot===1?"":"s"} · ${inr(ss.filter(OPEN_ST).reduce((a,s)=>a+insVal(s),0))} open value</small></div>
-      <div class="brkt up">${wr}%<small style="display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.4px">Win rate</small></div></div>
+      <div class="brkt up">${wr}<small style="display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.4px">Win rate</small></div></div>
     ${rows.filter(r=>r.n).map(r=>`<div class="frow"><div class="fl">${esc(r.st)}</div>
       <div class="ftrack"><i style="width:${Math.max(4,Math.round(r.n*100/mx))}%;background:${STC[r.st]||"#64748b"}"></i></div>
       <div class="fv">${r.n}<small>${r.v?inrS(r.v):"—"}</small></div></div>`).join("")||noMatch("No schools yet")}</div>`;
@@ -1249,11 +1251,12 @@ function analyticsView(){
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
   return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="d" aria-label="Deal stage">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}<optgroup label="Stage">${STAGES.map(v=>opt(v,v,an.d)).join("")}</optgroup></select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
-  <div class="kgrid k5 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
+  <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
   ${insKc("#2563eb",P.receipt,inrS(col.t),"Collected "+pl,col.n+" payment"+(col.n===1?"":"s")+" received")}
-  ${insKc("#7c3aed",P.flag,(cl?Math.round(won*100/cl):0)+"%","Win rate",won+" won of "+cl+" closed")}</div>
+  ${insKc("#7c3aed",P.flag,cl>=WR_MIN?Math.round(won*100/cl)+"%":"—","Win rate",cl>=WR_MIN?won+" won of "+cl+" closed":"needs "+WR_MIN+" closed deals")}
+  ${insKc("#db2777",P.net||P.home,(ss.length?Math.round(won*100/ss.length):0)+"%","Conversion",won+" won of "+ss.length+" school"+(ss.length===1?"":"s"))}</div>
   <div class="ins">${insFunnel(ss)}${insTrend(ss,ev)}${insRisk(ss)}
   <div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
   <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div>
