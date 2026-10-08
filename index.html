@@ -2559,7 +2559,9 @@ function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} sch
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
   if(t)t.value=ok?inr(c.yt)+" / year":"";
   e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
-function contactForm(p={}){modal(`<h3>${p.id?"Edit":"Add"} contact</h3>${fld("c_name","Full name",p.name)}${fld("c_phone","Phone",p.phone,"tel")}${fld("c_email","Email",p.email,"email")}${fld("c_des","Designation (Principal, Accountant, IT Head…)",p.designation)}${btns("saveContact","Save",p.id||"")}${p.id?`<button class="ghost" style="margin-top:6px;color:var(--red)" data-m="delContact" data-id="${p.id}">Delete contact</button>`:""}`)}
+const DESIGS=["Principal","Chairman","IT Head","Accountant","PRO","Director","Other"];
+const desVal=()=>{const v=val("c_dsel");return v==="Other"?(val("c_des")||"Other"):v};
+function contactForm(p={}){modal(`<h3>${p.id?"Edit":"Add"} contact</h3>${fld("c_name","Full name",p.name)}${fld("c_phone","Phone",p.phone,"tel")}${fld("c_email","Email",p.email,"email")}${(()=>{const d=p.designation||"",cus=d&&!DESIGS.includes(d);return `<div><label>Designation</label><select id="c_dsel"><option value="">Select designation</option>${DESIGS.map(x=>`<option ${x===d||(cus&&x==="Other")?"selected":""}>${esc(x)}</option>`).join("")}</select><input id="c_des" placeholder="Enter designation" value="${esc(cus?d:"")}" style="margin-top:6px;${cus?"":"display:none"}"></div>`})()}${btns("saveContact","Save",p.id||"")}${p.id?`<button class="ghost" style="margin-top:6px;color:var(--red)" data-m="delContact" data-id="${p.id}">Delete contact</button>`:""}`)}
 function taskForm(){const s0=cur(),cs=(s0&&s0.contacts)||[];const d=new Date(Date.now()+864e5);d.setHours(9,0,0,0);const iso=new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);modal(`<h3>Add task</h3><label>Task type</label><select id="t_type">${opts(ACT)}</select>${cs.length>=2?`<label>Contact</label><select id="t_contact">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}${c.designation?" ("+esc(c.designation)+")":""}</option>`).join("")}<option value="">No specific contact</option></select>`:""}${fld("t_title","What needs to be done")}<label>Date & time</label>${dueFields("t_due",d)}${btns("saveTask","Add task")}`)}
 const localISO=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);
 /* 12-hour date & time picker (date + hour : minute + AM/PM) */
@@ -2650,7 +2652,7 @@ function onClick(e){
     if(!s)return;
     if(m==="saveContact"){if(!val("c_name"))return err("Name is required");if(val("c_phone")&&!/^\d{10}$/.test(val("c_phone")))return err("Phone number must be exactly 10 digits");
       s.contacts=s.contacts||[];const id=el.dataset.id,p=s.contacts.find(x=>x.id===id)||{id:uid()};
-      Object.assign(p,{name:val("c_name"),phone:val("c_phone"),email:val("c_email"),designation:val("c_des")});
+      Object.assign(p,{name:val("c_name"),phone:val("c_phone"),email:val("c_email"),designation:desVal()});
       if(!id)s.contacts.push(p);log(s,"Update",`Contact ${id?"updated":"added"}: ${p.name}${p.designation?" ("+p.designation+")":""}`);close();toast("👤",id?"Contact updated successfully":"Contact added successfully");return save(s)}
     if(m==="delContact"){if(!armed(el,"Click again to confirm delete"))return;s.contacts=s.contacts.filter(x=>x.id!==el.dataset.id);close();toast("🗑️","Contact deleted");return save(s)}
     if(m==="saveTask"){const ti=val("t_title"),du=dueVal("t_due");if(!ti)return err("Enter what needs to be done");if(!du)return err("Pick a date and time");
@@ -2681,6 +2683,7 @@ document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.d
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
 document.addEventListener("change",payChange);
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="c_dsel"){const i=document.getElementById("c_des");if(!i)return;const o=e.target.value==="Other";i.style.display=o?"":"none";if(o)i.focus();else i.value=""}});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="f_state")cityRefill()});
 document.addEventListener("input",e=>{if(e.target.id==="mq"){mq=e.target.value;const pos=e.target.selectionStart;render();const i=document.getElementById("mq");if(i){i.focus();try{i.setSelectionRange(pos,pos)}catch(_){}}}});
 $("#q").addEventListener("input",e=>{filter=e.target.value;render()});
