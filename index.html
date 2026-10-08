@@ -805,6 +805,8 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .prow{display:grid;grid-template-columns:26px 1fr 1fr;gap:8px;align-items:center;margin-top:6px}
 .prow.ph{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--mute);margin-top:12px}
 .pno{font-weight:800;color:var(--teal2);text-align:center}
+.plock{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap}.plock .pedit{width:26px;height:26px;flex:none;display:inline-grid;place-items:center;background:none;margin-left:auto;color:var(--teal2);border:0;padding:3px;min-height:0;margin-left:6px;vertical-align:middle;border-radius:50%;line-height:0}.plock .pedit.on{background:#d1fae5}
+.pedrow{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;background:var(--soft);border-radius:10px}.pedrow label{font-size:11px;color:var(--mute);display:block}.pedrow input,.pedrow select{width:100%;margin-top:2px}
 .plock{padding:8px 10px;background:var(--soft);border-radius:8px;font-size:13px;font-weight:600}.plock em{font-style:normal;color:#065f46;font-weight:700;font-size:11px;margin-left:4px}
 .psum{margin-top:10px;padding:8px 12px;border-radius:10px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.psum.ok{background:#d1fae5;color:#065f46}.psum.bad{background:#fef3c7;color:#92400e}.psum.nil{background:var(--soft);color:var(--mute)}
 .psum button{padding:4px 10px;font-size:12px;min-height:0;margin-left:auto}
@@ -1647,7 +1649,7 @@ function payDetail(p){
   <div class="hero"><small>Total payment</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   <h4>Installments</h4>${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
     return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Due ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
-    <button class="${i.paidOn?"alt ed":""}" data-pay="${i.paidOn?"editpaid":"paid"}" data-i="${i.id}"${i.paidOn?' aria-label="Edit payment" title="Edit payment"':""}>${i.paidOn?sv(P.pencil,15):"Mark paid"}</button></div>`}).join("")}
+    ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
   ${p.notes?`<h4>Notes</h4><div class="note">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<h4>History</h4>${p.log.slice(0,15).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
   <div class="row" style="margin-top:16px">${s?`<button class="alt" data-pschool="${s.id}">Open school</button>`:""}<button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div>`;
@@ -1684,7 +1686,7 @@ function payDates(){const st=pf.d.start||todayISO(),fq=+pf.d.freq||1;pf.rows.for
 /* paid installments stay as they are; whatever is left of the total is split equally over the unpaid ones */
 function payAmounts(){const paid=pf.rows.filter(r=>r.paidOn).reduce((a,r)=>a+toP(paidAmt(r)),0),un=pf.rows.filter(r=>!r.paidOn),sp=splitP(Math.max(0,toP(pf.d.total)-paid),un.length);un.forEach((r,k)=>{r.amount=fromP(sp[k]||0);r.manual=false})}
 function payDraw(){const el=document.getElementById("pf_rows");if(!el)return;
-  el.innerHTML=`<div class="prow ph"><span>#</span><span>Due date</span><span>Amount (₹)</span></div>`+pf.rows.map((r,k)=>`<div class="prow"><span class="pno">${k+1}</span>${r.paidOn?`<span class="plock">${fmtDate(r.due)}</span><span class="plock">${inr(paidAmt(r))}<em>PAID</em></span>`:`<input type="date" data-pr="due" data-k="${k}" value="${esc(r.due)}" aria-label="Installment ${k+1} due date"><input type="number" inputmode="decimal" min="0" step="0.01" data-pr="amt" data-k="${k}" value="${r.amount}" aria-label="Installment ${k+1} amount">`}</div>`).join("")+`<div class="phint" style="margin-top:8px">Change any installment and the others adjust to keep the total.</div><div class="psum" id="pf_sum"></div>`;
+  el.innerHTML=`<div class="prow ph"><span>#</span><span>Due date</span><span>Amount (₹)</span></div>`+pf.rows.map((r,k)=>`<div class="prow"><span class="pno">${k+1}</span>${r.paidOn?(r.editing?`<span class="plock">${fmtDate(r.due)}</span><span class="plock">PAID<button type="button" class="pedit on" data-pay="rowedit" data-k="${k}" aria-label="Done editing" title="Done">${sv(P.check||P.pencil,14)}</button></span><div class="pedrow"><label>Paid on<input type="date" data-pr="pdate" data-k="${k}" value="${esc(r.paidOn)}"></label><label>Amount received (₹)<input type="number" inputmode="decimal" min="0" step="0.01" data-pr="pamt" data-k="${k}" value="${paidAmt(r)}"></label><label>Mode<select data-pr="pmode" data-k="${k}">${optsSel(PAY_MODES,r.mode)}</select></label><label>Reference<input data-pr="pref" data-k="${k}" value="${esc(r.ref||"")}"></label></div>`:`<span class="plock">${fmtDate(r.due)}</span><span class="plock">${inr(paidAmt(r))}<em>PAID</em><button type="button" class="pedit" data-pay="rowedit" data-k="${k}" aria-label="Edit payment" title="Edit payment">${sv(P.pencil,14)}</button></span>`):`<input type="date" data-pr="due" data-k="${k}" value="${esc(r.due)}" aria-label="Installment ${k+1} due date"><input type="number" inputmode="decimal" min="0" step="0.01" data-pr="amt" data-k="${k}" value="${r.amount}" aria-label="Installment ${k+1} amount">`}</div>`).join("")+`<div class="phint" style="margin-top:8px">Change any installment and the others adjust to keep the total.</div><div class="psum" id="pf_sum"></div>`;
   document.querySelectorAll("#pf_n [data-pn]").forEach(b=>b.classList.toggle("on",+b.dataset.pn===pf.rows.length));
   paySum()}
 function paySum(){const e=document.getElementById("pf_sum");if(!e)return;const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0),t=toP(pf.d.total);
@@ -1697,7 +1699,7 @@ function payCount(n){if(!pf)return;const lastPaid=pf.rows.reduce((a,r,k)=>r.paid
   if(n<lastPaid)return err(`Installment ${lastPaid} is already paid — choose ${lastPaid} or more`);err("");payRebuild(n);payDraw()}
 function payInput(e){const t=e.target;if(!pf||!t)return;
   if(t.id==="pf_total"){pf.d.total=t.value;payAmounts();payDraw();payHint();return}
-  if(t.dataset&&t.dataset.pr){const r=pf.rows[+t.dataset.k];if(!r)return;if(t.dataset.pr==="amt")return payEdit(+t.dataset.k,t.value);r.due=t.value;paySum()}}
+  if(t.dataset&&t.dataset.pr){const r=pf.rows[+t.dataset.k];if(!r)return;if(/^p(date|amt|mode|ref)$/.test(t.dataset.pr)){if(t.dataset.pr==="pref")r.ref=t.value;return}if(t.dataset.pr==="amt")return payEdit(+t.dataset.k,t.value);r.due=t.value;paySum()}}
 /* typing an amount: the other unpaid installments share what is left, so the total always matches */
 function payEdit(k,v){
   const rows=pf.rows,r=rows[k];if(!r||r.paidOn)return;
@@ -1715,6 +1717,10 @@ function payEdit(k,v){
   paySum();
 }
 function payChange(e){const t=e.target;if(!pf||!t)return;
+  if(t.dataset&&/^p(date|amt|mode|ref)$/.test(t.dataset.pr||"")){const r=pf.rows[+t.dataset.k];if(!r)return;const k=t.dataset.pr;
+    if(k==="pdate"&&t.value)r.paidOn=t.value;else if(k==="pmode")r.mode=t.value;else if(k==="pref")r.ref=t.value;
+    else if(k==="pamt"){const v=toP(t.value);if(v<=0)return err("Enter the amount received");r.paidAmt=fromP(v);r.amount=fromP(v);payAmounts()}
+    return payDraw()}
   if(t.id==="pf_start"||t.id==="pf_freq"){if(t.id==="pf_start")pf.d.start=t.value;else pf.d.freq=t.value;payDates();payDraw();return}
   if(t.id==="pf_school"){const o=document.getElementById("pf_sname");o.style.display=t.value==="__other"?"":"none";if(t.value==="__other")o.focus();
     const dv=dealTotal(schools.find(x=>x.id===t.value));if(dv&&!toP(pf.d.total)){pf.d.total=dv;document.getElementById("pf_total").value=dv;payAmounts();payDraw()}payHint()}}
@@ -1726,7 +1732,7 @@ function savePlan(){
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
   const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0);if(s!==t)return err(`Installments add up to ${inr(fromP(s))} but the total is ${inr(fromP(t))}. Tap “Split equally” or adjust the amounts.`);
   const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:val("pf_start"),freq:val("pf_freq"),notes:val("pf_notes"),
-    installments:pf.rows.map(({manual,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
+    installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
   payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);
 }
@@ -1741,6 +1747,7 @@ function payAct(el){
   if(a==="resplit"){if(pf){payAmounts();payDraw()}return}
   if(a==="usedeal"){const dv=dealTotal(schools.find(x=>x.id===val("pf_school")));if(pf&&dv){pf.d.total=dv;document.getElementById("pf_total").value=dv;payAmounts();payDraw();payHint()}return}
   if(a==="back"){psel=null;return render()}
+  if(a==="rowedit"){if(!pf)return;const r=pf.rows[+el.dataset.k];if(r){r.editing=!r.editing;payDraw()}return}
   const pe=el.closest("[data-plan]");if(pe)psel=pe.dataset.plan;
   const p=payments.find(x=>x.id===psel);if(!p)return;
   if(a==="edit")return payForm(p);
@@ -2228,7 +2235,7 @@ function planBlock(p){const m=planSum(p),ins=p.installments||[];
   return `<div class="pblk" data-plan="${p.id}"><div class="hero"><small>Total payment · ${m.n} installment${m.n===1?"":"s"} · ${esc(freqLabel(p.freq))} · ${PST[m.status][0]}</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   ${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
     return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Due ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
-    <button class="${i.paidOn?"alt ed":""}" data-pay="${i.paidOn?"editpaid":"paid"}" data-i="${i.id}"${i.paidOn?' aria-label="Edit payment" title="Edit payment"':""}>${i.paidOn?sv(P.pencil,15):"Mark paid"}</button></div>`}).join("")}
+    ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
   ${p.notes?`<div class="note" style="margin-top:8px">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<div class="phl">History</div>${p.log.slice(0,8).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
   <div class="row" style="margin:10px 0 0"><button class="alt ib" data-pay="edit">${sv(P.pencil,15)} Edit plan</button><button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div></div>`}
