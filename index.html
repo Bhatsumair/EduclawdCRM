@@ -612,6 +612,10 @@ header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc
 .exh.tt{border-top:2px solid var(--line);padding-top:10px;margin-top:16px}
 .exr{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 12px;cursor:pointer;box-shadow:0 1px 3px rgba(120,80,30,.08)}
 .exr+.exr{margin-top:6px}
+.kcard{position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,var(--card)),var(--card) 72%);border:1px solid var(--line);box-shadow:0 1px 3px rgba(120,80,30,.08)}
+.kcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.exr.kcard{padding-left:15px}.it.ncard.kcard{padding-left:17px}
+.kcard:hover,.kcard.on{border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
 .exr:hover{border-color:var(--teal)}
 .exd{text-align:center;background:var(--soft);border-radius:10px;padding:4px 0;color:var(--teal2)}
 .exd b{display:block;font-size:15px;line-height:1.1}.exd small{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
@@ -1855,15 +1859,15 @@ function expTx(list,ilist,coll,f){
   const g=new Map();rows.forEach(e=>{const k=e.date||"0000-00-00";(g.get(k)||g.set(k,[]).get(k)).push(e)});
   const out=sumP(list),into=sumP(ilist)+sumP(coll);
   const row=e=>{
-    if(e._t==="p")return `<div class="exr" data-psel="${e.pid}" data-go="1" title="Open the payment plan in School Network">
+    if(e._t==="p")return `<div class="exr kcard" style="--c:#16a34a" data-psel="${e.pid}" data-go="1" title="Open the payment plan in School Network">
       <div class="exav in">${esc((e.title||"?").trim()[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg in">Educlawd</span>${esc(["Installment "+e.k+" of "+e.n,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa in"><i>▴</i> ${inr(e.amount)}</div></div>`;
     const c=catLabel(e),i=e._t==="i";
-    if(e._cl)return `<div class="exr"><div class="exav" style="background:${CLM_COL[c]||mcol(c)}">${esc(c[0].toUpperCase())}</div>
+    if(e._cl)return `<div class="exr kcard" style="--c:#dc2626"><div class="exav" style="background:${CLM_COL[c]||mcol(c)}">${esc(c[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg">${esc(c)}</span>${esc("Approved claim · "+e.paidTo)}</small></div>
       <div class="exa"><i>▾</i> ${inr(e.amount)}</div></div>`;
-    return `<div class="exr" data-ex="edit" data-id="${e.id}" title="Tap to edit">
+    return `<div class="exr kcard" style="--c:${i?"#16a34a":"#dc2626"}" data-ex="edit" data-id="${e.id}" title="Tap to edit">
       <div class="exav${i?" in":""}"${i?"":` style="background:${mcol(e.catId||c)}"`}>${esc(c[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||e.paidTo||"—")}</b><small><span class="exg${i?" in":""}">${esc(c)}</span>${esc([e.title?e.paidTo:"",e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa${i?" in":""}"><i>${i?"▴":"▾"}</i> ${inr(e.amount)}</div></div>`};
@@ -2216,7 +2220,7 @@ function networkView(f){
   const PL={over:["Overdue","ps-over"],pend:["Pending","ps-pend"],done:["Fully Paid","ps-paid"],none:["No Plan","s-Lead"]};
   const td=todayISO();
   return kpi+seg+bar+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
-    return `<div class="it ncard ${s.id===nsel?"on":""}" data-nsel="${s.id}">
+    return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${{over:"#dc2626",pend:"#d97706",done:"#16a34a",none:"#94a3b8"}[st]}" data-nsel="${s.id}">
     <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
