@@ -2150,7 +2150,8 @@ const wonOf=p=>p&&p.schoolId?wonSchools().find(s=>s.id===p.schoolId):null; // th
 function payFocus(p){const ws=wonOf(p);gtab="network";if(ws){nsel=ws.id;psel=null}else{psel=p.id;nsel=null}}
 const netOf=s=>s.net||{};
 const termLabel=m=>(NET_TERMS.find(x=>x[0]===+m)||[0,m?+m+" months":""])[1];
-const netEnd=s=>{const n=netOf(s);return n.billStart&&+n.term?addMonths(n.billStart,+n.term):""};
+const netEnd=s=>{const n=netOf(s);if(!(n.billStart&&+n.term))return"";const d=new Date(addMonths(n.billStart,+n.term)+"T12:00");d.setDate(d.getDate()-1); // the contract ends the day before the anniversary
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const netLeft=s=>{const e=netEnd(s);if(!e)return null;return Math.ceil((new Date(e+"T12:00")-Date.now())/864e5)};
 const salesOf=s=>ulabel(owner(s));
 const netPct=s=>{const n=netOf(s),e=netEnd(s);if(!n.billStart||!e)return null;
