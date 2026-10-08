@@ -1508,20 +1508,22 @@ function dealsView(f){
 
 /* Educlawd CRM · Navigation list and main render() */
 const GN=[["home","Home"],["tasks","Tasks"],["contacts","Contacts"],["deals","Deals"]];
-const gnList=()=>[...GN,["claims","Expenses"],...(isAdmin()?[["payments","Payments"],["expenses","Finance"],["network","School Network"],["reports","Team Insights"],["team","Team"]]:[]),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
+const gnList=()=>[...GN,["claims","Expenses"],...(isAdmin()?[["expenses","Finance"],["network","School Network"],["reports","Team Insights"],["team","Team"]]:[]),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
 const PH={home:"Search school, city, board…",tasks:"Search tasks or schools…",contacts:"Search contacts…",deals:"Search deals…",payments:"Search payment plans by school…",expenses:"Search transactions…",network:"Search network by school, city, person…",claims:"Search expenses…",reports:"",team:"",profile:""};
 function render(){
   if(!me)return;
+  if(gtab==="payments"){gtab="network";ntab="pay"} // Payments now lives inside School Network
   if((gtab==="team"||gtab==="payments"||gtab==="reports"||gtab==="expenses"||gtab==="network")&&!isAdmin())gtab="home";
   const f=filter.toLowerCase(),n=allTasks().length;
-  $("#q").placeholder=PH[gtab];$("#add").style.display=gtab==="home"||gtab==="payments"||gtab==="expenses"||gtab==="claims"?"":"none";$("#add").title=$("#add").ariaLabel=gtab==="payments"?"Add payment plan":gtab==="claims"?"Record an expense":gtab==="expenses"?"Record expense or income":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="reports"||gtab==="profile"?"none":"";
+  const pmode=gtab==="network"&&ntab==="pay";
+  $("#q").placeholder=pmode?"Search payment plans by school…":PH[gtab];$("#add").style.display=gtab==="home"||pmode||gtab==="expenses"||gtab==="claims"?"":"none";$("#add").title=$("#add").ariaLabel=pmode?"Add payment plan":gtab==="claims"?"Record an expense":gtab==="expenses"?"Record expense or income":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="reports"||gtab==="profile"?"none":"";
   $("#greet").innerHTML=gtab==="home"?greetHtml():"";
-  $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,reports:analyticsView,payments:paymentsView,expenses:expensesView,network:networkView,claims:claimsView,profile:profileView}[gtab])(f);
+  $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,reports:analyticsView,payments:paymentsView,expenses:expensesView,network:networkHub,claims:claimsView,profile:profileView}[gtab])(f);
   const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,nv=GN.map(([k,l])=>`<button class="${gtab===k?"on":""}" data-g="${k}">${GI[k]}<span>${l}</span>${k==="tasks"&&ov?`<i class="bdg">${ov>9?"9+":ov}</i>`:""}</button>`).join("");
   if(nv!==navSig||!$("#gnav").firstChild){navSig=nv;$("#gnav").innerHTML=nv}
   const narrow=matchMedia("(max-width:800px)").matches;
-  const pm=gtab==="payments",pp=pm?payments.find(p=>p.id===psel):null;
-  const nw=gtab==="network",ns=nw?schools.find(x=>x.id===nsel&&x.stage==="Won"):null;
+  const pm=pmode,pp=pm?payments.find(p=>p.id===psel):null;
+  const nw=gtab==="network"&&!pmode,ns=nw?schools.find(x=>x.id===nsel&&x.stage==="Won"):null;
   const open=pm?!!pp:nw?!!ns:!!sel;
   const show=gtab==="profile"?!narrow:open;$("#list").classList.toggle("hide",show);$("#detail").classList.toggle("hide",!show);
   const s=cur();
@@ -1544,7 +1546,7 @@ function renderSide(){
   if(!me){el.innerHTML="";sideSig="";return}
   const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,adm=isAdmin();
   const b=(k,l)=>`<button class="${gtab===k?"on":""}" data-dm="${k}" title="${l}" aria-label="${l}"><span class="di">${GI[k]}</span><span class="sl">${l}</span>${k==="tasks"&&ov?`<i class="bdg2">${ov>9?"9+":ov}</i>`:""}</button>`;
-  const h=`<nav class="dnav">${GN.map(([k,l])=>b(k,l)).join("")}${b("claims","Expenses")}</nav>${adm?`<div class="sgl">Admin</div><nav class="dnav">${b("payments","Payments")}${b("expenses","Finance")}${b("network","School Network")}${b("reports","Team Insights")}${b("team","Team")}</nav>`:""}<nav class="dnav bot">${b("profile","Profile")}</nav>`;
+  const h=`<nav class="dnav">${GN.map(([k,l])=>b(k,l)).join("")}${b("claims","Expenses")}</nav>${adm?`<div class="sgl">Admin</div><nav class="dnav">${b("expenses","Finance")}${b("network","School Network")}${b("reports","Team Insights")}${b("team","Team")}</nav>`:""}<nav class="dnav bot">${b("profile","Profile")}</nav>`;
   if(h!==sideSig){sideSig=h;el.innerHTML=h}
 }
 const TI={contacts:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,activity:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,deal:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12"/><path d="M6 8h12"/><path d="m6 13 8.5 8"/><path d="M6 13h3"/><path d="M9 13c6.667 0 6.667-10 0-10"/></svg>`};
@@ -1854,7 +1856,7 @@ function expTx(list,ilist,coll,f){
   const g=new Map();rows.forEach(e=>{const k=e.date||"0000-00-00";(g.get(k)||g.set(k,[]).get(k)).push(e)});
   const out=sumP(list),into=sumP(ilist)+sumP(coll);
   const row=e=>{
-    if(e._t==="p")return `<div class="exr" data-psel="${e.pid}" data-go="1" title="Open the payment plan in Payments">
+    if(e._t==="p")return `<div class="exr" data-psel="${e.pid}" data-go="1" title="Open the payment plan in School Network">
       <div class="exav in">${esc((e.title||"?").trim()[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg in">Educlawd</span>${esc(["Installment "+e.k+" of "+e.n,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa in"><i>▴</i> ${inr(e.amount)}</div></div>`;
@@ -2162,7 +2164,7 @@ function clmReject(id,n){
    The extra details live on the school document itself (s.net), so they sync like any other school field. */
 const NET_TERMS=[[12,"1 year"],[24,"2 years"],[36,"3 years"],[6,"6 months"],[60,"5 years"]];
 GI.network=sv(P.net='<circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M12 12 6.8 16.3M12 12l5.2 4.3"/>',22);
-let nsel=null,nst="all",nsrt="value";
+let ntab="schools",nsel=null,nst="all",nsrt="value";
 const wonSchools=()=>schools.filter(s=>s.stage==="Won");
 const netOf=s=>s.net||{};
 const termLabel=m=>(NET_TERMS.find(x=>x[0]===+m)||[0,m?+m+" months":""])[1];
@@ -2184,6 +2186,12 @@ function netMetrics(){
   return{n:w.length,tv,live,soon,pend};
 }
 /* ---- list ---- */
+/* ---- School Network hub: Schools (contracts) + Payments (installment plans) in one module ---- */
+function networkHub(f){
+  if(!isAdmin())return noMatch("Only the admin can see the school network");
+  const tabs=`<div class="seg2 nhub" style="margin-bottom:10px"><button class="${ntab!=="pay"?"on":""}" data-ntab="schools">Schools (${wonSchools().length})</button><button class="${ntab==="pay"?"on":""}" data-ntab="pay">Payments (${payments.length})</button></div>`;
+  return tabs+(ntab==="pay"?paymentsView(f):networkView(f));
+}
 function networkView(f){
   if(!isAdmin())return noMatch("Only the admin can see the school network");
   const m=netMetrics(),won=wonSchools();
@@ -2423,6 +2431,7 @@ function onClick(e){
   if(el=g("data-ct")){clmT=el.dataset.ct;return render()}
   if(el=g("data-cv")){clmV=el.dataset.cv;return render()}
   if(el=g("data-cc")){const h=document.getElementById("cf_cat");if(h){h.value=el.dataset.cc;document.querySelectorAll("#cf_cats [data-cc]").forEach(b2=>b2.classList.toggle("on",b2.dataset.cc===el.dataset.cc))}return}
+  if(el=g("data-ntab")){ntab=el.dataset.ntab;filter="";$("#q").value="";return render()}
   if(el=g("data-nsel")){nsel=el.dataset.nsel;return render()}
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
   if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
@@ -2452,7 +2461,7 @@ function onClick(e){
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
   if(el=g("data-mtog"))return toggleUser(el);
-  if(t.closest&&t.closest("#add"))return gtab==="payments"?payForm():gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
+  if(t.closest&&t.closest("#add"))return gtab==="network"&&ntab==="pay"?payForm():gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
   if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
