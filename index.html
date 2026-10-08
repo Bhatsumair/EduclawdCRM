@@ -674,6 +674,8 @@ header{flex:none;position:relative!important;top:auto;z-index:8;padding-top:calc
 .chips.pn button.on{background:var(--teal);color:#fff}
 /* school network */
 .ncard .nsub{font-size:12.5px;color:var(--mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ncon{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;padding:6px 0 0;border-top:1px dashed var(--line)}
+.ncon small{display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.3px}.ncon b{display:block;font-size:12.5px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ngrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:9px}
 .ngrid>div{background:var(--soft);border-radius:10px;padding:6px 9px;min-width:0}
 .ngrid small{display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
@@ -2217,6 +2219,7 @@ function networkView(f){
     return `<div class="it ncard ${s.id===nsel?"on":""}" data-nsel="${s.id}">
     <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
+    <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Billing from</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Billing to</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(py.paid))}</b></div>
       <div><small>Outstanding</small><b>${inr(fromP(py.due))}</b></div>
