@@ -944,6 +944,7 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .sxe{flex:none;width:34px;height:34px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--teal2);border:1px solid var(--line);box-shadow:none}
 @media(max-width:800px){.grid.pq{grid-template-columns:1fr 1fr;column-gap:8px}.prow{grid-template-columns:70px minmax(0,1.15fr) minmax(0,1fr);gap:6px}.prow input{padding-left:8px;padding-right:6px;font-size:14px}.pno{font-size:11.5px}}
 .phint.pqb{font-size:13.5px;margin:2px 0 6px}.phint.pqb:empty{display:none}
+input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;cursor:default;pointer-events:none}
 </style>
 </head>
 <body>
@@ -1830,6 +1831,7 @@ function payForm(p,presetSchool){
   <label>Notes (optional)</label><textarea id="pf_notes" placeholder="e.g. invoice no., terms, GST details">${esc(e.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-pay="save">${p?"Save changes":"Create plan"}</button><button class="alt" data-m="close">Cancel</button></div>`);
   const t=document.getElementById("pf_total");t.setAttribute("inputmode","decimal");t.min="0";t.step="0.01";
+  ["pf_amt","pf_gst"].forEach(id=>{const x=document.getElementById(id);if(x){x.readOnly=true;x.tabIndex=-1;x.classList.add("ro")}});
   payDraw();payHint();payQuote("");
 }
 /* students × price quoted (a year) + GST amount fills the total */
