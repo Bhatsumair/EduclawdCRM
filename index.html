@@ -1813,7 +1813,7 @@ function payForm(p,presetSchool){
   const e=p?structuredClone(p):{id:"pay_"+uid(),_kind:"payment",schoolId:presetSchool||"",schoolName:"",total:"",count:2,freq:"1",start:todayISO(),installments:[],notes:""};
   if(!p&&presetSchool){const dv=dealTotal(schools.find(x=>x.id===presetSchool));if(dv)e.total=dv}
   if(e.students===undefined){const sd=(schools.find(x=>x.id===e.schoolId)||{}).deal||{};e.students=sd.students||"";e.price=sd.price||"";e.basis=sd.basis||"year"}
-  if(e.gst===undefined||e.gst==="")e.gst=18;
+  if(e.gstAmt===undefined&&+e.students>0&&+e.price>0)e.gstAmt=Math.round(calc({students:+e.students,price:+e.price,basis:e.basis}).y*18)/100;
   pf={d:e,rows:(e.installments||[]).map(i=>({...i}))};
   if(!pf.rows.length)payRebuild(+e.count||1);
   const lock=!!e.schoolId&&schools.some(x=>x.id===e.schoolId),other=!e.schoolId&&!!e.schoolName,ss=schools.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||""));
@@ -1821,7 +1821,7 @@ function payForm(p,presetSchool){
   <div${lock?' style="display:none"':""}><label>School</label><select id="pf_school"><option value="">Select school</option>${ss.map(s=>`<option value="${s.id}" ${s.id===e.schoolId?"selected":""}>${esc(s.name)}${s.stage==="Won"?" · Won":""}</option>`).join("")}<option value="__other" ${other?"selected":""}>Other (not in CRM)…</option></select>
   <input id="pf_sname" placeholder="School / client name" value="${esc(other?e.schoolName:"")}" style="margin-top:6px;${other?"":"display:none"}"></div>
   <div class="phint" id="pf_hint"></div>
-  <div class="grid pq">${fld("pf_stu","Students",e.students,"number")}${fld("pf_price","Price quoted per student (₹)",e.price,"number")}<div><label>Price is</label><select id="pf_basis"><option value="year" ${e.basis!=="month"?"selected":""}>Per year</option><option value="month" ${e.basis==="month"?"selected":""}>Per month</option></select></div>${fld("pf_gst","GST (%)",e.gst,"number")}</div><div class="phint" id="pf_qb"></div>
+  <div class="grid pq">${fld("pf_stu","Students",e.students,"number")}${fld("pf_price","Price quoted per student (₹)",e.price,"number")}<div><label>Price is</label><select id="pf_basis"><option value="year" ${e.basis!=="month"?"selected":""}>Per year</option><option value="month" ${e.basis==="month"?"selected":""}>Per month</option></select></div>${fld("pf_gst","GST amount (₹)",e.gstAmt??"","number")}</div><div class="phint" id="pf_qb"></div>
   <div class="grid">${fld("pf_total","Total payment (₹)",e.total,"number")}<div><label>Installment every</label><select id="pf_freq">${PAY_FREQ.map(([v,l])=>`<option value="${v}" ${String(e.freq)===v?"selected":""}>${l}</option>`).join("")}</select></div></div>
   <label>Number of installments</label><div class="chips pn" id="pf_n">${PAY_N.map(n=>`<button type="button" data-pn="${n}" class="${pf.rows.length===n?"on":""}">${n===1?"Full (1)":n}</button>`).join("")}</div>
   <div id="pf_rows"></div>
@@ -1830,11 +1830,14 @@ function payForm(p,presetSchool){
   const t=document.getElementById("pf_total");t.setAttribute("inputmode","decimal");t.min="0";t.step="0.01";
   payDraw();payHint();payQuote(false);
 }
-/* students × price quoted (+ GST %, a year) fills the total */
-function payQuote(fill=true){if(!pf)return;const n=+val("pf_stu")||0,pr=+val("pf_price")||0,g=Math.max(0,+val("pf_gst")||0),qb=document.getElementById("pf_qb");
+/* students × price quoted (a year) + GST amount fills the total */
+/* students/price change → GST amount refills at 18%; typing the GST amount keeps what you typed */
+function payQuote(fill=true,keepGst=false){if(!pf)return;const n=+val("pf_stu")||0,pr=+val("pf_price")||0,qb=document.getElementById("pf_qb"),gi=document.getElementById("pf_gst");
   if(!(n>0&&pr>0)){if(qb)qb.innerHTML="";return}
-  const base=calc({students:n,price:pr,basis:val("pf_basis")}).y,gv=Math.round(base*g)/100,t=Math.round((base+gv)*100)/100;
-  if(qb)qb.innerHTML=`Amount <b>${inr(base)}</b> / year + GST ${g}% <b>${inr(gv)}</b> = <b>${inr(t)}</b>`;
+  const base=calc({students:n,price:pr,basis:val("pf_basis")}).y;
+  if(fill&&!keepGst&&gi)gi.value=Math.round(base*18)/100;
+  const gv=Math.max(0,+val("pf_gst")||0),t=Math.round((base+gv)*100)/100;
+  if(qb)qb.innerHTML=`Amount <b>${inr(base)}</b> / year + GST <b>${inr(gv)}</b> = <b>${inr(t)}</b>`;
   if(!fill)return;pf.d.total=t;const el=document.getElementById("pf_total");if(el)el.value=t;payAmounts();payDraw();payHint()}
 const ordN=n=>n+(n%100>10&&n%100<14?"th":["th","st","nd","rd"][n%10<4?n%10:0]);
 function payRebuild(n){const old=pf.rows,rows=[];for(let k=0;k<n;k++){const o=old[k];rows.push(o&&o.paidOn?o:{id:(o&&o.id)||uid(),due:"",amount:0})}pf.rows=rows;pf.d.count=n;payDates();payAmounts()}
@@ -1855,7 +1858,8 @@ function payCount(n){if(!pf)return;const lastPaid=pf.rows.reduce((a,r,k)=>r.paid
   if(n<lastPaid)return err(`Installment ${lastPaid} is already paid — choose ${lastPaid} or more`);err("");payRebuild(n);payDraw()}
 function payInput(e){const t=e.target;if(!pf||!t)return;
   if(t.id==="pf_total"){pf.d.total=t.value;payAmounts();payDraw();payHint();return}
-  if(t.id==="pf_stu"||t.id==="pf_price"||t.id==="pf_gst"){payQuote();return}
+  if(t.id==="pf_stu"||t.id==="pf_price"){payQuote();return}
+  if(t.id==="pf_gst"){payQuote(true,true);return}
   if(t.dataset&&t.dataset.pr){const r=pf.rows[+t.dataset.k];if(!r)return;if(/^p(date|amt|mode|ref)$/.test(t.dataset.pr)){if(t.dataset.pr==="pref")r.ref=t.value;return}if(t.dataset.pr==="amt")return payEdit(+t.dataset.k,t.value);r.due=t.value;paySum()}}
 /* typing an amount: the other unpaid installments share what is left, so the total always matches */
 function payEdit(k,v){
@@ -1890,7 +1894,7 @@ function savePlan(){
   if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
   const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0);if(s!==t)return err(`Installments add up to ${inr(fromP(s))} but the total is ${inr(fromP(t))}. Tap “Split equally” or adjust the amounts.`);
-  const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gst:val("pf_gst")===""?0:+val("pf_gst"),notes:val("pf_notes"),
+  const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gstAmt:val("pf_gst")===""?0:+val("pf_gst"),notes:val("pf_notes"),
     installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
   payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);
