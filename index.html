@@ -1633,7 +1633,7 @@ function tasksView(){
 /* Educlawd CRM · Contacts tab and Deals tab */
 function contactsView(f){
   const rows=schools.flatMap(s=>(s.contacts||[]).map(p=>({p,s}))).filter(({p,s})=>[p.name,p.designation,p.phone,s.name].join(" ").toLowerCase().includes(f)).sort((a,b)=>(a.p.name||"").localeCompare(b.p.name||""));
-  return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small><small>${esc(p.phone||"—")}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
+  return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
 }
 let dtab="month",dstg="all";
 function stageSheet(){
