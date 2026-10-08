@@ -845,7 +845,7 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .sfld select{display:block;width:100%;border:0;background:transparent;padding:1px 0 0;font-size:14.5px;font-weight:700;color:var(--ink);appearance:none;-webkit-appearance:none;outline:0;cursor:pointer;box-shadow:none}
 .sfld::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);pointer-events:none}
 .sfld:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 18%,transparent)}
-.npt .od{font-style:normal;color:#b91c1c;font-weight:700}.ngrid b.od{color:#b91c1c}
+.ngrid b.dt{color:#b45309}.npt .od{font-style:normal;color:#b91c1c;font-weight:700}.ngrid b.od{color:#b91c1c}
 
 /* enhanced cards: Finance + School Network */
 .kgrid.kx{gap:10px}
@@ -1765,10 +1765,10 @@ function addMonths(iso,m){const[y,mo,d]=String(iso).split("-").map(Number);if(!y
 function splitP(totalP,n){if(n<1)return[];const base=Math.floor(totalP/n/100)*100,a=Array(n).fill(base);a[n-1]=totalP-base*(n-1);return a}
 const instSt=(i,td=todayISO())=>i.paidOn?"paid":i.due&&i.due<td?"over":"pend";
 function planSum(p){
-  const td=todayISO(),ins=p.installments||[],tot=toP(p.total);let paid=0,over=0,oc=0,next=null;
-  ins.forEach(i=>{const st=instSt(i,td);if(st==="paid")paid+=toP(paidAmt(i));else{if(st==="over"){over+=toP(i.amount);oc++}if(!next||(i.due||"9")<(next.due||"9"))next=i}});
+  const td=todayISO(),ins=p.installments||[],tot=toP(p.total);let paid=0,over=0,oc=0,tc=0,next=null;
+  ins.forEach(i=>{const st=instSt(i,td);if(st==="paid")paid+=toP(paidAmt(i));else{if(st==="over"){over+=toP(i.amount);oc++}if(i.due===td)tc++;if(!next||(i.due||"9")<(next.due||"9"))next=i}});
   const status=ins.length&&ins.every(i=>i.paidOn)?"done":oc?"over":"pend";
-  return{tot,paid,due:Math.max(0,tot-paid),over,oc,next,status,pc:tot?Math.min(100,Math.round(paid*100/tot)):0,n:ins.length,np:ins.filter(i=>i.paidOn).length};
+  return{tot,paid,due:Math.max(0,tot-paid),over,oc,tc,next,status,pc:tot?Math.min(100,Math.round(paid*100/tot)):0,n:ins.length,np:ins.filter(i=>i.paidOn).length};
 }
 function mergePay(docs){
   const loc=new Map(payments.map(p=>[p.id,p])),out=[],ids=new Set(docs.map(d=>d.id));
@@ -2331,12 +2331,12 @@ function netMetrics(){
 /* ---- list ---- */
 function networkView(f){
   if(!isAdmin())return noMatch("Only the admin can see the school network");
-  const m=netMetrics(),won=wonSchools(),pt=payments.reduce((a,p)=>{const q=planSum(p);a.t+=q.tot;a.c+=q.paid;a.d+=q.due;a.oc+=q.oc;return a},{t:0,c:0,d:0,oc:0});
+  const m=netMetrics(),won=wonSchools(),pt=payments.reduce((a,p)=>{const q=planSum(p);a.t+=q.tot;a.c+=q.paid;a.d+=q.due;a.oc+=q.oc;a.tc+=q.tc;return a},{t:0,c:0,d:0,oc:0,tc:0});
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
   const kpi=`<div class="kgrid lbl kx">${kc("#0d7f7a",P.net,String(m.n),"Won Schools",payments.length+" payment plan"+(payments.length===1?"":"s"))}
   ${kc("#0d7f7a",P.wallet,inrS(fromP(pt.t)),"Total Value","total of all payment plans")}
   ${kc("#16a34a",P.check,inrS(fromP(pt.c)),"Collected",(pt.t?Math.round(pt.c*100/pt.t):0)+"% of contract value")}
-  ${kc("#d97706",P.cal,inrS(fromP(pt.d)),"Upcoming Payments",pt.oc?pt.oc+" installment"+(pt.oc===1?"":"s")+" overdue":"nothing overdue")}</div>`;
+  ${kc("#d97706",P.cal,inrS(fromP(pt.d)),"Upcoming Payments",pt.oc?pt.oc+" installment"+(pt.oc===1?"":"s")+" overdue"+(pt.tc?" · "+pt.tc+" due today":""):pt.tc?pt.tc+" installment"+(pt.tc===1?"":"s")+" due today":"nothing overdue")}</div>`;
   if(!m.n&&!payments.length)return kpi+noMatch("<div style='font-size:34px'>🏫</div>No won schools yet.<br><small>A school joins the network as soon as its stage is set to Won</small>");
   const stOf=s=>{const y=netPay(s);return y?y.st:"none"},orphAll=payments.filter(p=>!wonOf(p));
   const cnt=k=>k==="all"?won.length+orphAll.length:won.filter(s=>stOf(s)===k).length+(k==="none"?0:orphAll.filter(p=>planSum(p).status===k).length);
@@ -2364,7 +2364,7 @@ function networkView(f){
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(py.paid))}</b></div>
       <div><small>Outstanding</small><b>${inr(fromP(py.due))}</b></div>
-      <div><small>Next due</small><b class="${nxo?"od":""}">${nx?fmtDate(nx.due):"—"}</b></div></div>
+      <div><small>Next due</small><b class="${nxo?"od":nx&&nx.due===td?"dt":""}">${nx?(nx.due===td?"Today · ":"")+fmtDate(nx.due):"—"}</b></div></div>
     <div class="nprog"><div class="npt"><span>${py.np}/${py.ni} installment${py.ni===1?"":"s"} paid</span><b>${pc}% collected</b><span>${py.over?`<em class="od">${py.over} overdue</em>`:py.n>1?py.n+" plans":""}</span></div>
       <div class="npb"><i class="${st==="over"?"exp":st==="done"?"live":"soon"}" style="width:${pc}%"></i></div></div>`
     :`<small class="nfoot od">No Payment Plan Yet — Tap To Create One</small>`}</div>`}).join("")
