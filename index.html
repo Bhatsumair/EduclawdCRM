@@ -1136,7 +1136,7 @@ async function syncNow(first){
     if(!me||me.id!==who)return;
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
-      if(isAdmin()){mergePay(docs.filter(isPayDoc));cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
+      if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
       mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
@@ -1799,6 +1799,16 @@ function mergePay(docs){
   payments=out;
 }
 function payLog(p,text){(p.log=p.log||[]).unshift({at:new Date().toISOString(),by:me?me.name:"",text})}
+/* plans saved before the Students / Price / Amount / GST fields existed get them filled in once:
+   Amount = Total ÷ 1.18, GST = the rest, Students and "Price is" from the school's deal, Price = Amount ÷ students (÷ 12 per month) */
+function migratePlans(){
+  payments.forEach(p=>{if(p.amount!==undefined&&p.gstAmt!==undefined)return;const t=+p.total||0;if(!(t>0))return;
+    const d=(schools.find(x=>x.id===p.schoolId)||{}).deal||{},basis=p.basis||d.basis||"year",n=+(p.students||d.students)||0;
+    const amt=Math.round(t/1.18*100)/100;
+    Object.assign(p,{amount:amt,gstAmt:Math.round((t-amt)*100)/100,basis,students:n||"",price:p.price||(n?Math.round(amt/n/(basis==="month"?12:1)*100)/100:(d.price||"")),
+      start:p.start||((p.installments||[])[0]||{}).due||"",updated:new Date().toISOString()});
+    push(p)});
+}
 function savePay(p){p.updated=new Date().toISOString();const i=payments.findIndex(x=>x.id===p.id);i<0?payments.push(p):payments[i]=p;cachePay();render();push(p)}
 function removePay(p){payments=payments.filter(x=>x.id!==p.id);payGone.add(p.id);psel=null;cachePay();render();toast("🗑️","Payment plan deleted");if(dbc)dbc.doc(p.id).delete().catch(()=>{})}
 
