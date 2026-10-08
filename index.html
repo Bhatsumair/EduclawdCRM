@@ -1842,6 +1842,12 @@ function payQuote(mode="q"){if(!pf)return;const n=+val("pf_stu")||0,pr=+val("pf_
   const gv=Math.max(0,+val("pf_gst")||0),t=Math.round((base+gv)*100)/100;
   if(qb)qb.innerHTML=`Amount <b>${inr(base)}</b> / year + GST <b>${inr(gv)}</b> = <b>${inr(t)}</b>`;
   if(!fill)return;pf.d.total=t;const el=document.getElementById("pf_total");if(el)el.value=t;payAmounts();payDraw();payHint()}
+/* typing the Total works backwards: Amount = Total ÷ 1.18, GST = the rest, Price quoted = Amount ÷ students (÷ 12 per month) */
+function payBack(){const t=+val("pf_total")||0,ai=document.getElementById("pf_amt"),gi=document.getElementById("pf_gst"),pi=document.getElementById("pf_price"),qb=document.getElementById("pf_qb");if(!ai||!gi)return;
+  if(!(t>0)){if(qb)qb.innerHTML="";return}
+  const amt=Math.round(t/1.18*100)/100,gv=Math.round((t-amt)*100)/100,n=+val("pf_stu")||0;ai.value=amt;gi.value=gv;
+  if(n>0&&pi)pi.value=Math.round(amt/n/(val("pf_basis")==="month"?12:1)*100)/100;
+  if(qb)qb.innerHTML=`Amount <b>${inr(amt)}</b> / year + GST <b>${inr(gv)}</b> = <b>${inr(t)}</b>`}
 const ordN=n=>n+(n%100>10&&n%100<14?"th":["th","st","nd","rd"][n%10<4?n%10:0]);
 function payRebuild(n){const old=pf.rows,rows=[];for(let k=0;k<n;k++){const o=old[k];rows.push(o&&o.paidOn?o:{id:(o&&o.id)||uid(),due:"",amount:0})}pf.rows=rows;pf.d.count=n;payDates();payAmounts()}
 function payDates(){const st=pf.d.start||todayISO(),fq=+pf.d.freq||1;pf.rows.forEach((r,k)=>{if(!r.paidOn)r.due=addMonths(st,k*fq)})}
@@ -1860,7 +1866,7 @@ function payHint(){const h=document.getElementById("pf_hint");if(!h||!pf)return;
 function payCount(n){if(!pf)return;const lastPaid=pf.rows.reduce((a,r,k)=>r.paidOn?k+1:a,0);
   if(n<lastPaid)return err(`Installment ${lastPaid} is already paid — choose ${lastPaid} or more`);err("");payRebuild(n);payDraw()}
 function payInput(e){const t=e.target;if(!pf||!t)return;
-  if(t.id==="pf_total"){pf.d.total=t.value;payAmounts();payDraw();payHint();return}
+  if(t.id==="pf_total"){pf.d.total=t.value;payBack();payAmounts();payDraw();payHint();return}
   if(t.id==="pf_stu"||t.id==="pf_price"){payQuote("q");return}
   if(t.id==="pf_amt"){payQuote("a");return}
   if(t.id==="pf_gst"){payQuote("g");return}
