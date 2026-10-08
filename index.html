@@ -812,6 +812,11 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .phint{margin-top:6px;font-size:12.5px;color:var(--mute)}.phint b{color:var(--teal2)}.phint button{background:none;color:var(--teal);font-weight:700;padding:0 2px;min-height:0;font-size:12.5px}
 .phist{font-size:12.5px;color:var(--mute);padding:6px 0;border-bottom:1px solid var(--line)}.phist b{color:var(--ink);font-weight:600}
 .pdeal{margin-top:16px;max-width:520px}
+.stgs{display:flex;gap:7px;overflow-x:auto;padding:10px 2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.stgs::-webkit-scrollbar{display:none}
+.stg{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:0;height:34px;padding:0 6px 0 12px;border-radius:99px;background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:12.5px;font-weight:600;box-shadow:0 1px 2px rgba(120,80,30,.06)}
+.stg b{min-width:22px;height:22px;padding:0 6px;border-radius:99px;display:inline-grid;place-items:center;font-size:11.5px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}
+.stg.z{opacity:.55}.stg.z b{color:var(--mute);background:var(--soft)}
+.stg.on{background:var(--c);border-color:var(--c);color:#fff;opacity:1;box-shadow:0 2px 6px color-mix(in srgb,var(--c) 40%,transparent)}.stg.on b{background:rgba(255,255,255,.25);color:#fff}
 </style>
 </head>
 <body>
@@ -1477,7 +1482,8 @@ function dealsView(f){
   const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15);
   const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),closed:cl.sort((x,y)=>(y.sd||0)-(x.sd||0))};
   const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>
-  <div class="tfl" style="margin-top:8px"><select data-dstg aria-label="Deal stage">${[["all","All stages ("+every.length+")"],...STAGES.map(g=>[g,g+" ("+every.filter(r=>(r.s.stage||"Lead")===g).length+")"])].map(([v,l])=>`<option value="${esc(v)}" ${dstg===v?"selected":""}>${esc(l)}</option>`).join("")}</select></div>`;
+  <div class="stgs">${[["all","All"],...STAGES.map(g=>[g,g])].map(([v,l])=>{const n=v==="all"?every.length:every.filter(r=>(r.s.stage||"Lead")===v).length;
+    return `<button class="stg ${dstg===v?"on":""} ${n?"":"z"}" style="--c:${v==="all"?"#0d7f7a":STC[v]||"#64748b"}" data-dstgc="${esc(v)}"><span>${esc(l)}</span><b>${n}</b></button>`}).join("")}</div>`;
   const rows=sets[dtab].filter(r=>(r.s.name||"").toLowerCase().includes(f));
   if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
@@ -2433,6 +2439,7 @@ function onClick(e){
   if(el=g("data-mtog"))return toggleUser(el);
   if(t.closest&&t.closest("#add"))return gtab==="payments"?payForm():gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
+  if(el=g("data-dstgc")){dstg=el.dataset.dstgc;render();const c=document.querySelector(".stgs"),o=c&&c.querySelector(".on");if(o)c.scrollLeft=o.offsetLeft-(c.clientWidth-o.offsetWidth)/2;return}
   if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
   if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
   if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
@@ -2490,7 +2497,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&$("#auth").classList
 document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.an){an[e.target.dataset.an]=e.target.value;an.lim=30;an.pg=1;render();return}
   const s=cur();if(s&&e.target.dataset&&e.target.dataset.act==="stage"){s.stage=e.target.value;log(s,"Update","Stage changed to "+s.stage);toast("🔄","Stage changed to "+s.stage);save(s)}});
 document.addEventListener("input",e=>{if(["f_strength","e_dp","e_db"].includes(e.target.id))editPrev();payInput(e)});
-document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&"dstg" in e.target.dataset){dstg=e.target.value;render();return}});
 document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.dataset.nsrt){nsrt=e.target.value;render();return}});
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
