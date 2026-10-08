@@ -898,6 +898,48 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .tpg .numz{font-size:14px}
 .tpg small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:800px){.tpg{gap:5px}.tpg>div{padding:5px 6px}.tpg small{font-size:9.5px}.tpn small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 @media(min-width:801px){.tpsum{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}.tpl{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}}
+
+/* pipeline by stage */
+.fnw,.mow{padding:14px}
+.fwr{text-align:right;flex:none;padding:5px 11px;border-radius:12px;background:color-mix(in srgb,#16a34a 10%,var(--card));border:1px solid color-mix(in srgb,#16a34a 20%,var(--line))}
+.fwr b{display:block;font-size:18px;font-weight:800;color:#15803d;line-height:1.1}.fwr small{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--mute)}
+.fstack{display:flex;height:10px;border-radius:99px;overflow:hidden;gap:2px;margin:12px 0 10px;background:var(--soft)}.fstack i{display:block;min-width:4px}
+.fsum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.fsum>div{--c:#0d7f7a;border-radius:12px;padding:7px 10px;background:color-mix(in srgb,var(--c) 9%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line));min-width:0}
+.fsum>div.w{--c:#16a34a}.fsum>div.l{--c:#dc2626}
+.fsum small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}.fsum b{font-size:18px;font-weight:800;color:color-mix(in srgb,var(--c) 75%,var(--ink));margin-right:6px}.fsum span{font-size:11.5px;font-weight:600;color:var(--mute)}
+.flist{border-top:1px solid var(--line)}
+.frw{display:grid;grid-template-columns:132px minmax(0,1fr) 54px 74px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.frw:last-child{border-bottom:0}
+.fnm{display:flex;align-items:center;gap:8px;min-width:0}.fnm i{width:9px;height:9px;border-radius:3px;background:var(--c);flex:none}.fnm b{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftk{height:8px;border-radius:99px;background:color-mix(in srgb,var(--c) 12%,var(--soft));overflow:hidden}.ftk i{display:block;height:100%;border-radius:99px;background:var(--c)}
+.fct{text-align:right;white-space:nowrap}.fct b{font-size:14px;font-weight:800}.fct small{font-size:10.5px;color:var(--mute);font-weight:700;margin-left:4px}
+.fvl{text-align:right;font-size:12.5px;font-weight:700;color:var(--mute);white-space:nowrap}
+@media(max-width:800px){.frw{grid-template-columns:112px minmax(0,1fr) 34px 58px;gap:8px}.fct small{display:block;margin:0}.fnm b{font-size:12px}.fsum b{font-size:16px;display:block}}
+/* last 6 months */
+.mok{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.mok>div{border-radius:12px;padding:7px 10px;background:color-mix(in srgb,var(--teal) 8%,var(--card));border:1px solid color-mix(in srgb,var(--teal) 16%,var(--line));min-width:0}
+.mok small{display:block;font-size:10.5px;font-weight:700;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mok b{display:block;font-size:18px;font-weight:800;line-height:1.2}
+.mok span{display:block;font-size:11px;font-weight:700;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mok .up{color:#15803d}.mok .dn{color:#b91c1c}
+.mch{display:grid;grid-template-columns:24px minmax(0,1fr);gap:6px;height:186px;margin-top:4px;padding-top:16px}
+.may{display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:var(--mute);text-align:right;padding-bottom:22px;line-height:0}
+.mpl{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.mgr{position:absolute;inset:0 0 22px 0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}.mgr i{display:block;border-top:1px dashed color-mix(in srgb,var(--line) 90%,transparent)}.mgr i:last-child{border-top:1px solid var(--line)}
+.mcol{position:relative;display:flex;flex-direction:column;min-width:0}
+.mcol.now::before{content:"";position:absolute;inset:-4px -3px 18px;border-radius:10px;background:color-mix(in srgb,var(--teal) 7%,transparent)}
+.mbx{position:relative;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px}
+.tb{position:relative;width:min(22px,38%);min-height:0;padding:0;border:0;border-radius:6px 6px 2px 2px;box-shadow:none;cursor:pointer}
+.tb.la{background:linear-gradient(180deg,#14b8a6,#0d7f7a)}.tb.lw{background:linear-gradient(180deg,#4ade80,#16a34a)}
+.tb.z{height:3px;border-radius:2px;opacity:.35;cursor:default}
+.tb em{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:2px;font-style:normal;font-size:10.5px;font-weight:800;color:var(--ink)}
+.mlb{height:22px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--mute)}.mcol.now .mlb{color:var(--teal2)}
+.mtb{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
+.mth,.mtr{display:grid;grid-template-columns:minmax(0,1.3fr) .8fr .8fr 1.1fr 1fr;gap:6px;align-items:center;padding:6px 10px}
+.mth{background:var(--soft);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--mute)}
+.mtr+.mtr{border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}.mtr span:first-child{font-weight:700}
+.mth span:not(:first-child),.mtr span:not(:first-child){text-align:right}
+.mtr .nmb{font-size:12.5px}.mtr .g{font-weight:800}.mtr .g.up{color:#15803d}.mtr .g.dn{color:#b91c1c}.mtr .g.nil{color:var(--mute)}
+@media(max-width:800px){.mok{gap:6px}.mok>div{padding:6px 8px}.mok b{font-size:16px}.mth,.mtr{padding:6px 8px;gap:4px}}
 </style>
 </head>
 <body>
@@ -1177,14 +1219,20 @@ const insKc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="
 function insFunnel(ss){
   const rows=STAGES.map(st=>{const r=ss.filter(s=>(s.stage||"Lead")===st);return{st,n:r.length,v:r.reduce((a,s)=>a+insVal(s),0)}});
   const mx=Math.max(1,...rows.map(r=>r.n)),tot=ss.length;
-  const won=rows.find(r=>r.st==="Won")||{n:0},lost=rows.find(r=>r.st==="Lost")||{n:0};
+  const won=rows.find(r=>r.st==="Won")||{n:0,v:0},lost=rows.find(r=>r.st==="Lost")||{n:0,v:0};
   const cl=won.n+lost.n,wr=cl>=WR_MIN?Math.round(won.n*100/cl)+"%":"—";
-  return `<div class="brk wide">
-    <div class="brkh"><div class="bh1">Pipeline by stage<small>${tot} school${tot===1?"":"s"} · ${inr(ss.filter(OPEN_ST).reduce((a,s)=>a+insVal(s),0))} open value</small></div>
-      <div class="brkt up">${wr}<small style="display:block;font-size:10px;color:var(--mute);font-weight:800;text-transform:uppercase;letter-spacing:.4px">Win rate</small></div></div>
-    ${rows.filter(r=>r.n).map(r=>`<div class="frow"><div class="fl">${esc(r.st)}</div>
-      <div class="ftrack"><i style="width:${Math.max(4,Math.round(r.n*100/mx))}%;background:${STC[r.st]||"#64748b"}"></i></div>
-      <div class="fv">${r.n}<small>${r.v?inrS(r.v):"—"}</small></div></div>`).join("")||noMatch("No schools yet")}</div>`;
+  const openN=ss.filter(OPEN_ST).length,openV=ss.filter(OPEN_ST).reduce((a,s)=>a+insVal(s),0);
+  const vis=rows.filter(r=>r.n),col=st=>STC[st]||"#64748b";
+  return `<div class="brk wide fnw">
+    <div class="brkh"><div class="bh1">Pipeline by stage<small>${tot} school${tot===1?"":"s"} · ${inr(openV)} open value</small></div>
+      <div class="fwr"><b>${wr}</b><small>Win rate</small></div></div>
+    ${tot?`<div class="fstack">${vis.map(r=>`<i style="flex:${r.n};background:${col(r.st)}" title="${esc(r.st)}: ${r.n}"></i>`).join("")}</div>`:""}
+    <div class="fsum"><div><small>Open</small><b>${openN}</b><span>${openV?inrS(openV):"—"}</span></div><div class="w"><small>Won</small><b>${won.n}</b><span>${won.v?inrS(won.v):"—"}</span></div><div class="l"><small>Lost</small><b>${lost.n}</b><span>${lost.v?inrS(lost.v):"—"}</span></div></div>
+    <div class="flist">${vis.map(r=>{const pc=tot?Math.round(r.n*100/tot):0;return `<div class="frw" style="--c:${col(r.st)}">
+      <div class="fnm"><i></i><b>${esc(r.st)}</b></div>
+      <div class="ftk"><i style="width:${Math.max(3,Math.round(r.n*100/mx))}%"></i></div>
+      <div class="fct"><b>${r.n}</b><small>${pc}%</small></div>
+      <div class="fvl">${r.v?inrS(r.v):"—"}</div></div>`}).join("")||noMatch("No schools yet")}</div></div>`;
 }
 function insTrend(ss,ev){
   const now=new Date(),ms=[];
@@ -1193,19 +1241,24 @@ function insTrend(ss,ev){
     return{m,a:add.length,w:wn.length,av:add.reduce((x,s)=>x+insVal(s),0),v:wn.reduce((x,s)=>x+insVal(s),0)}});
   /* month-on-month growth, in schools added and in the deal value they carry */
   const gr=(c,p)=>p===null||p===undefined?null:p===0?(c?Infinity:0):Math.round((c-p)*100/p);
-  data.forEach((d,i)=>{d.g=gr(d.a,i?data[i-1].a:null);d.gv=gr(d.av,i?data[i-1].av:null)});
-  const gtxt=g=>g===null?"—":g===Infinity?"new":(g>0?"▲":g<0?"▼":"")+Math.abs(g)+"%";
+  data.forEach((d,i)=>{d.g=gr(d.a,i?data[i-1].a:null);d.gv=gr(d.av,i?data[i-1].av:null);d.gw=gr(d.w,i?data[i-1].w:null)});
+  const gtxt=g=>g===null?"—":g===Infinity?"New":(g>0?"▲ ":g<0?"▼ ":"")+Math.abs(g)+"%";
   const gcls=g=>g===null?"nil":g===Infinity||g>0?"up":g<0?"dn":"nil";
-  const mx=Math.max(1,...data.map(d=>Math.max(d.a,d.w)));
-  return `<div class="brk wide">
-    <div class="brkh"><div class="bh1">Last 6 months</div>
+  const cur=data[5];const mx=Math.max(1,...data.map(d=>Math.max(d.a,d.w))),step=Math.max(1,Math.ceil(mx/4)),nt=Math.ceil(mx/step),top=step*nt,pm=esc(monChip(data[4].m).split(" ")[0]),cm=esc(monChip(cur.m).split(" ")[0]);
+  const sumA=data.reduce((a,d)=>a+d.a,0),sumW=data.reduce((a,d)=>a+d.w,0),sumV=data.reduce((a,d)=>a+d.v,0);
+  const bar=(d,f,n,cls,lbl)=>n?`<button type="button" class="tb ${cls}" data-tmo="${d.m}" data-f="${f}" style="height:${Math.round(n*100/top)}%" title="${n} ${lbl} — tap to see them"><em>${n}</em></button>`:`<span class="tb ${cls} z"></span>`;
+  return `<div class="brk wide mow">
+    <div class="brkh"><div class="bh1">Last 6 months<small>Month-on-month · schools added and deals won</small></div>
       <div class="mleg" style="margin:0;flex:none"><span class="la">Added</span><span class="lw">Won</span></div></div>
-    <div class="vc">${data.map(d=>`<div class="vcm" title="${esc(monLabel(d.m))}: ${d.a} added (${inr(d.av)}), ${d.w} won${d.v?" ("+inr(d.v)+")":""}${d.g===null?"":" · schools "+gtxt(d.g)+", value "+gtxt(d.gv)}">
-      <div class="vcb">${d.a?`<button type="button" class="bb la" data-tmo="${d.m}" data-f="all" style="height:${Math.round(d.a*100/mx)}%" title="${d.a} school${d.a===1?"":"s"} added — tap to see them"></button>`:`<i class="la"></i>`}${d.w?`<button type="button" class="bb lw" data-tmo="${d.m}" data-f="won" style="height:${Math.round(d.w*100/mx)}%" title="${d.w} deal${d.w===1?"":"s"} won — tap to see them"></button>`:`<i class="lw"></i>`}</div>
-      <div class="vcl">${esc(monChip(d.m).split(" ")[0])}</div>
-      <div class="vcn">${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}/${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</div>
-      <div class="vcv">${d.av?inrS(d.av):"—"}</div>
-      <div class="vcg ${gcls(d.g)}">${gtxt(d.g)}</div></div>`).join("")}</div></div>`;
+    <div class="mok">
+      <div><small>Added in ${cm}</small><b>${cur.a}</b><span class="${gcls(cur.g)}">${gtxt(cur.g)} vs ${pm}</span></div>
+      <div><small>Won in ${cm}</small><b>${cur.w}</b><span class="${gcls(cur.gw)}">${gtxt(cur.gw)} vs ${pm}</span></div>
+      <div><small>6-month total</small><b>${sumA} / ${sumW}</b><span>added / won</span></div></div>
+    <div class="mch"><div class="may">${[...Array(nt+1).keys()].reverse().map(i=>`<span>${i*step}</span>`).join("")}</div>
+      <div class="mpl"><div class="mgr">${[...Array(nt+1)].map(()=>"<i></i>").join("")}</div>
+        ${data.map((d,i)=>`<div class="mcol ${i===5?"now":""}"><div class="mbx">${bar(d,"all",d.a,"la","school"+(d.a===1?"":"s")+" added")}${bar(d,"won",d.w,"lw","deal"+(d.w===1?"":"s")+" won")}</div><div class="mlb">${esc(monChip(d.m).split(" ")[0])}</div></div>`).join("")}</div></div>
+    <div class="mtb"><div class="mth"><span>Month</span><span>Added</span><span>Won</span><span>Value added</span><span>Growth</span></div>
+      ${data.slice().reverse().map(d=>`<div class="mtr"><span>${esc(monLabel(d.m).replace(/ \d{4}$/,""))}</span><span>${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}</span><span>${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</span><span>${d.av?inrS(d.av):"—"}</span><span class="g ${gcls(d.g)}">${gtxt(d.g)}</span></div>`).join("")}</div></div>`;
 }
 function insRisk(ss){
   const now=Date.now(),open=ss.filter(OPEN_ST);
