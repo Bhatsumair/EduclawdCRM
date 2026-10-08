@@ -868,6 +868,36 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .ncard.kcard .npb{height:8px;background:color-mix(in srgb,var(--c) 12%,var(--soft))}
 .exr.kcard .exav{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,var(--card))}
 .exr.kcard .exa{padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--c) 10%,var(--card))}
+
+/* team performance report */
+.tpw{padding:14px}
+.tpsum{display:grid;gap:10px;margin-top:10px}
+.tpk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tpk>div{background:linear-gradient(135deg,color-mix(in srgb,var(--teal) 10%,var(--card)),color-mix(in srgb,var(--teal) 4%,var(--card)));border:1px solid color-mix(in srgb,var(--teal) 16%,var(--line));border-radius:12px;padding:8px 11px;min-width:0}
+.tpk small,.tpg small,.tpv small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}
+.tpk b{display:block;font-size:18px;font-weight:800;letter-spacing:-.3px;line-height:1.2}.tpk span{font-size:11px;color:var(--mute)}
+.tpb{border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card)}
+.tpbh{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--mute);margin-bottom:4px}
+.tpbi{display:flex;gap:9px;align-items:flex-start;padding:6px 0 6px 10px;border-left:3px solid var(--c);margin:5px 0;border-radius:2px}
+.tpbi span{flex:none;font-size:14px;line-height:1.4}.tpbi p{margin:0;font-size:13px;line-height:1.45}
+.tpl{display:grid;gap:10px;margin-top:12px}
+.tpm{padding:12px 12px 12px 16px;cursor:pointer}
+.tph{display:flex;align-items:center;gap:9px}
+.tpr{flex:none;font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--soft);color:var(--mute)}
+.tpr.r1{background:#fde68a;color:#78350f}.tpr.r2{background:#e5e7eb;color:#374151}.tpr.r3{background:#fed7aa;color:#7c2d12}
+.tph .fav{width:34px;height:34px;font-size:14px;flex:none}
+.tpn{flex:1;min-width:0}.tpn b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tpn small{display:block;font-size:11px;color:var(--mute)}
+.tpt{flex:none;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:99px;color:var(--t);background:color-mix(in srgb,var(--t) 14%,var(--card))}
+.tpv{display:flex;align-items:flex-end;gap:12px;margin-top:10px}
+.tpv b{display:block;font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.1}
+.tps{flex:1;min-width:0}.tps span{display:block;text-align:right;font-size:11px;font-weight:700;color:var(--mute)}.tps .npb{height:7px}
+.tpg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}
+.tpg>div{background:color-mix(in srgb,var(--card) 70%,transparent);border:1px solid color-mix(in srgb,var(--c) 14%,var(--line));border-radius:10px;padding:6px 8px;min-width:0}
+.tpg b{display:block;font-size:14px;font-weight:800;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tpg .numb{font-size:14px;padding:0 8px;min-height:0;line-height:1.5}
+.tpg .numz{font-size:14px}
+.tpg small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}@media(max-width:800px){.tpg{gap:5px}.tpg>div{padding:5px 6px}.tpg small{font-size:9.5px}.tpn small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media(min-width:801px){.tpsum{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}.tpl{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}}
 </style>
 </head>
 <body>
@@ -1221,18 +1251,48 @@ function insTeam(ss,ev,all,pl){
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const rows=keys.map(k=>{
     const mine=ev.filter(x=>x.u===k),c=kk=>mine.filter(x=>x.k===kk).length;
-    const my=ss.filter(s=>owner(s)===k),won=my.filter(s=>s.stage==="Won");
+    const my=ss.filter(s=>owner(s)===k),won=my.filter(s=>s.stage==="Won"),lost=my.filter(s=>s.stage==="Lost").length;
+    const wv=won.reduce((a,s)=>a+insVal(s),0);
     return{k,s:c("school_added"),a:c("activity")+c("note"),d:c("task_done"),
-      n:my.length,w:won.length,wv:won.reduce((a,s)=>a+insVal(s),0),pv:my.filter(OPEN_ST).reduce((a,s)=>a+insVal(s),0),
+      n:my.length,w:won.length,l:lost,wv,pv:my.filter(OPEN_ST).reduce((a,s)=>a+insVal(s),0),op:my.filter(OPEN_ST).length,
+      conv:my.length?Math.round(won.length*100/my.length):0,avg:won.length?wv/won.length:0,
       tot:mine.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).length,
       last:all.filter(x=>x.u===k).reduce((a,x)=>Math.max(a,x.t),0)}
   }).filter(r=>team.some(u=>u.id===r.k)||r.tot>0).sort((a,b)=>b.wv-a.wv||b.tot-a.tot);
+  if(!rows.length)return"";
+  const sum=f=>rows.reduce((a,r)=>a+r[f],0),tw=sum("wv"),tpv=sum("pv"),tW=sum("w"),tA=sum("a"),tD=sum("d"),tS=sum("s");
+  const best=(f)=>rows.slice().sort((a,b)=>f(b)-f(a))[0],nm=r=>esc(ulabel(r.k));
+  const top=rows[0],act=best(r=>r.a+r.d+r.s),pipe=best(r=>r.pv),idle=rows.filter(r=>!(r.a+r.d+r.s));
+  const pts=[];
+  if(top.wv)pts.push(["#16a34a","🏆",`<b>${nm(top)}</b> leads with <b>${inrS(top.wv)}</b> won from ${top.w} deal${top.w===1?"":"s"}${rows.length>1&&tw?` — ${Math.round(top.wv*100/tw)}% of the team`:""}.`]);
+  if(act&&act.a+act.d+act.s)pts.push(["#2563eb","⚡",`<b>${nm(act)}</b> is the most active: ${act.a} activit${act.a===1?"y":"ies"}, ${act.d} task${act.d===1?"":"s"} done, ${act.s} school${act.s===1?"":"s"} added.`]);
+  if(pipe&&pipe.pv)pts.push(["#0d7f7a","📈",`<b>${nm(pipe)}</b> holds the biggest open pipeline: <b>${inrS(pipe.pv)}</b> across ${pipe.op} deal${pipe.op===1?"":"s"}.`]);
+  if(idle.length)pts.push(["#dc2626","⚠️",`${idle.map(nm).join(", ")} ${idle.length===1?"has":"have"} no activity ${an.p==="all"?"yet":esc(pl)} — needs follow-up.`]);
+  if(!pts.length)pts.push(["#94a3b8","ℹ️","No team activity in this period yet."]);
+  const tag=r=>r===top&&r.wv?["Top performer","#16a34a"]:!(r.a+r.d+r.s)?["Needs attention","#dc2626"]:r===act?["Most active","#2563eb"]:["On track","#0d7f7a"];
   const mx=Math.max(1,...rows.map(q=>q.wv));
-  return `<div class="brk wide">
+  const card=(r,i)=>{const[tl,tc]=tag(r),c=mcol(r.k),sh=tw?Math.round(r.wv*100/tw):0,cl=r.w+r.l;
+    return `<div class="tpm kcard ${an.m===r.k?"on":""}" style="--c:${tc}" data-pick="${esc(r.k)}" title="Tap to filter everything below">
+    <div class="tph"><span class="tpr r${i+1}">#${i+1}</span><span class="fav" style="background:${c}">${esc(ulabel(r.k)[0].toUpperCase())}</span>
+      <div class="tpn"><b>${nm(r)}</b><small>${r.last?"Last active "+dt(r.last):"No activity yet"}</small></div><span class="tpt" style="--t:${tc}">${tl}</span></div>
+    <div class="tpv"><div><small>Won value</small><b>${r.wv?inrS(r.wv):"₹0"}</b></div><div class="tps"><span>${sh}% of team</span><div class="npb"><i style="width:${Math.round(r.wv*100/mx)}%;background:${tc}"></i></div></div></div>
+    <div class="tpg">
+      <div><small>Schools</small><b>${numCell(r.k,"all",r.n)}</b></div>
+      <div><small>Won</small><b>${numCell(r.k,"won",r.w)}</b></div>
+      <div><small>Conversion</small><b>${r.n?r.conv+"%":"—"}</b></div>
+      <div><small>Win rate</small><b>${cl>=WR_MIN?Math.round(r.w*100/cl)+"%":"—"}</b></div>
+      <div><small>Open value</small><b>${r.pv?inrS(r.pv):"—"}</b></div>
+      <div><small>Avg deal</small><b>${r.avg?inrS(r.avg):"—"}</b></div>
+      <div><small>Activity</small><b>${r.a}</b></div>
+      <div><small>Tasks done</small><b>${r.d}</b></div>
+    </div></div>`};
+  return `<div class="brk wide tpw">
     <div class="brkh"><div class="bh1">Team performance · ${pl}<small>tap a member to filter everything below</small></div></div>
-    <div style="overflow-x:auto;margin-top:8px"><table class="lb"><tr><th style="text-align:left">Member</th><th>Schools</th><th>Won</th><th>Won value</th><th>Open value</th><th>Activity</th><th>Done</th></tr>
-    ${rows.map(r=>`<tr data-pick="${esc(r.k)}" class="${an.m===r.k?"on":""}"><td><div class="mn"><span class="fav sm" style="background:${mcol(r.k)}">${esc(ulabel(r.k)[0].toUpperCase())}</span><div><b>${esc(ulabel(r.k))}</b>${r.last?`<small>${dt(r.last)}</small>`:""}</div></div></td>
-    <td>${numCell(r.k,"all",r.n)}</td><td>${numCell(r.k,"won",r.w)}</td><td><b>${r.wv?inrS(r.wv):"—"}</b><div class="tbar"><i style="width:${Math.round(r.wv*100/mx)}%"></i></div></td><td>${r.pv?inrS(r.pv):"—"}</td><td>${r.a}</td><td>${r.d}</td></tr>`).join("")}</table></div></div>`;
+    <div class="tpsum">
+      <div class="tpk"><div><small>Team won</small><b>${inrS(tw)}</b><span>${tW} deal${tW===1?"":"s"}</span></div><div><small>Open pipeline</small><b>${inrS(tpv)}</b><span>${rows.reduce((a,r)=>a+r.op,0)} deals</span></div><div><small>Activity</small><b>${tA}</b><span>${tD} tasks done</span></div><div><small>Schools added</small><b>${tS}</b><span>${rows.length} member${rows.length===1?"":"s"}</span></div></div>
+      <div class="tpb"><div class="tpbh">Summary</div>${pts.map(([c,ic,t])=>`<div class="tpbi" style="--c:${c}"><span>${ic}</span><p>${t}</p></div>`).join("")}</div>
+    </div>
+    <div class="tpl">${rows.map(card).join("")}</div></div>`;
 }
 function analyticsView(){
   const[from,to]=anRange(),every=allEvents(),df=(an.d||"all")!=="all";
