@@ -1465,18 +1465,21 @@ function contactsView(f){
   const rows=schools.flatMap(s=>(s.contacts||[]).map(p=>({p,s}))).filter(({p,s})=>[p.name,p.designation,p.phone,s.name].join(" ").toLowerCase().includes(f)).sort((a,b)=>(a.p.name||"").localeCompare(b.p.name||""));
   return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small><small>${esc(p.phone||"—")}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
 }
-let dtab="month";
+let dtab="month",dstg="all";
 function dealsView(f){
   const eom=new Date();eom.setMonth(eom.getMonth()+1,0);eom.setHours(23,59,59,999);
-  const all=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
+  const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
+  if(dstg!=="all"&&!STAGES.includes(dstg))dstg="all";
+  const all=dstg==="all"?every:every.filter(r=>(r.s.stage||"Lead")===dstg);
   const closed=r=>r.s.stage==="Won"||r.s.stage==="Lost";
   const open=all.filter(r=>!closed(r)),
     month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),cl=all.filter(closed);
   const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15);
   const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),closed:cl.sort((x,y)=>(y.sd||0)-(x.sd||0))};
-  const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>`;
+  const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>
+  <div class="tfl" style="margin-top:8px"><select data-dstg aria-label="Deal stage">${[["all","All stages ("+every.length+")"],...STAGES.map(g=>[g,g+" ("+every.filter(r=>(r.s.stage||"Lead")===g).length+")"])].map(([v,l])=>`<option value="${esc(v)}" ${dstg===v?"selected":""}>${esc(l)}</option>`).join("")}</select></div>`;
   const rows=sets[dtab].filter(r=>(r.s.name||"").toLowerCase().includes(f));
-  if(!rows.length)return seg+noMatch(f?"No deals match your search":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
+  if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
   const lab={month:"This month",upcoming:"Upcoming",closed:"Closed"}[dtab];
   return seg+`<div class="hero" style="margin:10px 0"><small>${lab} · total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="pill ${sc(s.stage)}">${esc(s.stage||"Lead")}</span></div><small>${s.deal.students} students × ${inr(s.deal.price)} per ${s.deal.basis==="year"?"year":"month"}</small><small>${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small><div class="dv">${inr(c.yt)} <small>/ yr incl. GST</small></div></div>`).join("");
@@ -2487,6 +2490,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Enter"&&$("#auth").classList
 document.addEventListener("change",e=>{if(e.target.dataset&&e.target.dataset.an){an[e.target.dataset.an]=e.target.value;an.lim=30;an.pg=1;render();return}
   const s=cur();if(s&&e.target.dataset&&e.target.dataset.act==="stage"){s.stage=e.target.value;log(s,"Update","Stage changed to "+s.stage);toast("🔄","Stage changed to "+s.stage);save(s)}});
 document.addEventListener("input",e=>{if(["f_strength","e_dp","e_db"].includes(e.target.id))editPrev();payInput(e)});
+document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&"dstg" in e.target.dataset){dstg=e.target.value;render();return}});
 document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.dataset.nsrt){nsrt=e.target.value;render();return}});
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
