@@ -827,6 +827,8 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .hero.dh::after{content:"";position:absolute;right:-26px;top:-34px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07);pointer-events:none}
 .hero.dh .dhl{min-width:0}.hero.dh small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.07em}.hero.dh .big{width:auto;padding:0;font-size:25px;line-height:1.15;margin:2px 0 0;white-space:nowrap}.hero.dh .big span{font-size:12.5px;margin-left:3px}
 .hero.dh .sub{flex:none;position:relative;z-index:1;padding:6px 13px;border-radius:99px;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.25);font-size:12.5px;font-weight:700;opacity:1;white-space:nowrap;margin:0}
+.pblk .hero{padding:10px 14px;border-radius:12px}.pblk .hero small{font-size:11px}.pblk .hero .big{font-size:22px;line-height:1.1;margin:0;padding:0;height:auto;min-height:0;width:auto;display:block;background:none;box-shadow:none;border:0;text-align:left;font-weight:800}.pblk .hero .sub{font-size:12px}.pblk .hero .pbar{margin:7px 0 0;height:5px}
+.inst{padding:6px 10px;gap:9px;margin-bottom:6px;border-radius:12px}.inum{width:26px;height:26px;border-radius:8px;font-size:13px}.ibody b{font-size:14.5px}.ibody small{font-size:11.5px;margin-top:0}.inst>button{padding:4px 10px;min-height:28px;font-size:12px}.inst>button.ed{display:inline-flex;gap:4px;align-items:center}
 .pblk{margin:0 0 6px}.pblk .hero{margin:4px 0 10px}.pblk+.pblk{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}.phl{font-size:12px;font-weight:700;color:var(--mute);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em}
 .ndt{margin:12px 0 4px}.nstat{display:flex;align-items:center;gap:10px;margin:12px 0 4px}.nstat small{color:var(--mute);font-size:12.5px}
 .sfld{display:block;position:relative;margin:0 0 10px;padding:7px 38px 7px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 1px 3px rgba(120,80,30,.08)}
@@ -1645,7 +1647,7 @@ function payDetail(p){
   <div class="hero"><small>Total payment</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   <h4>Installments</h4>${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
     return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Due ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
-    ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
+    <button class="${i.paidOn?"alt ib ed":""}" data-pay="${i.paidOn?"editpaid":"paid"}" data-i="${i.id}">${i.paidOn?sv(P.pencil,14)+" Edit":"Mark paid"}</button></div>`}).join("")}
   ${p.notes?`<h4>Notes</h4><div class="note">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<h4>History</h4>${p.log.slice(0,15).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
   <div class="row" style="margin-top:16px">${s?`<button class="alt" data-pschool="${s.id}">Open school</button>`:""}<button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div>`;
@@ -1653,7 +1655,7 @@ function payDetail(p){
 /* small summary on a school's Deal tab (admin only) */
 function payDealBlock(s){
   if(!isAdmin())return"";const ps=payments.filter(p=>p.schoolId===s.id);
-  if(!ps.length)return `<div class="pdeal"><button class="alt ib" data-pnew="${s.id}">${sv(P.wallet,16)} Create payment plan</button></div>`;
+  if(!ps.length)return"";
   return `<div class="pdeal"><div class="dl2">Payments</div>`+ps.map(p=>{const m=planSum(p);return `<div class="it pcard" data-psel="${p.id}" data-go="1"><div class="r"><b>${inr(fromP(m.paid))} <small style="display:inline;font-weight:500">of ${inr(p.total)}</small></b><span class="pill ${PST[m.status][1]}">${PST[m.status][0]}</span></div><div class="pbar"><i style="width:${m.pc}%"></i></div><small>${m.np}/${m.n} installments paid · tap to open</small></div>`}).join("")+`</div>`;
 }
 
@@ -1729,10 +1731,10 @@ function savePlan(){
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
-  modal(`<h3>Record payment</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">Installment ${k+1} of ${p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
-  <div class="grid">${fld("pp_amt","Amount received (₹)",i.amount,"number")}${fld("pp_date","Payment date",todayISO(),"date")}<div><label>Payment mode</label><select id="pp_mode">${opts(PAY_MODES)}</select></div>${fld("pp_ref","Reference / UTR / cheque no.")}</div>
+  modal(`<h3>${i.paidOn?"Edit payment":"Record payment"}</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">Installment ${k+1} of ${p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
+  <div class="grid">${fld("pp_amt","Amount received (₹)",i.paidOn?paidAmt(i):i.amount,"number")}${fld("pp_date","Payment date",i.paidOn||todayISO(),"date")}<div><label>Payment mode</label><select id="pp_mode">${optsSel(PAY_MODES,i.mode)}</select></div>${fld("pp_ref","Reference / UTR / cheque no.",i.ref||"")}</div>
   <div class="dst">If the amount differs from ${inr(i.amount)}, the remaining unpaid installments are re-balanced so the plan still adds up to ${inr(p.total)}.</div>
-  <div class="row" style="margin-top:12px"><button data-pay="savepaid" data-i="${i.id}">Save payment</button><button class="alt" data-m="close">Cancel</button></div>`)}
+  <div class="row" style="margin-top:12px"><button data-pay="savepaid" data-i="${i.id}">Save payment</button><button class="alt" data-m="close">Cancel</button>${i.paidOn?`<button class="ghost sp" style="color:var(--red)" data-pay="unpaid" data-i="${i.id}">Mark unpaid</button>`:""}</div>`)}
 function payAct(el){
   const a=el.dataset.pay;
   if(a==="save")return pf&&savePlan();
@@ -1744,13 +1746,14 @@ function payAct(el){
   if(a==="edit")return payForm(p);
   if(a==="del"){if(!armed(el,"Tap again to delete"))return;return removePay(p)}
   const i=(p.installments||[]).find(x=>x.id===el.dataset.i),k=p.installments.indexOf(i);if(!i)return;
-  if(a==="paid")return paidForm(p,i);
+  if(a==="paid"||a==="editpaid")return paidForm(p,i);
+  if(a==="unpaid"){delete i.paidOn;delete i.paidAmt;delete i.mode;delete i.ref;payLog(p,`Installment ${k+1} marked unpaid`);close();toast("↩️","Marked unpaid");return savePay(p)}
   if(a==="savepaid"){
     const amt=toP(val("pp_amt")),dt=val("pp_date");if(amt<=0)return err("Enter the amount received");if(!dt)return err("Pick the payment date");
-    const diff=amt!==toP(i.amount);Object.assign(i,{paidOn:dt,paidAmt:fromP(amt),amount:fromP(amt),mode:val("pp_mode"),ref:val("pp_ref")});
+    const wasPaid=!!i.paidOn,diff=amt!==toP(i.amount);Object.assign(i,{paidOn:dt,paidAmt:fromP(amt),amount:fromP(amt),mode:val("pp_mode"),ref:val("pp_ref")});
     const un=p.installments.filter(x=>!x.paidOn);
     if(diff&&un.length){const rest=Math.max(0,toP(p.total)-p.installments.filter(x=>x.paidOn).reduce((s,x)=>s+toP(paidAmt(x)),0)),sp=splitP(rest,un.length);un.forEach((x,j)=>x.amount=fromP(sp[j]))}
-    payLog(p,`Installment ${k+1} paid · ${inr(fromP(amt))}${i.mode?" via "+i.mode:""}`);close();
+    payLog(p,`Installment ${k+1} ${wasPaid?"payment edited":"paid"} · ${inr(fromP(amt))}${i.mode?" via "+i.mode:""}`);close();
     toast("✅",diff&&un.length?"Payment saved · remaining installments re-balanced":"Payment recorded");return savePay(p)}
 }
 
@@ -2225,7 +2228,7 @@ function planBlock(p){const m=planSum(p),ins=p.installments||[];
   return `<div class="pblk" data-plan="${p.id}"><div class="hero"><small>Total payment · ${m.n} installment${m.n===1?"":"s"} · ${esc(freqLabel(p.freq))} · ${PST[m.status][0]}</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   ${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
     return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Due ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
-    ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
+    <button class="${i.paidOn?"alt ib ed":""}" data-pay="${i.paidOn?"editpaid":"paid"}" data-i="${i.id}">${i.paidOn?sv(P.pencil,14)+" Edit":"Mark paid"}</button></div>`}).join("")}
   ${p.notes?`<div class="note" style="margin-top:8px">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<div class="phl">History</div>${p.log.slice(0,8).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
   <div class="row" style="margin:10px 0 0"><button class="alt ib" data-pay="edit">${sv(P.pencil,15)} Edit plan</button><button class="ghost sp" style="color:var(--red)" data-pay="del">Delete plan</button></div></div>`}
