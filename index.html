@@ -821,6 +821,8 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .stgr{display:flex;align-items:center;gap:12px;width:100%;min-height:0;padding:12px 14px;border-radius:12px;background:var(--card);color:var(--ink);border:1px solid var(--line);font-size:15px;font-weight:600;text-align:left}
 .stgr span{flex:1}.stgr em{color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--card))}
 .stgr.z{opacity:.5}.stgr.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,var(--card));opacity:1}
+.it.dc{padding:8px 12px;gap:2px;border-radius:12px}.it.dc .r{align-items:baseline;gap:10px}.it.dc .r b{font-size:14.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it.dc small{font-size:11.5px;line-height:1.3;color:var(--mute)}.dva{flex:none;font-weight:800;font-size:14.5px;color:var(--teal)}.dva{white-space:nowrap}.dva small{display:inline;font-size:10.5px;font-weight:600;margin-left:2px}
 </style>
 </head>
 <body>
@@ -1497,7 +1499,7 @@ function dealsView(f){
   if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
   const lab={month:"This month",upcoming:"Upcoming",closed:"Closed"}[dtab];
-  return seg+`<div class="hero" style="margin:10px 0"><small>${lab} · total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="pill ${sc(s.stage)}">${esc(s.stage||"Lead")}</span></div><small>${s.deal.students} students × ${inr(s.deal.price)} per ${s.deal.basis==="year"?"year":"month"}</small><small>${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small><div class="dv">${inr(c.yt)} <small>/ yr incl. GST</small></div></div>`).join("");
+  return seg+`<div class="hero" style="margin:10px 0"><small>${lab} · total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
 }
 
 /* Educlawd CRM · Navigation list and main render() */
