@@ -2148,7 +2148,6 @@ function expDraw(){
   const e=efd,inc=e.flow==="in",cs=catsFor(e.flow),nc=!cs.length||!e.catId;
   modal(`<h3>${efEdit?"Edit":"Record"} ${inc?"income":"expense"}</h3>
   <div class="seg2 fseg"><button type="button" class="${inc?"":"on"}" data-exf="out">▾ Expense</button><button type="button" class="${inc?"on":""}" data-exf="in">▴ Income</button></div>
-  ${inc?"":fld("ex_title","Title",e.title)}
   <label>${inc?"Income category":"Expense category"}</label><select id="ex_cat">${cs.map(c=>`<option value="${c.id}" ${c.id===e.catId?"selected":""}>${esc(c.name)}</option>`).join("")}<option value="__new" ${nc?"selected":""}>➕ Add new category…</option></select>
   <input id="ex_newcat" placeholder="New ${inc?"income":"expense"} category name" autocomplete="off" value="${esc(e.newcat||"")}" style="margin-top:6px;${nc?"":"display:none"}">
   <div class="grid">${fld("ex_paid",inc?"Received from":"Paid to",e.paidTo)}${fld("ex_amt","Amount (₹)",e.amount,"number")}${fld("ex_date",inc?"Received on":"Expense date",e.date||todayISO(),"date")}<div><label>${inc?"Received via":"Payment mode"}</label><select id="ex_mode">${optsSel(EXP_MODES,e.mode||"UPI")}</select></div>${fld("ex_ref",inc?"Receipt / reference no.":"Bill / reference no.",e.ref)}</div>
@@ -2160,8 +2159,6 @@ function expDraw(){
 }
 function saveExpense(id){
   const old=expenses.find(x=>x.id===id),fl=efd?efd.flow:"out",inc=fl==="in";
-  const tf=document.getElementById("ex_title"),ti=tf?tf.value.trim():"";
-  if(!inc&&!ti)return err("Enter a title for this expense");
   let cid=val("ex_cat");
   if(cid==="__new"){const n=val("ex_newcat");if(!n)return err("Enter the new category name");
     const ex=excats.find(c=>flowOf(c)===fl&&(c.name||"").toLowerCase()===n.toLowerCase());
@@ -2170,7 +2167,7 @@ function saveExpense(id){
   const pt=val("ex_paid");if(!pt)return err(inc?"Enter who this was received from":"Enter who this was paid to");
   const amt=toP(val("ex_amt"));if(amt<=0)return err("Enter an amount above ₹0");
   const dt=val("ex_date");if(!dt)return err(inc?"Pick the date it was received":"Pick the expense date");
-  const o={...(old||{id,_kind:"expense"}),_kind:"expense",flow:fl,catId:cid,catName:(catOf(cid)||{}).name||"",title:inc?"":ti,paidTo:pt,
+  const o={...(old||{id,_kind:"expense"}),_kind:"expense",flow:fl,catId:cid,catName:(catOf(cid)||{}).name||"",title:inc?"":((old&&old.title)||""),paidTo:pt,
     amount:fromP(amt),date:dt,mode:val("ex_mode"),ref:val("ex_ref"),notes:val("ex_notes"),
     created:(old&&old.created)||new Date().toISOString(),createdBy:(old&&old.createdBy)||(me?me.name:"")};
   delete o.newcat;efd=null;
