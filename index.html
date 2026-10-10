@@ -1098,7 +1098,8 @@ const API_URL="/api";
 const LOCAL=!API_URL&&(!SUPABASE_URL||!SUPABASE_ANON_KEY),LDB_KEY="educlawd_local_db_v1";
 const lerr=c=>{const e=new Error(MSG[c]||c);e.code=c;return e};
 function ldb(){let d=null;try{d=JSON.parse(localStorage.getItem(LDB_KEY)||"null")}catch(e){}
-  if(!d||!d.users){d={users:[{id:"u-admin",username:"educlawdcrm",name:"Educlawd Admin",role:"admin",active:true,pw:"admin123",created:new Date().toISOString(),createdBy:"setup"}],sessions:{},docs:[]};lsave(d)}return d}
+  if(d&&d.users){const j=JSON.stringify(d);if(j.includes('"Educlawd Admin"')){d=JSON.parse(j.split('"Educlawd Admin"').join('"Auqib Bhat"'));lsave(d)}}
+  if(!d||!d.users){d={users:[{id:"u-admin",username:"educlawdcrm",name:"Auqib Bhat",role:"admin",active:true,pw:"admin123",created:new Date().toISOString(),createdBy:"setup"}],sessions:{},docs:[]};lsave(d)}return d}
 const lsave=d=>{try{localStorage.setItem(LDB_KEY,JSON.stringify(d))}catch(e){}};
 const lpub=u=>({id:u.id,name:u.name,username:u.username,role:u.role,active:u.active,created:u.created,createdBy:u.createdBy});
 const lrand=()=>Array.from(crypto.getRandomValues(new Uint8Array(24)),x=>x.toString(16).padStart(2,"0")).join("");

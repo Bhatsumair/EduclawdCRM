@@ -47,4 +47,4 @@ CREATE TABLE IF NOT EXISTS crm_docs (
 --   node -e "console.log(require('bcryptjs').hashSync('YOUR_PASSWORD',10))"
 -- (install once with: npm i bcryptjs)
 -- INSERT INTO crm_users (id, username, name, role, active, password_hash, created_by)
--- VALUES ('u-admin', 'educlawdcrm', 'Educlawd Admin', 'admin', 1, 'PASTE_BCRYPT_HASH_HERE', 'setup');
+-- VALUES ('u-admin', 'educlawdcrm', 'Auqib Bhat', 'admin', 1, 'PASTE_BCRYPT_HASH_HERE', 'setup');
