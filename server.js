@@ -331,6 +331,22 @@ async function ensureSchema() {
   for (const st of stmts) await pool.query(st); // all are CREATE TABLE IF NOT EXISTS
 }
 
+/* one-time rename of the admin from the old default name, everywhere the name was stored */
+async function renameAdmin() {
+  const OLD = "Educlawd Admin", NEW = "Auqib Bhat";
+  try {
+    await pool.query("UPDATE crm_users SET name = ? WHERE role = 'admin' AND name = ?", [NEW, OLD]);
+    await pool.query("UPDATE crm_users SET created_by = ? WHERE created_by = ?", [NEW, OLD]);
+    const [r] = await pool.query(
+      "UPDATE crm_docs SET data = REPLACE(CAST(data AS CHAR), ?, ?) WHERE CAST(data AS CHAR) LIKE ?",
+      [JSON.stringify(OLD), JSON.stringify(NEW), "%" + OLD + "%"]
+    );
+    if (r && r.affectedRows) console.log("Renamed admin in " + r.affectedRows + " record(s).");
+  } catch (e) {
+    console.warn("Admin rename skipped: " + e.message);
+  }
+}
+
 async function ensureAdmin() {
   const [r] = await pool.query("SELECT id FROM crm_users WHERE role = 'admin' LIMIT 1");
   if (r.length) return;
@@ -342,7 +358,7 @@ async function ensureAdmin() {
   }
   const hash = await bcrypt.hash(pw, 10);
   await pool.query(
-    "INSERT INTO crm_users (id, username, name, role, active, password_hash, created_at, created_by) VALUES ('u-admin', ?, 'Educlawd Admin', 'admin', 1, ?, ?, 'setup')",
+    "INSERT INTO crm_users (id, username, name, role, active, password_hash, created_at, created_by) VALUES ('u-admin', ?, 'Auqib Bhat', 'admin', 1, ?, ?, 'setup')",
     [un, hash, new Date()]
   );
   console.log("Created admin user '" + un + "'. You can remove ADMIN_PASSWORD from Variables now.");
@@ -353,6 +369,7 @@ async function ensureAdmin() {
     try {
       await ensureSchema();
       await ensureAdmin();
+      await renameAdmin();
       break;
     } catch (e) {
       console.error("Database not ready (" + i + "/10): " + e.message);
