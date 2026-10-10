@@ -1810,7 +1810,25 @@ function render(){
   const s=cur();
   $("#detail").innerHTML=gtab==="profile"?(narrow?"":`<div class="pwide">${profileView()}</div>`):nw?(pp?payDetail(pp):ns?netDetail(ns):`<div class="empty">Select a school to see its contract and payments, or tap + to add a payment plan.</div>`):s?detail(s):`<div class="empty">Select a school or add a new one.</div>`;
   renderSide();
+  navGuard();
 }
+/* phone back button: from anywhere in the app it closes an open sheet/menu or returns to Home; on Home it leaves the app */
+let navArmed=false,navSkip=false;
+const onPhone=()=>matchMedia("(max-width:800px)").matches;
+const atHome=()=>gtab==="home"&&!sel&&!$("#modalRoot").innerHTML&&!$("#drawerRoot .dwr.open");
+function navGuard(){
+  if(!me||!onPhone())return;
+  if(!atHome()&&!navArmed){history.pushState({ecg:1},"");navArmed=true}
+  else if(atHome()&&navArmed){navArmed=false;navSkip=true;history.back()}
+}
+addEventListener("popstate",()=>{
+  if(navSkip){navSkip=false;return}
+  if(!navArmed||!me)return;
+  navArmed=false;
+  if($("#modalRoot").innerHTML){close();return navGuard()}
+  if($("#drawerRoot .dwr.open")){closeDrawer();return setTimeout(navGuard,260)}
+  gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
+});
 
 /* ---- Profile module ---- */
 function profileView(){
@@ -1838,11 +1856,11 @@ function openDrawer(){
   if(!me)return;
   const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length;
   $("#drawerRoot").innerHTML=`<div class="dwr"><div class="dsc" data-dclose="1"></div><aside class="dpn" role="dialog" aria-modal="true" aria-label="Modules"><div class="dph2"><div class="dbrand">Educ<span>lawd</span> <span class="crm">CRM</span></div><button class="dx" data-dclose="1" aria-label="Close menu"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="dus"><div class="av">${esc((me.name||"?")[0].toUpperCase())}</div><div><b>${esc(me.name||"")}</b><small>${isAdmin()?"Admin":"Sales"}</small></div></div><nav class="dnav">${gnList().map(([k,l])=>`<button class="${gtab===k?"on":""}" data-dm="${k}"><span class="di">${GI[k]}</span><span>${l}</span>${k==="tasks"&&ov?`<i class="bdg2">${ov>9?"9+":ov}</i>`:""}</button>`).join("")}</nav></aside></div>`;
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{const d=$("#drawerRoot .dwr");if(d)d.classList.add("open")}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const d=$("#drawerRoot .dwr");if(d)d.classList.add("open");navGuard()}));
 }
 function closeDrawer(){
   const d=$("#drawerRoot .dwr");if(!d)return;d.classList.remove("open");
-  setTimeout(()=>{const x=$("#drawerRoot");if(x&&!x.querySelector(".dwr.open"))x.innerHTML=""},240);
+  setTimeout(()=>{const x=$("#drawerRoot");if(x&&!x.querySelector(".dwr.open"))x.innerHTML="";navGuard()},240);
 }
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
 let navSig="";
@@ -2737,8 +2755,8 @@ function deal(s){
 }
 
 /* Educlawd CRM · Modal, form helpers, school / contact / task forms, date picker */
-const modal=(h,cls="")=>{$("#modalRoot").innerHTML=`<div class="modal ${cls}"><div class="card">${h}<div class="err" id="err"></div></div></div>`};
-const close=()=>{$("#modalRoot").innerHTML=""};
+const modal=(h,cls="")=>{$("#modalRoot").innerHTML=`<div class="modal ${cls}"><div class="card">${h}<div class="err" id="err"></div></div></div>`;navGuard()};
+const close=()=>{$("#modalRoot").innerHTML="";navGuard()};
 const err=m=>{const e=document.getElementById("err");if(e)e.textContent=m};
 const phoneNorm=v=>{let d=String(v||"").replace(/\D/g,"");if(d.length===12&&d.startsWith("91"))d=d.slice(2);else if(d.length===11&&d[0]==="0")d=d.slice(1);return d};
 const fld=(id,l,v="",t="text")=>`<div><label>${l}</label><input id="${id}" type="${t}" value="${esc(t==="tel"?phoneNorm(v):v)}"${t==="tel"?' inputmode="numeric" maxlength="10" pattern="[0-9]{10}" autocomplete="tel-national"':""}></div>`;
