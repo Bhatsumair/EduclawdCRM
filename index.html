@@ -1067,6 +1067,25 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .fk.fkm .fkn{font-size:24px;color:var(--c)}
 .fks{margin-top:2px;font-size:11px;color:var(--mute);font-weight:500}
 @media(min-width:801px){.fkg{grid-template-columns:repeat(3,minmax(0,1fr))}.fk.fkm{grid-column:auto}.fkn{font-size:22px}.fk.fkm .fkn{font-size:22px}}
+
+/* ---- web only: soft pastel theme (dim periwinkle → peach), phone keeps the teal look ---- */
+@media(min-width:801px){
+  body{background:#f3eee7}
+  header{background:linear-gradient(90deg,#c3cbe5 0%,#d7d1e4 45%,#eedccd 100%)!important;color:#2d3150;box-shadow:0 1px 0 rgba(45,49,80,.08)!important;border-bottom:0}
+  header b{color:#2d3150}header b span{color:#b7841a}
+  header b span.crm{color:#2d3150!important;opacity:.75!important;border-color:rgba(45,49,80,.35)!important;background:rgba(255,255,255,.35)!important}
+  header small#mode{background:rgba(255,255,255,.55)!important;border-color:rgba(45,49,80,.12)!important;color:#2d3150!important}
+  header .hbtn,header .meb{color:#2d3150}
+  #side{background:linear-gradient(180deg,#c3cbe5 0%,#d6cfe3 45%,#efdcce 100%);border-right:0;box-shadow:inset -1px 0 0 rgba(45,49,80,.06)}
+  #side .dnav button{color:#3a3f5e}
+  #side .dnav .di{color:#3a3f5e}
+  #side .dnav button:hover:not(.on) .di{background:rgba(255,255,255,.45)}
+  #side .dnav button.on{color:#22263f}
+  #side .dnav button.on .di{background:#fffdf9;color:#22263f;box-shadow:0 2px 10px rgba(45,49,80,.16)}
+  #side .sgl{color:#5b6080}
+  #side .sgl::before,#side .sgl::after{background:rgba(45,49,80,.15)}
+  #side .dnav .bdg2{border-color:#d6cfe3}
+}
 </style>
 </head>
 <body>
