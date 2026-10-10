@@ -1006,6 +1006,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mbf small{font-size:10px}.mbf b{font-size:15.5px;margin-top:1px}
 .mbsr>span{padding:7px 11px;font-size:11px}.mbsr b{font-size:13px}
 .cba .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
+.csend.cpay{background:color-mix(in srgb,#2563eb 8%,var(--card));border-color:color-mix(in srgb,#2563eb 22%,var(--line))}.csend .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
 </style>
 </head>
 <body>
@@ -1184,7 +1185,7 @@ async function syncNow(first){
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
       if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
-      mergeClaims(docs.filter(isClaimDoc));migrateClaims();cacheClm();changed=true}
+      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
     if(!dirty.size)setMode("");
@@ -2305,8 +2306,6 @@ function mergeClaims(docs){
   clmGone.forEach(id=>{if(!ids.has(id))clmGone.delete(id)});
   claims=out;
 }
-/* the admin's own expenses used to stop at "approved"; they are paid by definition, so move them to "paid" once */
-function migrateClaims(){if(!isAdmin()||!me)return;claims.forEach(c=>{if(c.byId===me.id&&clmSt(c)==="approved"){Object.assign(c,{status:"paid",paidOn:c.paidOn||c.date,payBatch:c.payBatch||("own_"+me.id+"_"+c.date),updated:new Date().toISOString()});push(c)}})}
 function saveClaim(c){c.updated=new Date().toISOString();const i=claims.findIndex(x=>x.id===c.id);i<0?claims.push(c):claims[i]=c;cacheClm();render();push(c)}
 function removeClaim(c){claims=claims.filter(x=>x.id!==c.id);clmGone.add(c.id);cacheClm();render();if(dbc)dbc.doc(c.id).delete().catch(()=>{})}
 /* approved claims feed the admin's Finance module */
@@ -2337,7 +2336,9 @@ function clmMyView(f){
   if(!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No expenses yet.<br><small>Tap the yellow + button to record one, then send the month for approval</small>");
   if(!list.length)return kpi+strip+noMatch("Nothing for these filters");
   const g=new Map();list.forEach(c=>{const k=monKey(c.date)||"0000-00";(g.get(k)||g.set(k,[]).get(k)).push(c)});
-  return kpi+strip+[...g.keys()].sort().reverse().map(k=>{
+  const ownPay=isAdmin()?cnt("approved"):[];
+  const payBar=ownPay.length?`<div class="csend cpay"><div><b>${ownPay.length} expense${ownPay.length===1?"":"s"} approved</b><small>${inr(clmSum(ownPay))} waiting to be paid</small></div><button class="paybtn" data-clm="pay" data-id="own">${sv(P.wallet,15)} Mark all paid</button></div>`:"";
+  return kpi+payBar+strip+[...g.keys()].sort().reverse().map(k=>{
     const rows=g.get(k),dr=isAdmin()?[]:rows.filter(c=>clmSt(c)==="draft"||clmSt(c)==="rejected");
     return `<div class="exh"><div><b>${esc(monLabel(k))}</b> <small>· ${rows.length} expense${rows.length===1?"":"s"}</small></div><div class="tot">${inr(clmSum(rows))}</div></div>
     ${dr.length?`<div class="csend"><div><b>${dr.length} expense${dr.length===1?"":"s"} not sent</b><small>${inr(clmSum(dr))} waiting to go for approval</small></div><button data-clm="send" data-id="${k}">Send for approval</button></div>`:""}
@@ -2395,12 +2396,12 @@ function clmSave(id){
   if(old&&!isAdmin()&&["sent","approved","paid"].includes(clmSt(old)))return err("This one has already been sent");
   const adm=isAdmin();
   const c={...(old||{id,_kind:"claim"}),_kind:"claim",cat,amount:fromP(amt),date:dt,note,
-    status:adm?"paid":(old&&clmSt(old)==="rejected"?"draft":(old?clmSt(old):"draft")),
+    status:adm?(old&&clmSt(old)==="paid"?"paid":"approved"):(old&&clmSt(old)==="rejected"?"draft":(old?clmSt(old):"draft")),
     by:me?me.name:"",byId:me?me.id:"",created:(old&&old.created)||new Date().toISOString()};
-  if(adm){c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";c.paidOn=dt;c.payBatch=c.payBatch||("own_"+(me?me.id:"")+"_"+dt)}
+  if(adm){c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:""}
   if(old&&clmSt(old)==="rejected")delete c.remark;
   if(adm)clmV="mine";
-  close();toast("🧾",old?"Expense updated":adm?"Expense added to Finance · "+inr(c.amount):"Expense added · "+inr(c.amount));saveClaim(c);
+  close();toast("🧾",old?"Expense updated":adm?"Expense approved · mark it paid to add to Finance":"Expense added · "+inr(c.amount));saveClaim(c);
 }
 function clmAct(el){
   const a=el.dataset.clm,id=el.dataset.id;
@@ -2424,7 +2425,7 @@ function clmAct(el){
     return toast("✅",rows.length+" expense"+(rows.length===1?"":"s")+" approved · mark them paid to add to Finance")}
   if(a==="pay"||a==="paysave"){
     if(!isAdmin())return;
-    const[u,mk]=String(id).split("|"),rows=claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
+    const[u,mk]=String(id).split("|"),rows=id==="own"?clmMine().filter(c=>clmSt(c)==="approved"):claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
     if(!rows.length)return;
     if(a==="pay")return clmPayForm(id,rows);
     const dt=val("cp_date");if(!dt)return err("Pick the payment date");
