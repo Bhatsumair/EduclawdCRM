@@ -2593,7 +2593,7 @@ function networkView(f){
   const PL={over:["Overdue","ps-over"],pend:["Pending","ps-pend"],done:["Fully Paid","ps-paid"],none:["No Plan","s-Lead"]};
   const td=todayISO();
   return kpi+seg+bar+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
-    return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:#0d7f7a" data-nsel="${s.id}">
+    return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${{over:"#dc2626",pend:"#0d7f7a",done:"#16a34a",none:"#94a3b8"}[st]}" data-nsel="${s.id}">
     <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
