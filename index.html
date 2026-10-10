@@ -1032,6 +1032,18 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .m2t{height:7px;border-radius:99px;background:var(--soft);overflow:hidden}.m2t i{display:block;height:100%;border-radius:99px}
 .m2r.i .m2t i{background:linear-gradient(90deg,#4ade80,#16a34a)}.m2r.o .m2t i{background:linear-gradient(90deg,#f87171,#dc2626)}
 .m2r b{font-size:12px;font-weight:800;white-space:nowrap;min-width:64px;text-align:right}.m2r.i b{color:#15803d}.m2r.o b{color:#b91c1c}
+
+.mbbar.v3{display:grid;gap:8px;height:auto;background:none;border-radius:0;overflow:visible;margin:12px 0 14px}
+.mbbar.v3>div{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center}
+.mbbar.v3 em{font-style:normal;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:10px;color:#fff}
+.mbbar.v3 .i em{background:linear-gradient(140deg,#4ade80,#16a34a)}.mbbar.v3 .o em{background:linear-gradient(140deg,#f87171,#dc2626)}
+.mbbar.v3 span{display:block;height:12px;border-radius:99px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+.mbbar.v3 .i span{background:color-mix(in srgb,#16a34a 10%,var(--soft))}.mbbar.v3 .o span{background:color-mix(in srgb,#dc2626 9%,var(--soft))}
+.mbbar.v3 span i{display:block;height:100%;border-radius:99px;min-width:4px;position:relative;transition:width .4s}
+.mbbar.v3 .i span i{background:linear-gradient(90deg,#86efac,#22c55e 55%,#15803d);box-shadow:0 2px 6px -2px rgba(22,163,74,.6)}
+.mbbar.v3 .o span i{background:linear-gradient(90deg,#fca5a5,#ef4444 55%,#b91c1c);box-shadow:0 2px 6px -2px rgba(220,38,38,.6)}
+.mbbar.v3 span i::after{content:"";position:absolute;inset:2px 6px auto 6px;height:3px;border-radius:99px;background:rgba(255,255,255,.35)}
+.mbbar.v3 b{font-size:12.5px;font-weight:800;min-width:58px;text-align:right;white-space:nowrap}.mbbar.v3 .i b{color:#15803d}.mbbar.v3 .o b{color:#b91c1c}
 </style>
 </head>
 <body>
@@ -2114,7 +2126,7 @@ function expensesView(f){
   const sumbar=`<div class="mbal">
     <div class="mbh"><div class="mbt">${exm==="all"?"All months":esc(monLabel(exm))}</div>
       <div class="mbn ${net<0?"dn":"up"}"><small>${net<0?"Net shortfall":"Net in hand"}</small><b>${inrSign(fromP(net))}</b></div></div>
-    <div class="mbbar v2">${(()=>{const mx=Math.max(mIn,mOut,1);return `<span class="i"><i style="width:${mIn?Math.round(mIn*100/mx):0}%"></i></span><span class="o"><i style="width:${mOut?Math.round(mOut*100/mx):0}%"></i></span>`})()}</div>
+    <div class="mbbar v3">${(()=>{const mx=Math.max(mIn,mOut,1),w=v=>v?Math.max(2,Math.round(v*100/mx)):0;return `<div class="i"><em>▲</em><span><i style="width:${w(mIn)}%"></i></span><b>${inrSS(fromP(mIn))}</b></div><div class="o"><em>▼</em><span><i style="width:${w(mOut)}%"></i></span><b>${inrSS(fromP(mOut))}</b></div>`})()}</div>
     <div class="mbf"><div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div>
       <div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div></div>
     ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b><i class="srb"><i style="width:${Math.max(0,Math.min(100,sr))}%"></i></i></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
