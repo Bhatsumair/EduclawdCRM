@@ -1005,6 +1005,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mbf .ic{width:26px;height:26px;border-radius:8px;font-size:11px}
 .mbf small{font-size:10px}.mbf b{font-size:15.5px;margin-top:1px}
 .mbsr>span{padding:7px 11px;font-size:11px}.mbsr b{font-size:13px}
+.cba .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
 </style>
 </head>
 <body>
@@ -1183,7 +1184,7 @@ async function syncNow(first){
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
       if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
-      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true}
+      mergeClaims(docs.filter(isClaimDoc));migrateClaims();cacheClm();changed=true}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
     if(!dirty.size)setMode("");
@@ -2130,8 +2131,8 @@ function expTx(list,ilist,coll,f){
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg in">Educlawd</span>${esc(["Installment "+e.k+" of "+e.n,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa in"><i>▴</i> ${inr(e.amount)}</div></div>`;
     const c=catLabel(e),i=e._t==="i";
-    if(e._cl)return `<div class="exr kcard" style="--c:#dc2626"><div class="exav" style="background:${CLM_COL[c]||mcol(c)}">${esc(c[0].toUpperCase())}</div>
-      <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg">${esc(c)}</span>${esc("Approved claim · "+e.paidTo)}</small></div>
+    if(e._cl)return `<div class="exr kcard" style="--c:#dc2626" data-gclm="1" title="Open these claims in Expenses"><div class="exav" style="background:#b45309">🧾</div>
+      <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg">${e.n} claim${e.n===1?"":"s"}</span>${esc([e.paidTo,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa"><i>▾</i> ${inr(e.amount)}</div></div>`;
     return `<div class="exr kcard" style="--c:${i?"#16a34a":"#dc2626"}" data-ex="edit" data-id="${e.id}" title="Tap to edit">
       <div class="exav${i?" in":""}"${i?"":` style="background:${mcol(e.catId||c)}"`}>${esc(c[0].toUpperCase())}</div>
@@ -2284,7 +2285,7 @@ function exAct(el){
 const CLM_CATS=["Travel","Food","Stay","Other"];
 const CLM_ICON={Travel:"🚗",Food:"🍽️",Stay:"🏨",Other:"🧾"};
 const CLM_COL={Travel:"#2563eb",Food:"#ea580c",Stay:"#7c3aed",Other:"#64748b"};
-const CST={draft:["Not sent","s-Lead"],sent:["Awaiting approval","s-Proposal"],approved:["Approved","s-Won"],rejected:["Rejected","s-Lost"]};
+const CST={draft:["Not sent","s-Lead"],sent:["Awaiting approval","s-Proposal"],approved:["Approved","s-Proposal"],paid:["Paid","s-Won"],rejected:["Rejected","s-Lost"]};
 GI.claims=sv(P.claim='<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/>',22);
 let claims=[],clmM="all",clmT="sent",clmV="appr";
 const clmGone=new Set();
@@ -2304,12 +2305,16 @@ function mergeClaims(docs){
   clmGone.forEach(id=>{if(!ids.has(id))clmGone.delete(id)});
   claims=out;
 }
+/* the admin's own expenses used to stop at "approved"; they are paid by definition, so move them to "paid" once */
+function migrateClaims(){if(!isAdmin()||!me)return;claims.forEach(c=>{if(c.byId===me.id&&clmSt(c)==="approved"){Object.assign(c,{status:"paid",paidOn:c.paidOn||c.date,payBatch:c.payBatch||("own_"+me.id+"_"+c.date),updated:new Date().toISOString()});push(c)}})}
 function saveClaim(c){c.updated=new Date().toISOString();const i=claims.findIndex(x=>x.id===c.id);i<0?claims.push(c):claims[i]=c;cacheClm();render();push(c)}
 function removeClaim(c){claims=claims.filter(x=>x.id!==c.id);clmGone.add(c.id);cacheClm();render();if(dbc)dbc.doc(c.id).delete().catch(()=>{})}
 /* approved claims feed the admin's Finance module */
-const claimExp=()=>claims.filter(c=>clmSt(c)==="approved").map(c=>({
-  id:c.id,flow:"out",date:c.date,title:c.note||(c.cat+" expense"),paidTo:clmWho(c),
-  catId:"",catName:c.cat,sumName:clmWho(c),mode:"",ref:"",amount:c.amount,_cl:true}));
+/* paid claims reach Finance as ONE "Expense Claims" transaction per payment (all claims paid together) */
+const claimExp=()=>{const g=new Map();claims.filter(c=>clmSt(c)==="paid").forEach(c=>{const k=c.payBatch||((c.paidOn||c.date)+"|"+(c.byId||""));(g.get(k)||g.set(k,[]).get(k)).push(c)});
+  return[...g.entries()].map(([k,rs])=>{const who=[...new Set(rs.map(clmWho))];return{
+    id:"clmpay_"+k,flow:"out",date:rs[0].paidOn||rs[0].date,title:"Expense Claims",paidTo:who.join(", "),n:rs.length,
+    catId:"",catName:"Expense Claims",sumName:"Expense Claims",mode:rs[0].payMode||"",ref:rs[0].payRef||"",amount:clmSum(rs),_cl:true}})};
 
 /* ---- the member's own expenses ---- */
 function claimsView(f){
@@ -2325,8 +2330,8 @@ function clmMyView(f){
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
   const kpi=`<div class="kgrid lbl">${kc("#0d7f7a",P.claim,inrS(clmSum(mine)),"Total claimed",mine.length+" expense"+(mine.length===1?"":"s"))}
   ${kc("#d97706",P.cal,inrS(clmSum(cnt("sent"))),"Awaiting approval",cnt("sent").length+" sent")}
-  ${kc("#16a34a",P.check,inrS(clmSum(cnt("approved"))),"Approved",cnt("approved").length+" expense"+(cnt("approved").length===1?"":"s"))}
-  ${kc("#dc2626",P.alert,inrS(clmSum(cnt("rejected"))),"Rejected",cnt("rejected").length?"edit and send again":"nothing rejected")}</div>`;
+  ${kc("#2563eb",P.check,inrS(clmSum(cnt("approved"))),"Approved",cnt("approved").length?cnt("approved").length+" waiting for payment":"nothing waiting")}
+  ${kc("#16a34a",P.wallet,inrS(clmSum(cnt("paid"))),"Paid",cnt("paid").length+" expense"+(cnt("paid").length===1?"":"s")+" paid")}</div>`;
   const strip=`<div class="mstrip">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>`<button class="${clmM===k?"on":""}" data-cm="${k}">${esc(l)}</button>`).join("")}</div>`;
   const list=mine.filter(c=>(clmM==="all"||monKey(c.date)===clmM)&&(!f||((c.note||"")+" "+c.cat).toLowerCase().includes(f)));
   if(!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No expenses yet.<br><small>Tap the yellow + button to record one, then send the month for approval</small>");
@@ -2352,20 +2357,21 @@ function clmAdminView(f){
   const cnt=s=>all.filter(c=>clmSt(c)===s);
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
   const kpi=`<div class="kgrid lbl">${kc("#d97706",P.claim,inrS(clmSum(cnt("sent"))),"To approve",cnt("sent").length+" expense"+(cnt("sent").length===1?"":"s"))}
-  ${kc("#16a34a",P.check,inrS(clmSum(cnt("approved"))),"Approved","in Finance as expenses")}
-  ${kc("#dc2626",P.alert,inrS(clmSum(cnt("rejected"))),"Rejected",cnt("rejected").length+" sent back")}
-  ${kc("#0d7f7a",P.users,String(new Set(all.map(c=>c.byId)).size),"Team members","have claimed")}</div>`;
-  const seg=`<div class="seg2 pseg">${[["sent","To approve"],["approved","Approved"],["rejected","Rejected"],["all","All"]].map(([k,l])=>`<button class="${clmT===k?"on":""}" data-ct="${k}">${l} (${k==="all"?all.length:cnt(k).length})</button>`).join("")}</div>`;
+  ${kc("#2563eb",P.check,inrS(clmSum(cnt("approved"))),"To pay",cnt("approved").length+" approved, not paid")}
+  ${kc("#16a34a",P.wallet,inrS(clmSum(cnt("paid"))),"Paid","in Finance as Expense Claims")}
+  ${kc("#dc2626",P.alert,inrS(clmSum(cnt("rejected"))),"Rejected",cnt("rejected").length+" sent back")}</div>`;
+  const seg=`<div class="seg2 pseg">${[["sent","To approve"],["approved","To pay"],["paid","Paid"],["rejected","Rejected"],["all","All"]].map(([k,l])=>`<button class="${clmT===k?"on":""}" data-ct="${k}">${l} (${k==="all"?all.length:cnt(k).length})</button>`).join("")}</div>`;
   const list=all.filter(c=>(clmT==="all"||clmSt(c)===clmT)&&(!f||((c.note||"")+" "+c.cat+" "+clmWho(c)).toLowerCase().includes(f)));
   if(!all.length)return kpi+noMatch("<div style='font-size:34px'>📨</div>Nothing has been sent for approval yet.");
   if(!list.length)return kpi+seg+noMatch("Nothing here");
   const g=new Map();list.forEach(c=>{const k=(c.byId||"none")+"|"+(monKey(c.date)||"0000-00");(g.get(k)||g.set(k,[]).get(k)).push(c)});
   return kpi+seg+[...g.keys()].sort((a,b)=>b.split("|")[1].localeCompare(a.split("|")[1])).map(k=>{
-    const rows=g.get(k),[uid_,mk]=k.split("|"),pend=rows.filter(c=>clmSt(c)==="sent");
+    const rows=g.get(k),[uid_,mk]=k.split("|"),pend=rows.filter(c=>clmSt(c)==="sent"),topay=rows.filter(c=>clmSt(c)==="approved");
     return `<div class="cbatch"><div class="cbh"><div class="mn"><span class="fav sm" style="background:${mcol(uid_)}">${esc(clmWho(rows[0])[0].toUpperCase())}</span>
       <div><b>${esc(clmWho(rows[0]))}</b><small>${esc(monLabel(mk))} · ${rows.length} expense${rows.length===1?"":"s"}</small></div></div>
       <div class="cbt">${inr(clmSum(rows))}</div></div>
       ${pend.length?`<div class="cba"><button data-clm="ok" data-id="${k}">Approve ${pend.length===rows.length?"all":pend.length}</button><button class="alt" data-clm="no" data-id="${k}">Reject</button></div>`:""}
+      ${topay.length?`<div class="cba"><button class="paybtn" data-clm="pay" data-id="${k}">${sv(P.wallet,15)} Mark ${topay.length===rows.length?"all":topay.length} paid · ${inr(clmSum(topay))}</button></div>`:""}
       ${rows.map(c=>clmRow(c,false)).join("")}</div>`}).join("");
 }
 /* ---- record / edit ---- */
@@ -2386,12 +2392,12 @@ function clmSave(id){
   const amt=toP(val("cf_amt"));if(amt<=0)return err("Enter an amount above ₹0");
   const dt=val("cf_date");if(!dt)return err("Pick the date");
   const note=val("cf_note");
-  if(old&&!isAdmin()&&(clmSt(old)==="sent"||clmSt(old)==="approved"))return err("This one has already been sent");
+  if(old&&!isAdmin()&&["sent","approved","paid"].includes(clmSt(old)))return err("This one has already been sent");
   const adm=isAdmin();
   const c={...(old||{id,_kind:"claim"}),_kind:"claim",cat,amount:fromP(amt),date:dt,note,
-    status:adm?"approved":(old&&clmSt(old)==="rejected"?"draft":(old?clmSt(old):"draft")),
+    status:adm?"paid":(old&&clmSt(old)==="rejected"?"draft":(old?clmSt(old):"draft")),
     by:me?me.name:"",byId:me?me.id:"",created:(old&&old.created)||new Date().toISOString()};
-  if(adm){c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:""}
+  if(adm){c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";c.paidOn=dt;c.payBatch=c.payBatch||("own_"+(me?me.id:"")+"_"+dt)}
   if(old&&clmSt(old)==="rejected")delete c.remark;
   if(adm)clmV="mine";
   close();toast("🧾",old?"Expense updated":adm?"Expense added to Finance · "+inr(c.amount):"Expense added · "+inr(c.amount));saveClaim(c);
@@ -2402,7 +2408,7 @@ function clmAct(el){
   if(a==="edit"){const c=claims.find(x=>x.id===id);return c&&clmForm(c)}
   if(a==="save")return clmSave(id);
   if(a==="del"){if(!armed(el,"Tap again to delete"))return;const c=claims.find(x=>x.id===id);if(!c)return;
-    if(!(isAdmin()&&c.byId===me.id)&&(clmSt(c)==="sent"||clmSt(c)==="approved"))return err("This one has already been sent");
+    if(!(isAdmin()&&c.byId===me.id)&&["sent","approved","paid"].includes(clmSt(c)))return err("This one has already been sent");
     close();toast("🗑️","Expense deleted");return removeClaim(c)}
   if(a==="send"){const rows=clmMine().filter(c=>monKey(c.date)===id&&(clmSt(c)==="draft"||clmSt(c)==="rejected"));
     if(!rows.length)return;if(!armed(el,"Tap again to send"))return;
@@ -2415,12 +2421,27 @@ function clmAct(el){
     if(a==="no")return clmReject(id,rows.length);
     if(!armed(el,"Tap again to approve"))return;
     rows.forEach(c=>{c.status="approved";c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";delete c.remark;saveClaim(c)});
-    return toast("✅",rows.length+" expense"+(rows.length===1?"":"s")+" approved · added to Finance")}
+    return toast("✅",rows.length+" expense"+(rows.length===1?"":"s")+" approved · mark them paid to add to Finance")}
+  if(a==="pay"||a==="paysave"){
+    if(!isAdmin())return;
+    const[u,mk]=String(id).split("|"),rows=claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
+    if(!rows.length)return;
+    if(a==="pay")return clmPayForm(id,rows);
+    const dt=val("cp_date");if(!dt)return err("Pick the payment date");
+    const b="pb_"+uid(),mode=val("cp_mode"),ref=val("cp_ref");
+    rows.forEach(c=>{Object.assign(c,{status:"paid",paidOn:dt,payMode:mode,payRef:ref,payBatch:b,paidBy:me?me.name:""});saveClaim(c)});
+    close();return toast("💸",rows.length+" expense"+(rows.length===1?"":"s")+" paid · "+inr(clmSum(rows))+" added to Finance")}
   if(a==="rejsave"){
     const[u,mk]=String(id).split("|"),rows=claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="sent");
     const r=val("cf_rem");if(!r)return err("Add a short reason");
     rows.forEach(c=>{c.status="rejected";c.remark=r;c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";saveClaim(c)});
     close();return toast("↩️",rows.length+" expense"+(rows.length===1?"":"s")+" sent back")}
+}
+function clmPayForm(id,rows){
+  modal(`<h3>Pay ${rows.length} expense${rows.length===1?"":"s"}</h3>
+  <p style="margin:0 0 6px"><b>${esc(clmWho(rows[0]))}</b> · <b>${inr(clmSum(rows))}</b><br><small style="color:var(--mute)">Goes to Finance as one “Expense Claims” transaction</small></p>
+  <div class="grid">${fld("cp_date","Payment date",todayISO(),"date")}<div><label>Payment mode</label><select id="cp_mode">${optsSel(EXP_MODES,"UPI")}</select></div>${fld("cp_ref","Reference / UTR (optional)")}</div>
+  <div class="row" style="margin-top:12px"><button data-clm="paysave" data-id="${esc(id)}">Mark paid</button><button class="alt" data-m="close">Cancel</button></div>`);
 }
 function clmReject(id,n){
   modal(`<h3>Reject ${n} expense${n===1?"":"s"}</h3>
@@ -2713,6 +2734,7 @@ function onClick(e){
   if(g("data-export"))return doExport();
   if(el=g("data-pay"))return payAct(el);
   if(el=g("data-net"))return netAct(el);
+  if(el=g("data-gclm")){gtab="claims";clmV="appr";clmT="paid";filter="";$("#q").value="";return render()}
   if(el=g("data-clm"))return clmAct(el);
   if(el=g("data-cm")){clmM=el.dataset.cm;return render()}
   if(el=g("data-ct")){clmT=el.dataset.ct;return render()}
