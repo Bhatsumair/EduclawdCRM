@@ -1057,16 +1057,16 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 
 /* finance summary cards */
 .fkg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
-.fk{position:relative;min-width:0;padding:12px 14px;border-radius:16px;background:var(--card);border:1px solid color-mix(in srgb,var(--c) 16%,var(--line));box-shadow:0 1px 2px rgba(16,24,40,.04)}
-.fk.big{grid-column:1/-1;padding:14px 16px;background:linear-gradient(120deg,color-mix(in srgb,var(--c) 10%,var(--card)),var(--card) 70%)}
+.fk{position:relative;min-width:0;margin:0;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 9%,var(--card)),color-mix(in srgb,var(--c) 4%,var(--card)));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line));box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;justify-content:flex-start}
+.fk.fkm{grid-column:1/-1}
 .fkh{display:flex;align-items:center;gap:8px}
-.fki{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--card))}
+.fki{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 16%,var(--card))}
 .fki svg{width:16px;height:16px}
 .fkl{font-size:12px;font-weight:600;color:var(--mute)}
 .fkn{margin-top:8px;font-size:20px;font-weight:800;letter-spacing:-.4px;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fk.big .fkn{font-size:26px;color:var(--c)}
+.fk.fkm .fkn{font-size:24px;color:var(--c)}
 .fks{margin-top:2px;font-size:11px;color:var(--mute);font-weight:500}
-@media(min-width:801px){.fkg{grid-template-columns:1.3fr 1fr 1fr}.fk.big{grid-column:auto}.fkn{font-size:22px}.fk.big .fkn{font-size:24px}}
+@media(min-width:801px){.fkg{grid-template-columns:repeat(3,minmax(0,1fr))}.fk.fkm{grid-column:auto}.fkn{font-size:22px}.fk.fkm .fkn{font-size:22px}}
 </style>
 </head>
 <body>
@@ -2133,9 +2133,9 @@ function expensesView(f){
   const months=[...new Set([...all.map(e=>monKey(e.date)),...mine.map(e=>monKey(e.date)),...payMonths()].filter(Boolean))].sort().reverse();
   const tot=sumP(all),incT=incomeTot("all"),netT=incT-tot,np=incList().length+mine.length;
   const kc=(c,ic,n,l,cls)=>`<div class="kc money" style="--c:${c}" title="${esc(inrSign(n))}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn ${cls||""}">${inrSS(n)}</div></div>`;
-  const fk=(c,ic,n,l,sub,cls)=>`<div class="fk ${cls||""}" style="--c:${c}"><div class="fkh"><span class="fki">${sv(ic,17)}</span><span class="fkl">${l}</span></div><div class="fkn">${inrSign(n)}</div><div class="fks">${sub}</div></div>`;
+  const fk=(c,ic,n,l,sub,cls)=>`<div class="fk ${cls||""}" style="--c:${c}"><div class="fkh"><span class="fki">${sv(ic,17)}</span><span class="fkl">${l}</span></div><div class="fkn">${inrSign(n)}</div>${sub?`<div class="fks">${sub}</div>`:""}</div>`;
   const kIn=incList().length+mine.length,kOut=all.length;
-  const kpi=`<div class="fkg">${fk(netT<0?"#e11d48":"#0d9488",P.wallet,fromP(netT),"Net worth","Income − Expense","big "+(netT<0?"neg":"pos"))}${fk("#16a34a",P.check,fromP(incT),"Income",kIn+" transaction"+(kIn===1?"":"s"))}${fk("#e11d48",P.receipt,fromP(tot),"Expense",kOut+" transaction"+(kOut===1?"":"s"))}</div>`;
+  const kpi=`<div class="fkg">${fk(netT<0?"#e11d48":"#0d9488",P.wallet,fromP(netT),"Net Worth","","fkm "+(netT<0?"neg":"pos"))}${fk("#16a34a",P.check,fromP(incT),"Income",kIn+" transaction"+(kIn===1?"":"s"))}${fk("#e11d48",P.receipt,fromP(tot),"Expense",kOut+" transaction"+(kOut===1?"":"s"))}</div>`;
   const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>{const[a,b]=String(l).split(" ");return `<button class="${exm===k?"on":""}" data-em="${k}"><b>${esc(a)}</b>${b?`<small>${esc(b)}</small>`:""}</button>`}).join("")}</div>`;
   const seg=`<div class="seg2 pseg">${[["tx","Transactions"],["cat","Summary"]].map(([k,l])=>`<button class="${etab===k?"on":""}" data-et="${k}">${l}</button>`).join("")}</div>`;
   if(!all.length&&!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No transactions yet.<br><small>Tap the yellow + button to record an expense or income — you can create the category right in the form</small>");
