@@ -1246,7 +1246,7 @@ async function syncNow(first){
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
       if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
-      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true}
+      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true;if(isAdmin())setTimeout(payAlerts,0)}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
     if(!dirty.size)setMode("");
@@ -1936,6 +1936,22 @@ function migratePlans(){
       start:p.start||((p.installments||[])[0]||{}).due||"",updated:new Date().toISOString()});
     push(p)});
 }
+/* 5 days before an installment is due, add a "collect payment" task to that school (once per installment) */
+const PAY_ALERT_DAYS=5;
+function payAlerts(){
+  if(!me||!isAdmin())return;
+  const lim=localISO(new Date(Date.now()+PAY_ALERT_DAYS*864e5)).slice(0,10),bySchool=new Map();
+  payments.forEach(p=>{const s=schools.find(x=>x.id===p.schoolId);if(!s)return;let ch=false;
+    (p.installments||[]).forEach((i,k)=>{if(i.paidOn||!i.due||i.alerted===i.due||i.due>lim)return;
+      const key=p.id+":"+i.id;if((s.tasks||[]).some(t=>t.payKey===key&&t.title.endsWith(fmtDate(i.due)))){i.alerted=i.due;ch=true;return}
+      const d=new Date(i.due+"T10:00");d.setDate(d.getDate()-PAY_ALERT_DAYS);if(d.getTime()<Date.now()){d.setTime(Date.now()+30*6e4)}
+      const o=bySchool.get(s.id)||structuredClone(s);
+      (o.tasks=o.tasks||[]).push({id:uid(),type:"Call",title:`Payment collection: ${ordN(k+1)} installment ${inr(i.amount)} due ${fmtDate(i.due)}`,due:d.toISOString(),payKey:key,by:"Auto reminder",byId:me.id});
+      log(o,"Task",`Payment collection task added: ${ordN(k+1)} installment ${inr(i.amount)} due ${fmtDate(i.due)}`);
+      bySchool.set(s.id,o);i.alerted=i.due;ch=true});
+    if(ch){p.updated=new Date().toISOString();push(p)}});
+  if(bySchool.size){cachePay();bySchool.forEach(o=>save(o));toast("💰",bySchool.size===1?"Payment collection task added":"Payment collection tasks added for "+bySchool.size+" schools")}
+}
 function savePay(p){p.updated=new Date().toISOString();const i=payments.findIndex(x=>x.id===p.id);i<0?payments.push(p):payments[i]=p;cachePay();render();push(p)}
 function removePay(p){payments=payments.filter(x=>x.id!==p.id);payGone.add(p.id);psel=null;cachePay();render();toast("🗑️","Payment plan deleted");if(dbc)dbc.doc(p.id).delete().catch(()=>{})}
 
@@ -2061,7 +2077,7 @@ function savePlan(){
   const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gstAmt:val("pf_gst")===""?0:+val("pf_gst"),amount:+val("pf_amt")||"",notes:val("pf_notes"),
     installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
   payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
-  payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);
+  payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);setTimeout(payAlerts,300);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
   modal(`<h3>${i.paidOn?"Edit payment":"Record payment"}</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">Installment ${k+1} of ${p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
@@ -2087,6 +2103,7 @@ function payAct(el){
     const wasPaid=!!i.paidOn,diff=amt!==toP(i.amount);Object.assign(i,{paidOn:dt,paidAmt:fromP(amt),amount:fromP(amt),mode:val("pp_mode"),ref:val("pp_ref")});
     const un=p.installments.filter(x=>!x.paidOn);
     if(diff&&un.length){const rest=Math.max(0,toP(p.total)-p.installments.filter(x=>x.paidOn).reduce((s,x)=>s+toP(paidAmt(x)),0)),sp=splitP(rest,un.length);un.forEach((x,j)=>x.amount=fromP(sp[j]))}
+    {const sc=schools.find(x=>x.id===p.schoolId),key=p.id+":"+i.id;if(sc&&(sc.tasks||[]).some(t=>t.payKey===key)){const o=structuredClone(sc);o.tasks=o.tasks.filter(t=>t.payKey!==key);save(o)}}
     payLog(p,`Installment ${k+1} ${wasPaid?"payment edited":"paid"} · ${inr(fromP(amt))}${i.mode?" via "+i.mode:""}`);close();
     toast("✅",diff&&un.length?"Payment saved · remaining installments re-balanced":"Payment recorded");return savePay(p)}
 }
