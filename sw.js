@@ -1,4 +1,4 @@
-const C="educlawd-v63",F=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/logo-96.png"];
+const C="educlawd-v64",F=["./","index.html","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/logo-96.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)));self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;

@@ -2074,7 +2074,7 @@ function expensesView(f){
   const months=[...new Set([...all.map(e=>monKey(e.date)),...mine.map(e=>monKey(e.date)),...payMonths()].filter(Boolean))].sort().reverse();
   const tot=sumP(all),incT=incomeTot("all"),netT=incT-tot,np=incList().length+mine.length;
   const kc=(c,ic,n,l,cls)=>`<div class="kc money" style="--c:${c}" title="${esc(inrSign(n))}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn ${cls||""}">${inrSS(n)}</div></div>`;
-  const kpi=`<div class="kgrid k3 lbl kx">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#16a34a",P.check,fromP(incT),"Income")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}</div>`;
+  const kpi=`<div class="kgrid k3 lbl">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#16a34a",P.check,fromP(incT),"Income")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}</div>`;
   const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>{const[a,b]=String(l).split(" ");return `<button class="${exm===k?"on":""}" data-em="${k}"><b>${esc(a)}</b>${b?`<small>${esc(b)}</small>`:""}</button>`}).join("")}</div>`;
   const seg=`<div class="seg2 pseg">${[["tx","Transactions"],["cat","Summary"]].map(([k,l])=>`<button class="${etab===k?"on":""}" data-et="${k}">${l}</button>`).join("")}</div>`;
   if(!all.length&&!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No transactions yet.<br><small>Tap the yellow + button to record an expense or income — you can create the category right in the form</small>");
@@ -2128,15 +2128,15 @@ function expTx(list,ilist,coll,f){
   const g=new Map();rows.forEach(e=>{const k=e.date||"0000-00-00";(g.get(k)||g.set(k,[]).get(k)).push(e)});
   const out=sumP(list),into=sumP(ilist)+sumP(coll);
   const row=e=>{
-    if(e._t==="p")return `<div class="exr kcard" style="--c:#16a34a" data-psel="${e.pid}" data-go="1" title="Open the payment plan in School Network">
+    if(e._t==="p")return `<div class="exr" style="--c:#16a34a" data-psel="${e.pid}" data-go="1" title="Open the payment plan in School Network">
       <div class="exav in">${esc((e.title||"?").trim()[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg in">Educlawd</span>${esc(["Installment "+e.k+" of "+e.n,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa in"><i>▴</i> ${inr(e.amount)}</div></div>`;
     const c=catLabel(e),i=e._t==="i";
-    if(e._cl)return `<div class="exr kcard" style="--c:#dc2626" data-gclm="1" title="Open these claims in Expenses"><div class="exav" style="background:#b45309">🧾</div>
+    if(e._cl)return `<div class="exr" style="--c:#dc2626" data-gclm="1" title="Open these claims in Expenses"><div class="exav" style="background:#b45309">🧾</div>
       <div class="exm"><b>${esc(e.title||"—")}</b><small><span class="exg">${e.n} claim${e.n===1?"":"s"}</span>${esc([e.paidTo,e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa"><i>▾</i> ${inr(e.amount)}</div></div>`;
-    return `<div class="exr kcard" style="--c:${i?"#16a34a":"#dc2626"}" data-ex="edit" data-id="${e.id}" title="Tap to edit">
+    return `<div class="exr" style="--c:${i?"#16a34a":"#dc2626"}" data-ex="edit" data-id="${e.id}" title="Tap to edit">
       <div class="exav${i?" in":""}"${i?"":` style="background:${mcol(e.catId||c)}"`}>${esc(c[0].toUpperCase())}</div>
       <div class="exm"><b>${esc(e.title||e.paidTo||"—")}</b><small><span class="exg${i?" in":""}">${esc(c)}</span>${esc([e.title?e.paidTo:"",e.mode,e.ref].filter(Boolean).join(" · "))}</small></div>
       <div class="exa${i?" in":""}"><i>${i?"▴":"▾"}</i> ${inr(e.amount)}</div></div>`};
