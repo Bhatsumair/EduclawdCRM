@@ -1007,6 +1007,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mbsr>span{padding:7px 11px;font-size:11px}.mbsr b{font-size:13px}
 .cba .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
 .csend.cpay{background:color-mix(in srgb,#2563eb 8%,var(--card));border-color:color-mix(in srgb,#2563eb 22%,var(--line))}.csend .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
+.clmr .cdel{min-height:0;padding:3px 9px;font-size:11px;font-weight:700;border-radius:99px;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;box-shadow:none}
 </style>
 </head>
 <body>
@@ -2350,7 +2351,7 @@ function clmRow(c,own){
   return `<div class="exr clmr"${tap?` data-clm="edit" data-id="${c.id}" title="Tap to edit"`:""}>
     <div class="exav" style="background:${CLM_COL[c.cat]||"#64748b"}">${CLM_ICON[c.cat]||"🧾"}</div>
     <div class="exm"><b>${esc(c.note||c.cat)}</b><small><span class="exg">${esc(c.cat)}</span>${esc(fmtDate(c.date))}${own?"":" · "+esc(clmWho(c))}${c.remark?" · “"+esc(c.remark)+"”":""}</small></div>
-    <div class="exa"><span class="pill ${sc2}">${sl}</span><b>${inr(c.amount)}</b></div></div>`;
+    <div class="exa"><span class="pill ${sc2}">${sl}</span><b>${inr(c.amount)}</b>${!own&&isAdmin()&&st==="rejected"?`<button class="cdel" data-clm="rdel" data-id="${c.id}" title="Delete this rejected expense">Delete</button>`:""}</div></div>`;
 }
 /* ---- the admin's approval queue ---- */
 function clmAdminView(f){
@@ -2423,6 +2424,8 @@ function clmAct(el){
     if(!armed(el,"Tap again to approve"))return;
     rows.forEach(c=>{c.status="approved";c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";delete c.remark;saveClaim(c)});
     return toast("✅",rows.length+" expense"+(rows.length===1?"":"s")+" approved · mark them paid to add to Finance")}
+  if(a==="rdel"){const c=claims.find(x=>x.id===id);if(!isAdmin()||!c||clmSt(c)!=="rejected")return;
+    if(!armed(el,"Tap again"))return;toast("🗑️","Rejected expense deleted");return removeClaim(c)}
   if(a==="pay"||a==="paysave"){
     if(!isAdmin())return;
     const[u,mk]=String(id).split("|"),rows=id==="own"?clmMine().filter(c=>clmSt(c)==="approved"):claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
