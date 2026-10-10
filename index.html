@@ -1044,6 +1044,16 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mbbar.v3 .o span i{background:linear-gradient(90deg,#fca5a5,#ef4444 55%,#b91c1c);box-shadow:0 2px 6px -2px rgba(220,38,38,.6)}
 .mbbar.v3 span i::after{content:"";position:absolute;inset:2px 6px auto 6px;height:3px;border-radius:99px;background:rgba(255,255,255,.35)}
 .mbbar.v3 b{font-size:12.5px;font-weight:800;min-width:58px;text-align:right;white-space:nowrap}.mbbar.v3 .i b{color:#15803d}.mbbar.v3 .o b{color:#b91c1c}
+
+.mbbar.v4{display:grid;gap:12px;height:auto;background:none;border-radius:0;overflow:visible;margin:14px 0 16px}
+.mbbar.v4 .l{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.mbbar.v4 .l span{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink)}
+.mbbar.v4 .l span>i{width:8px;height:8px;border-radius:50%}.mbbar.v4 .i .l span>i{background:#22c55e}.mbbar.v4 .o .l span>i{background:#f43f5e}
+.mbbar.v4 .l small{font-size:11px;font-weight:600;color:var(--mute)}
+.mbbar.v4 .l b{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.mbbar.v4 .t{height:6px;border-radius:99px;background:color-mix(in srgb,var(--ink) 7%,transparent);overflow:hidden}
+.mbbar.v4 .t i{display:block;height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.mbbar.v4 .i .t i{background:#22c55e}.mbbar.v4 .o .t i{background:#f43f5e}
 </style>
 </head>
 <body>
@@ -2126,7 +2136,7 @@ function expensesView(f){
   const sumbar=`<div class="mbal">
     <div class="mbh"><div class="mbt">${exm==="all"?"All months":esc(monLabel(exm))}</div>
       <div class="mbn ${net<0?"dn":"up"}"><small>${net<0?"Net shortfall":"Net in hand"}</small><b>${inrSign(fromP(net))}</b></div></div>
-    <div class="mbbar v3">${(()=>{const mx=Math.max(mIn,mOut,1),w=v=>v?Math.max(2,Math.round(v*100/mx)):0;return `<div class="i"><em>▲</em><span><i style="width:${w(mIn)}%"></i></span><b>${inrSS(fromP(mIn))}</b></div><div class="o"><em>▼</em><span><i style="width:${w(mOut)}%"></i></span><b>${inrSS(fromP(mOut))}</b></div>`})()}</div>
+    <div class="mbbar v4">${(()=>{const mx=Math.max(mIn,mOut,1),w=v=>v?Math.max(1.5,Math.round(v*1000/mx)/10):0,sp=mIn?Math.round(mOut*100/mIn):null;return `<div class="i"><div class="l"><span><i></i>Income</span><b>${inr(fromP(mIn))}</b></div><div class="t"><i style="width:${w(mIn)}%"></i></div></div><div class="o"><div class="l"><span><i></i>Expense${sp===null?"":`<small>${sp}% of income</small>`}</span><b>${inr(fromP(mOut))}</b></div><div class="t"><i style="width:${w(mOut)}%"></i></div></div>`})()}</div>
     <div class="mbf"><div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div>
       <div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div></div>
     ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b><i class="srb"><i style="width:${Math.max(0,Math.min(100,sr))}%"></i></i></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
