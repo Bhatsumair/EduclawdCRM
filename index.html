@@ -960,6 +960,35 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .ety button.on{background:var(--teal);color:#fff;border-color:var(--teal)}.ety button.on.o{background:#dc2626;border-color:#dc2626}.ety button.on.i{background:#16a34a;border-color:#16a34a}
 .mbf .dl{display:block;font-size:10.5px;font-weight:700;margin-top:1px}.mbf .dl.up{color:#15803d}.mbf .dl.dn{color:#b91c1c}.mbf .dl.nil{color:var(--mute)}
 .mbsr{display:flex;justify-content:space-between;gap:8px;margin-top:8px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--line) 90%,transparent);font-size:12px;color:var(--mute);font-weight:600}.mbsr b{color:var(--ink)}
+
+/* finance: month tiles + balance card */
+.mstrip{gap:8px;margin:8px -4px 2px;padding:4px 4px 14px}
+.mstrip button{width:64px;height:64px;padding:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 3px rgba(120,80,30,.08);color:var(--ink);transition:transform .15s,box-shadow .15s}
+.mstrip button b{font-size:16px;font-weight:800;line-height:1.1}.mstrip button small{font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.1}
+.mstrip button:hover{transform:translateY(-1px);box-shadow:0 6px 14px -8px rgba(13,127,122,.5)}
+.mstrip button.on{background:linear-gradient(150deg,#14b8a6,var(--teal2));border-color:var(--teal2);color:#fff;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--teal) 75%,transparent)}
+.mstrip button.on small{color:rgba(255,255,255,.8)}
+.mbal{padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 3px rgba(120,80,30,.08),0 10px 24px -18px rgba(13,127,122,.45)}
+.mbh{display:block}
+.mbt{display:inline-block;padding:4px 10px;border-radius:99px;background:var(--soft);color:var(--teal2);font-size:10.5px}
+.mbn{text-align:left;margin-top:10px}
+.mbn small{font-size:11px}
+.mbn b{font-size:32px;letter-spacing:-1px;line-height:1.1;margin-top:2px}
+.mbbar{height:12px;gap:4px;margin:12px 0 14px}
+.mbf{gap:10px}
+.mbf>div{border-radius:14px;padding:12px;gap:10px;align-items:flex-start}
+.mbf .o{background:linear-gradient(135deg,#fee2e2,color-mix(in srgb,#fee2e2 40%,var(--card)));border:1px solid #fecaca}
+.mbf .i{background:linear-gradient(135deg,#dcfce7,color-mix(in srgb,#dcfce7 40%,var(--card)));border:1px solid #bbf7d0}
+.mbf .ic{width:32px;height:32px;border-radius:10px;font-size:13px;color:#fff!important}
+.mbf .o .ic{background:linear-gradient(140deg,#f87171,#dc2626)}.mbf .i .ic{background:linear-gradient(140deg,#4ade80,#16a34a)}
+.mbf small{font-size:10.5px}
+.mbf b{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-top:2px}
+.mbsr{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:0;padding-top:0;margin-top:10px}
+.mbsr>span{display:block;background:var(--soft);border-radius:12px;padding:9px 12px;font-size:11.5px}
+.mbsr>span:last-child{text-align:left}.mbsr>span:empty{display:none}
+.mbsr b{font-size:15px;font-weight:800}
+.mbsr .srb{display:block;height:6px;border-radius:99px;background:color-mix(in srgb,var(--teal) 15%,var(--card));overflow:hidden;margin-top:6px}.mbsr .srb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#14b8a6,var(--teal2))}
+@media(min-width:801px){.mbal{padding:18px 20px}.mbn b{font-size:36px}.mbf{grid-template-columns:1fr 1fr}.mstrip button{width:70px;height:70px}}
 </style>
 </head>
 <body>
@@ -2026,9 +2055,10 @@ function expensesView(f){
   const tot=sumP(all),incT=incomeTot("all"),netT=incT-tot,np=incList().length+mine.length;
   const kc=(c,ic,n,l,cls)=>`<div class="kc money" style="--c:${c}" title="${esc(inrSign(n))}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn ${cls||""}">${inrSS(n)}</div></div>`;
   const kpi=`<div class="kgrid k3 lbl kx">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}${kc("#16a34a",P.check,fromP(incT),"Income")}</div>`;
-  const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>`<button class="${exm===k?"on":""}" data-em="${k}">${esc(l)}</button>`).join("")}</div>`;
+  const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>{const[a,b]=String(l).split(" ");return `<button class="${exm===k?"on":""}" data-em="${k}"><b>${esc(a)}</b>${b?`<small>${esc(b)}</small>`:""}</button>`}).join("")}</div>`;
   const seg=`<div class="seg2 pseg">${[["tx","Transactions"],["cat","Summary"]].map(([k,l])=>`<button class="${etab===k?"on":""}" data-et="${k}">${l}</button>`).join("")}</div>`;
   if(!all.length&&!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No transactions yet.<br><small>Tap the yellow + button to record an expense or income — you can create the category right in the form</small>");
+  exc="all";
   const hit=e=>!f||((e.title||"")+" "+(e.paidTo||"")+" "+catLabel(e)+" "+(e.ref||"")+" "+(e.notes||"")+" "+(e.mode||"")).toLowerCase().includes(f);
   const keep=e=>(exm==="all"||monKey(e.date)===exm)&&(exc==="all"||e.catId===exc)&&hit(e);
   const list=all.filter(keep),ilist=mine.filter(keep);
@@ -2043,14 +2073,14 @@ function expensesView(f){
     <div class="mbbar">${mv?`<i class="o" style="width:${ow}%"></i><i class="i" style="width:${100-ow}%"></i>`:""}</div>
     <div class="mbf"><div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div>
       <div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div></div>
-    ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
+    ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b><i class="srb"><i style="width:${Math.max(0,Math.min(100,sr))}%"></i></i></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
   const og=(fl,lb)=>{const cs=catsFor(fl);return cs.length?`<optgroup label="${lb}">${cs.map(c=>`<option value="${c.id}" ${exc===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</optgroup>`:""};
   const cf=excats.length>1?`<div class="exbar"><select data-exs="exc" aria-label="Filter by category"><option value="all" ${exc==="all"?"selected":""}>All categories</option>${og("out","Expense")}${og("in","Income")}</select>${exc!=="all"?`<button class="alt ib" data-ex="clear">Clear</button>`:""}</div>`:"";
   const coll=incList().filter(x=>(exm==="all"||monKey(x.date)===exm)&&exc==="all"
     &&(!f||(x.title+" educlawd payment received installment "+x.mode+" "+x.ref).toLowerCase().includes(f)));
   const nIn=ilist.length+coll.length,nOut=list.length;
   const chips=`<div class="ety">${[["all","All",nIn+nOut,""],["in","Income",nIn,"i"],["out","Expense",nOut,"o"]].map(([k,l,n,c])=>`<button class="${ety===k?"on ":""}${c}" data-ety="${k}">${l} (${n})</button>`).join("")}</div>`;
-  return kpi+seg+strip+sumbar+(etab==="cat"?cf+expSummary(list,ilist,coll):cf+chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
+  return kpi+seg+strip+sumbar+(etab==="cat"?expSummary(list,ilist,coll):chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
 }
 /* receivables: unpaid installments from payment plans — overdue, next 30 days, and the next few to collect */
 function expRecv(){
@@ -2109,7 +2139,7 @@ function brkBlock(hd,rows,tone){
   return `<div class="brk ${tone}">
     <div class="brkh"><div class="bh1">${hd}<small>${rows.length} categor${rows.length===1?"y":"ies"} · ${n} record${n===1?"":"s"}</small></div><div class="brkt">${inr(fromP(t))}</div></div>
     <div class="stack">${rows.map(r=>`<i style="width:${pc(r.t)}%;background:${r.col}"></i>`).join("")}</div>
-    ${rows.map(r=>`<div class="brow"${r.id?` data-ex="pickcat" data-id="${r.id}" title="Show these transactions"`:""}>
+    ${rows.map(r=>`<div class="brow">
       <span class="bdot" style="background:${r.col}"></span>
       <div class="bn"><b>${esc(r.name)}</b><small>${r.n} record${r.n===1?"":"s"}</small></div>
       <div class="bv"><b>${inr(fromP(r.t))}</b><small>${pc(r.t)}%</small></div></div>`).join("")}</div>`;
