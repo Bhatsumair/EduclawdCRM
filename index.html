@@ -2050,7 +2050,7 @@ function expensesView(f){
     &&(!f||(x.title+" educlawd payment received installment "+x.mode+" "+x.ref).toLowerCase().includes(f)));
   const nIn=ilist.length+coll.length,nOut=list.length;
   const chips=`<div class="ety">${[["all","All",nIn+nOut,""],["in","Income",nIn,"i"],["out","Expense",nOut,"o"]].map(([k,l,n,c])=>`<button class="${ety===k?"on ":""}${c}" data-ety="${k}">${l} (${n})</button>`).join("")}</div>`;
-  return kpi+seg+strip+sumbar+(etab==="cat"?cf+expSummary(list,ilist,coll):expRecv()+cf+chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
+  return kpi+seg+strip+sumbar+(etab==="cat"?cf+expSummary(list,ilist,coll):cf+chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
 }
 /* receivables: unpaid installments from payment plans — overdue, next 30 days, and the next few to collect */
 function expRecv(){
