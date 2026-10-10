@@ -989,6 +989,22 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mbsr b{font-size:15px;font-weight:800}
 .mbsr .srb{display:block;height:6px;border-radius:99px;background:color-mix(in srgb,var(--teal) 15%,var(--card));overflow:hidden;margin-top:6px}.mbsr .srb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#14b8a6,var(--teal2))}
 @media(min-width:801px){.mbal{padding:18px 20px}.mbn b{font-size:36px}.mbf{grid-template-columns:1fr 1fr}.mstrip button{width:70px;height:70px}}
+
+/* finance v2: compact */
+.mstrip button{width:auto;min-width:76px;height:42px;padding:0 14px;flex-direction:row;gap:5px;border-radius:12px}
+.mstrip button b{font-size:14px}.mstrip button small{font-size:12px}
+@media(min-width:801px){.mstrip button{width:auto;height:42px;min-width:84px}}
+.mbal{padding:14px}
+.mbn{margin-top:8px}.mbn b{font-size:24px;letter-spacing:-.5px}
+@media(min-width:801px){.mbal{padding:16px 18px}.mbn b{font-size:26px}}
+.mbbar.v2{display:grid;gap:6px;height:auto;background:none;border-radius:0;overflow:visible;margin:10px 0 12px}
+.mbbar.v2>span{display:block;height:9px;border-radius:99px;background:var(--soft);overflow:hidden}
+.mbbar.v2>span>i{display:block;height:100%;border-radius:99px;min-width:3px}
+.mbbar.v2 .i>i{background:linear-gradient(90deg,#4ade80,#16a34a)}.mbbar.v2 .o>i{background:linear-gradient(90deg,#f87171,#dc2626)}
+.mbf>div{padding:9px 11px;gap:8px;align-items:center}
+.mbf .ic{width:26px;height:26px;border-radius:8px;font-size:11px}
+.mbf small{font-size:10px}.mbf b{font-size:15.5px;margin-top:1px}
+.mbsr>span{padding:7px 11px;font-size:11px}.mbsr b{font-size:13px}
 </style>
 </head>
 <body>
@@ -2054,7 +2070,7 @@ function expensesView(f){
   const months=[...new Set([...all.map(e=>monKey(e.date)),...mine.map(e=>monKey(e.date)),...payMonths()].filter(Boolean))].sort().reverse();
   const tot=sumP(all),incT=incomeTot("all"),netT=incT-tot,np=incList().length+mine.length;
   const kc=(c,ic,n,l,cls)=>`<div class="kc money" style="--c:${c}" title="${esc(inrSign(n))}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn ${cls||""}">${inrSS(n)}</div></div>`;
-  const kpi=`<div class="kgrid k3 lbl kx">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}${kc("#16a34a",P.check,fromP(incT),"Income")}</div>`;
+  const kpi=`<div class="kgrid k3 lbl kx">${kc(netT<0?"#dc2626":"#16a34a",P.wallet,fromP(netT),"Net worth",netT<0?"neg":"pos")}${kc("#16a34a",P.check,fromP(incT),"Income")}${kc("#dc2626",P.receipt,fromP(tot),"Expense")}</div>`;
   const strip=`<div class="mstrip" role="tablist" aria-label="Month">${[["all","All"]].concat(months.map(m=>[m,monChip(m)])).map(([k,l])=>{const[a,b]=String(l).split(" ");return `<button class="${exm===k?"on":""}" data-em="${k}"><b>${esc(a)}</b>${b?`<small>${esc(b)}</small>`:""}</button>`}).join("")}</div>`;
   const seg=`<div class="seg2 pseg">${[["tx","Transactions"],["cat","Summary"]].map(([k,l])=>`<button class="${etab===k?"on":""}" data-et="${k}">${l}</button>`).join("")}</div>`;
   if(!all.length&&!mine.length)return kpi+noMatch("<div style='font-size:34px'>🧾</div>No transactions yet.<br><small>Tap the yellow + button to record an expense or income — you can create the category right in the form</small>");
@@ -2070,9 +2086,9 @@ function expensesView(f){
   const sumbar=`<div class="mbal">
     <div class="mbh"><div class="mbt">${exm==="all"?"All months":esc(monLabel(exm))}</div>
       <div class="mbn ${net<0?"dn":"up"}"><small>${net<0?"Net shortfall":"Net in hand"}</small><b>${inrSign(fromP(net))}</b></div></div>
-    <div class="mbbar">${mv?`<i class="o" style="width:${ow}%"></i><i class="i" style="width:${100-ow}%"></i>`:""}</div>
-    <div class="mbf"><div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div>
-      <div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div></div>
+    <div class="mbbar v2">${(()=>{const mx=Math.max(mIn,mOut,1);return `<span class="i"><i style="width:${mIn?Math.round(mIn*100/mx):0}%"></i></span><span class="o"><i style="width:${mOut?Math.round(mOut*100/mx):0}%"></i></span>`})()}</div>
+    <div class="mbf"><div class="i"><span class="ic">▴</span><div><small>Income</small><b>${inr(fromP(mIn))}</b>${dl(mIn,pIn,true)}</div></div>
+      <div class="o"><span class="ic">▾</span><div><small>Expense</small><b>${inr(fromP(mOut))}</b>${dl(mOut,pOut,false)}</div></div></div>
     ${sr===null?"":`<div class="mbsr"><span>Savings rate <b>${sr}%</b><i class="srb"><i style="width:${Math.max(0,Math.min(100,sr))}%"></i></i></span><span>${(()=>{const n=(list.length+ilist.length);return n?"Avg expense <b>"+inr(fromP(list.length?Math.round(sumP(list)/list.length):0))+"</b>":""})()}</span></div>`}</div>`;
   const og=(fl,lb)=>{const cs=catsFor(fl);return cs.length?`<optgroup label="${lb}">${cs.map(c=>`<option value="${c.id}" ${exc===c.id?"selected":""}>${esc(c.name)}</option>`).join("")}</optgroup>`:""};
   const cf=excats.length>1?`<div class="exbar"><select data-exs="exc" aria-label="Filter by category"><option value="all" ${exc==="all"?"selected":""}>All categories</option>${og("out","Expense")}${og("in","Income")}</select>${exc!=="all"?`<button class="alt ib" data-ex="clear">Clear</button>`:""}</div>`:"";
