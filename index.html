@@ -1008,6 +1008,30 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .cba .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
 .csend.cpay{background:color-mix(in srgb,#2563eb 8%,var(--card));border-color:color-mix(in srgb,#2563eb 22%,var(--line))}.csend .paybtn{display:inline-flex;align-items:center;gap:6px;background:#16a34a;border-color:#16a34a}
 .clmr .cdel{min-height:0;padding:3px 9px;font-size:11px;font-weight:700;border-radius:99px;background:#fee2e2;color:#b91c1c;border:1px solid #fecaca;box-shadow:none}
+
+/* finance summary: month by month v2 */
+.brk.mon2{padding:14px}
+.m2tot{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 12px}
+.m2tot>div{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:12px;min-width:0}
+.m2tot .i{background:color-mix(in srgb,#16a34a 9%,var(--card));border:1px solid color-mix(in srgb,#16a34a 20%,var(--line))}
+.m2tot .o{background:color-mix(in srgb,#dc2626 8%,var(--card));border:1px solid color-mix(in srgb,#dc2626 20%,var(--line))}
+.m2tot span{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:11px;color:#fff;flex:none}
+.m2tot .i span{background:#16a34a}.m2tot .o span{background:#dc2626}
+.m2tot small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}.m2tot b{display:block;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m2tot .i b{color:#15803d}.m2tot .o b{color:#b91c1c}
+.m2c{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.m2c+.m2c{margin-top:8px}.m2c:hover{border-color:var(--teal);box-shadow:0 6px 16px -12px rgba(13,127,122,.6)}
+.m2b{height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(150deg,color-mix(in srgb,var(--teal) 14%,var(--card)),color-mix(in srgb,var(--teal) 6%,var(--card)));border:1px solid color-mix(in srgb,var(--teal) 20%,var(--line))}
+.m2b b{font-size:15px;font-weight:800;color:var(--teal2);line-height:1.1}.m2b small{font-size:11px;font-weight:700;color:var(--mute)}
+.m2m{min-width:0}
+.m2h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.m2h b{font-size:16px;font-weight:800}.m2h b.up{color:#15803d}.m2h b.dn{color:#b91c1c}
+.m2h span{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px}.m2h span.up{background:#dcfce7;color:#15803d}.m2h span.dn{background:#fee2e2;color:#b91c1c}
+.m2r{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:3px}
+.m2r em{font-style:normal;font-size:11px;font-weight:700;color:var(--mute)}
+.m2t{height:7px;border-radius:99px;background:var(--soft);overflow:hidden}.m2t i{display:block;height:100%;border-radius:99px}
+.m2r.i .m2t i{background:linear-gradient(90deg,#4ade80,#16a34a)}.m2r.o .m2t i{background:linear-gradient(90deg,#f87171,#dc2626)}
+.m2r b{font-size:12px;font-weight:800;white-space:nowrap;min-width:64px;text-align:right}.m2r.i b{color:#15803d}.m2r.o b{color:#b91c1c}
 </style>
 </head>
 <body>
@@ -2173,14 +2197,17 @@ function expSummary(list,ilist,coll){
   const ks=[...M.keys()].sort().reverse();
   const T=ks.reduce((a,k)=>({o:a.o+M.get(k).o,i:a.i+M.get(k).i,n:a.n+M.get(k).n}),{o:0,i:0,n:0});
   const mx=Math.max(1,...ks.map(k=>Math.max(M.get(k).o,M.get(k).i)));
-  const mon=ks.length?`<div class="brk mon">
+  const mon=ks.length?`<div class="brk mon2">
     <div class="brkh"><div class="bh1">Month by month<small>${ks.length} month${ks.length===1?"":"s"} · ${T.n} transaction${T.n===1?"":"s"}</small></div><div class="brkt ${T.i-T.o<0?"dn":"up"}">${inrSign(fromP(T.i-T.o))}</div></div>
-    <div class="mleg"><span class="lo">Expense</span><span class="li">Income</span></div>
-    ${ks.map(k=>{const r=M.get(k),n=r.i-r.o;
-      return `<div class="mrow" data-ex="pickmon" data-id="${k}" title="Show ${esc(monLabel(k))}">
-      <div class="ml">${esc(monChip(k))}</div>
-      <div class="mb"><div class="mbar"><i class="lo" style="width:${Math.round(r.o*76/mx)}%"></i><em>${inr(fromP(r.o))}</em></div><div class="mbar"><i class="li" style="width:${Math.round(r.i*76/mx)}%"></i><em>${inr(fromP(r.i))}</em></div></div>
-      <div class="mv ${n<0?"dn":"up"}">${inrSS(fromP(n))}</div></div>`}).join("")}</div>`:"";
+    <div class="m2tot"><div class="i"><span>▲</span><div><small>Income</small><b>${inr(fromP(T.i))}</b></div></div><div class="o"><span>▼</span><div><small>Expense</small><b>${inr(fromP(T.o))}</b></div></div></div>
+    ${ks.map(k=>{const r=M.get(k),n=r.i-r.o,[mm,yy]=monChip(k).split(" "),kept=r.i?Math.round(n*100/r.i):null;
+      return `<div class="m2c" data-ex="pickmon" data-id="${k}" title="Show ${esc(monLabel(k))}">
+      <div class="m2b"><b>${esc(mm||"")}</b><small>${esc(yy||"")}</small></div>
+      <div class="m2m">
+        <div class="m2h"><b class="${n<0?"dn":"up"}">${inrSign(fromP(n))}</b>${kept===null?"":`<span class="${kept<0?"dn":"up"}">${kept}% saved</span>`}</div>
+        <div class="m2r i"><em>Income</em><div class="m2t"><i style="width:${r.i?Math.max(2,Math.round(r.i*100/mx)):0}%"></i></div><b>${inr(fromP(r.i))}</b></div>
+        <div class="m2r o"><em>Expense</em><div class="m2t"><i style="width:${r.o?Math.max(2,Math.round(r.o*100/mx)):0}%"></i></div><b>${inr(fromP(r.o))}</b></div>
+      </div></div>`}).join("")}</div>`:"";
   return `<div class="sumw">${brkBlock("Expense by category",brkRows(list),"out")}
   ${brkBlock("Income by category",brkRows(ilist,{name:"Educlawd",n:coll.length,t:sumP(coll)}),"inn")}
   ${mon}</div>
