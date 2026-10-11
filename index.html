@@ -2144,14 +2144,22 @@ function payChange(e){const t=e.target;if(!pf||!t)return;
 function savePlan(){
   const d=pf.d,sid=val("pf_school"),nm=sid==="__other"?val("pf_sname"):((schools.find(s=>s.id===sid)||{}).name||"");
   if(!sid)return err("Select a school");if(!nm)return err("Enter the school / client name");
-  if(sid!=="__other"&&payments.some(p=>p.schoolId===sid&&p.id!==d.id))return err("This school already has a payment plan — edit that plan instead");
+  if(!payments.some(x=>x.id===d.id)&&sid!=="__other"&&payments.some(p=>p.schoolId===sid))return err("This school already has a payment plan — edit that plan instead");
   const t=toP(d.total);if(t<=0)return err("Enter the total payment amount");
   if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
   const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0);if(s!==t)return err(`Installments add up to ${inr(fromP(s))} but the total is ${inr(fromP(t))}. Tap “Split equally” or adjust the amounts.`);
   const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gstAmt:val("pf_gst")===""?0:+val("pf_gst"),amount:+val("pf_amt")||"",notes:val("pf_notes"),
     installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
-  payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
+  if(!old)payLog(p,`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
+  else{/* one "modified" entry that says what changed; nothing logged if nothing changed */
+    const ch=[],oi=old.installments||[],ni=p.installments;
+    if(toP(old.total)!==toP(p.total))ch.push(`total ${inr(old.total)} → ${inr(p.total)}`);
+    if(oi.length!==ni.length)ch.push(`installments ${oi.length} → ${ni.length}`);
+    else{const dd=ni.filter((x,k)=>oi[k]&&oi[k].due!==x.due).length,aa=ni.filter((x,k)=>oi[k]&&toP(oi[k].amount)!==toP(x.amount)).length;if(dd)ch.push(`${dd} payment date${dd===1?"":"s"}`);if(aa&&toP(old.total)===toP(p.total))ch.push(`${aa} amount${aa===1?"":"s"}`)}
+    if((old.notes||"")!==(p.notes||""))ch.push("notes");
+    if(String(old.freq)!==String(p.freq))ch.push("frequency");
+    if(ch.length)payLog(p,"Plan modified · "+ch.join(", "))}
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);setTimeout(payAlerts,300);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
