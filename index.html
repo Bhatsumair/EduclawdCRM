@@ -1112,6 +1112,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .stgr span u{display:block;height:4px;border-radius:99px;background:var(--soft);margin-top:4px;text-decoration:none;overflow:hidden}.stgr span u b{display:block;height:100%;background:var(--c);border-radius:99px}
 .stgr span{display:flex;flex-direction:column}
 .sidp{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,var(--card));color:var(--teal2);margin-right:6px;vertical-align:1px}
+.ncard .nhd{align-items:flex-start}.nrt{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}.nrt .sidp{margin:0}
 </style>
 </head>
 <body>
@@ -2688,8 +2689,8 @@ function networkView(f){
   const td=todayISO();
   return kpi+seg+bar+`<div class="nlist">`+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
     return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${{over:"#dc2626",pend:"#0d7f7a",done:"#16a34a",none:"#94a3b8"}[st]}" data-nsel="${s.id}">
-    <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
-    <div class="nsub">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
+    <div class="r nhd"><b>${esc(s.name||"—")}</b><span class="nrt">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}<span class="pill ${scl}">${sl}</span></span></div>
+    <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(py.paid))}</b></div>
