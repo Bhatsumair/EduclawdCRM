@@ -2748,14 +2748,17 @@ function netDetail(s){
   ${tabs}${pay?payTab:contract}`;
 }
 /* ---- edit ---- */
-/* School ID: EDU-0001, EDU-0002 … — given automatically, never typed */
+/* School ID: ECWD-1001, ECWD-1002 … — given automatically, never typed */
 const sidOf=s=>(s.net&&s.net.sid)||"";
-const nextSid=()=>"EDU-"+String(Math.max(0,...schools.map(x=>+((sidOf(x).match(/(\d+)$/)||[0,0])[1])))+1).padStart(4,"0");
+const nextSid=()=>"ECWD-"+(Math.max(1000,...schools.map(x=>/^ECWD-\d+$/.test(sidOf(x))?+sidOf(x).slice(5):0))+1);
 /* every Won school gets an ID once (oldest signing first), so the existing network is numbered too */
 function assignSids(){
   if(!me||!isAdmin())return;
+  /* earlier EDU-0001 style IDs become ECWD-1001 style */
+  const old=schools.filter(s=>/^EDU-\d+$/.test(sidOf(s)));
+  old.forEach(s=>{s.net=Object.assign({},s.net,{sid:"ECWD-"+(1000+ +sidOf(s).slice(4))});s.updated=new Date().toISOString();push(s)});
   const need=schools.filter(s=>s.stage==="Won"&&!sidOf(s)).sort((a,b)=>(wonOn(a)||"9").localeCompare(wonOn(b)||"9"));
-  if(!need.length)return;
+  if(!need.length){if(old.length){cache();render()}return}
   need.forEach(s=>{s.net=Object.assign({},s.net||{},{sid:nextSid()});s.updated=new Date().toISOString();push(s)});
   cache();render();
 }
