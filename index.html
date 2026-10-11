@@ -1873,7 +1873,9 @@ function render(){
   const f=filter.toLowerCase(),n=allTasks().length;
   $("#q").placeholder=PH[gtab];$("#add").style.display=gtab==="home"||gtab==="network"||gtab==="expenses"||gtab==="claims"?"":"none";$("#add").title=$("#add").ariaLabel=gtab==="network"?"Add payment plan":gtab==="claims"?"Record an expense":gtab==="expenses"?"Record expense or income":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="reports"||gtab==="profile"?"none":"";
   $("#greet").innerHTML=gtab==="home"?greetHtml():"";
+  const msl=[...document.querySelectorAll("#items .mstrip")].map(x=>x.scrollLeft); // keep the month strip where it was
   $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,reports:analyticsView,expenses:expensesView,network:networkView,claims:claimsView,profile:profileView}[gtab])(f);
+  document.querySelectorAll("#items .mstrip").forEach((x,k)=>{if(msl[k])x.scrollLeft=msl[k];const on=x.querySelector("button.on");if(on&&(on.offsetLeft<x.scrollLeft||on.offsetLeft+on.offsetWidth>x.scrollLeft+x.clientWidth))on.scrollIntoView({block:"nearest",inline:"nearest"})});
   const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,nv=GN.map(([k,l])=>`<button class="${gtab===k?"on":""}" data-g="${k}">${GI[k]}<span>${l}</span>${k==="tasks"&&ov?`<i class="bdg">${ov>9?"9+":ov}</i>`:""}</button>`).join("");
   if(nv!==navSig||!$("#gnav").firstChild){navSig=nv;$("#gnav").innerHTML=nv}
   const narrow=matchMedia("(max-width:800px)").matches;
