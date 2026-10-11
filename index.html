@@ -1328,7 +1328,7 @@ const savePw=safe(async()=>{
 });
 
 /* Educlawd CRM · Team analytics view, filters, feed pagination */
-let tsub="analytics",an={m:"all",p:"7d",d:"all",t:"all",from:"",to:"",lim:30,pg:1};
+let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1};
 const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
 const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
 const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
