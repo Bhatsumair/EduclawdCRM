@@ -2152,14 +2152,14 @@ function savePlan(){
   const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gstAmt:val("pf_gst")===""?0:+val("pf_gst"),amount:+val("pf_amt")||"",notes:val("pf_notes"),
     installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
   if(!old)payLog(p,`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
-  else{/* one "modified" entry that says what changed; nothing logged if nothing changed */
+  else{/* one "updated" entry that says what changed; nothing logged if nothing changed */
     const ch=[],oi=old.installments||[],ni=p.installments;
     if(toP(old.total)!==toP(p.total))ch.push(`total ${inr(old.total)} → ${inr(p.total)}`);
     if(oi.length!==ni.length)ch.push(`installments ${oi.length} → ${ni.length}`);
     else{const dd=ni.filter((x,k)=>oi[k]&&oi[k].due!==x.due).length,aa=ni.filter((x,k)=>oi[k]&&toP(oi[k].amount)!==toP(x.amount)).length;if(dd)ch.push(`${dd} payment date${dd===1?"":"s"}`);if(aa&&toP(old.total)===toP(p.total))ch.push(`${aa} amount${aa===1?"":"s"}`)}
     if((old.notes||"")!==(p.notes||""))ch.push("notes");
     if(String(old.freq)!==String(p.freq))ch.push("frequency");
-    if(ch.length)payLog(p,"Plan modified · "+ch.join(", "))}
+    if(ch.length)payLog(p,"Plan updated · "+ch.join(", "))}
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);setTimeout(payAlerts,300);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
