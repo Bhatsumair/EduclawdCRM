@@ -1121,6 +1121,11 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
   #side{background:linear-gradient(180deg,#fffcf0 0%,#fdf4d6 100%)}
   body{background:radial-gradient(1100px 620px at 100% 0,rgba(253,224,130,.28),transparent 62%),radial-gradient(900px 640px at 8% 100%,rgba(250,214,120,.18),transparent 60%),linear-gradient(180deg,#fefaeb,#fbf1d4)!important;background-attachment:fixed!important}
 }
+.brow[data-catsh]{cursor:pointer;border-radius:10px;transition:background .15s}.brow[data-catsh]:hover{background:color-mix(in srgb,var(--teal) 6%,transparent)}
+.brow[data-catsh] .bn b{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--ink) 25%,transparent);text-underline-offset:3px}
+.csl{display:grid;gap:6px;margin-top:10px}
+.csr{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer}
+.csr:hover{border-color:var(--teal)}.csd{font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.2}
 </style>
 </head>
 <body>
@@ -2380,25 +2385,35 @@ function expTx(list,ilist,coll,f){
 }
 /* summary: visual breakdowns by category, then a month-by-month chart */
 function brkRows(recs,extra){
-  return catsSorted().map(c=>{const r=recs.filter(e=>e.catId===c.id);return{name:c.name,id:c.id,n:r.length,t:sumP(r),col:mcol(c.id)}})
+  return catsSorted().map(c=>{const r=recs.filter(e=>e.catId===c.id);return{name:c.name,id:c.id,n:r.length,t:sumP(r),col:mcol(c.id),recs:r}})
     .concat((()=>{const r=recs.filter(e=>!catOf(e.catId)),m2=new Map();
-      r.forEach(e=>{const n=e.sumName||e.catName||"Uncategorised",g2=m2.get(n)||{name:n,id:"",n:0,t:0,col:e.sumName?mcol(n):(CLM_COL[n]||"#9ca3af")};g2.n++;g2.t+=toP(e.amount);m2.set(n,g2)});
+      r.forEach(e=>{const n=e.sumName||e.catName||"Uncategorised",g2=m2.get(n)||{name:n,id:"",n:0,t:0,col:e.sumName?mcol(n):(CLM_COL[n]||"#9ca3af"),recs:[]};g2.n++;g2.t+=toP(e.amount);g2.recs.push(e);m2.set(n,g2)});
       return[...m2.values()]})())
-    .concat(extra&&extra.n?[{name:extra.name,id:"",n:extra.n,t:extra.t,col:"#0d7f7a"}]:[])
+    .concat(extra&&extra.n?[{name:extra.name,id:"",n:extra.n,t:extra.t,col:"#0d7f7a",recs:extra.recs||[]}]:[])
     .filter(r=>r.n).sort((a,b)=>b.t-a.t);
 }
+let catSh=[];
 function brkBlock(hd,rows,tone){
   if(!rows.length)return"";
   const t=rows.reduce((a,r)=>a+r.t,0),pc=v=>t?Math.round(v*1000/t)/10:0,n=rows.reduce((a,r)=>a+r.n,0);
   return `<div class="brk ${tone}">
     <div class="brkh"><div class="bh1">${hd}<small>${rows.length} categor${rows.length===1?"y":"ies"} · ${n} record${n===1?"":"s"}</small></div><div class="brkt">${inr(fromP(t))}</div></div>
     <div class="stack">${rows.map(r=>`<i style="width:${pc(r.t)}%;background:${r.col}"></i>`).join("")}</div>
-    ${rows.map(r=>`<div class="brow">
+    ${rows.map(r=>`<div class="brow" data-catsh="${catSh.push({name:r.name,col:r.col,tone,recs:r.recs||[]})-1}" title="Show these records">
       <span class="bdot" style="background:${r.col}"></span>
       <div class="bn"><b>${esc(r.name)}</b><small>${r.n} record${r.n===1?"":"s"}</small></div>
       <div class="bv"><b>${inr(fromP(r.t))}</b><small>${pc(r.t)}%</small></div></div>`).join("")}</div>`;
 }
-function expSummary(list,ilist,coll){
+function catSheet(i){
+  const c=catSh[i];if(!c)return;const inc=c.tone==="inn",recs=c.recs.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")),tot=recs.reduce((a,e)=>a+toP(e.amount),0);
+  const row=e=>{const tap=e._cl?`data-gclm="1"`:e.pid?`data-psel="${e.pid}" data-go="1"`:e.id?`data-ex="edit" data-id="${e.id}"`:"";
+    const t=e._cl?"Expense Claims":e.pid?e.title:(e.title||e.paidTo||"—"),sub=e._cl?[e.n+" claim"+(e.n===1?"":"s"),e.paidTo,e.mode]:e.pid?["Installment "+e.k+" of "+e.n,e.mode,e.ref]:[e.title?e.paidTo:"",e.mode,e.ref];
+    return `<div class="csr" ${tap}><div class="csd">${esc(fmtDate(e.date))}</div><div class="exm"><b>${esc(t)}</b><small>${esc(sub.filter(Boolean).join(" · "))||"&nbsp;"}</small></div><div class="exa${inc?" in":""}"><i>${inc?"▴":"▾"}</i> ${inr(e.amount)}</div></div>`};
+  modal(`<div class="shh"><h3 style="margin:0;display:flex;align-items:center;gap:8px"><span class="bdot" style="background:${c.col}"></span>${esc(c.name)}</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div>
+  <div class="phint">${recs.length} record${recs.length===1?"":"s"} · <b style="color:${inc?"#15803d":"#b91c1c"}">${inr(fromP(tot))}</b>${exm==="all"?" · all months":" · "+esc(monLabel(exm))}</div>
+  <div class="csl">${recs.map(row).join("")||noMatch("No records")}</div>`,"side");
+}
+function expSummary(list,ilist,coll){catSh=[];
   if(!list.length&&!ilist.length&&!coll.length)return noMatch("Nothing for these filters");
   const M=new Map(),bump=(d,key,v)=>{const k=monKey(d)||"0000-00",r=M.get(k)||{o:0,i:0,n:0};r[key]+=v;r.n++;M.set(k,r)};
   list.forEach(e=>bump(e.date,"o",toP(e.amount)));
@@ -2419,7 +2434,7 @@ function expSummary(list,ilist,coll){
         <div class="m2r o"><em>Expense</em><div class="m2t"><i style="width:${r.o?Math.max(2,Math.round(r.o*100/mx)):0}%"></i></div><b>${inr(fromP(r.o))}</b></div>
       </div></div>`}).join("")}</div>`:"";
   return `<div class="sumw">${brkBlock("Expense by category",brkRows(list),"out")}
-  ${brkBlock("Income by category",brkRows(ilist,{name:"Educlawd",n:coll.length,t:sumP(coll)}),"inn")}
+  ${brkBlock("Income by category",brkRows(ilist,{name:"Educlawd",n:coll.length,t:sumP(coll),recs:coll}),"inn")}
   ${mon}</div>
   <div class="row" style="margin-top:12px"><button class="alt ib" data-ex="cats">${sv(P.pencil,16)} Rename or delete categories</button></div>`;
 }
@@ -3007,6 +3022,7 @@ function onClick(e){
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
   if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ex"))return exAct(el);
+  if(el=g("data-catsh"))return catSheet(+el.dataset.catsh);
   if(el=g("data-et")){etab=el.dataset.et;return render()}
   if(el=g("data-ety")){ety=el.dataset.ety;return render()}
   if(el=g("data-em")){exm=el.dataset.em;return render()}
