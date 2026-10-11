@@ -2040,7 +2040,7 @@ function payForm(p,presetSchool){
   if(!pf.rows.length)payRebuild(+e.count||1);
   const lock=!!e.schoolId&&schools.some(x=>x.id===e.schoolId),other=!e.schoolId&&!!e.schoolName,ss=schools.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||""));
   modal(`<h3>${p?"Edit":"New"} payment plan</h3>
-  <div${lock?' style="display:none"':""}><label>School</label><select id="pf_school"><option value="">Select school</option>${ss.map(s=>`<option value="${s.id}" ${s.id===e.schoolId?"selected":""}>${esc(s.name)}${s.stage==="Won"?" · Won":""}</option>`).join("")}<option value="__other" ${other?"selected":""}>Other (not in CRM)…</option></select>
+  <div${lock?' style="display:none"':""}><label>School</label><select id="pf_school"><option value="">Select school</option>${ss.filter(s=>s.stage==="Won"||s.id===e.schoolId).map(s=>{const has=payments.some(p=>p.schoolId===s.id&&p.id!==e.id);return `<option value="${s.id}" ${s.id===e.schoolId?"selected":""} ${has?"disabled":""}>${esc(s.name)}${has?" · plan added":""}</option>`}).join("")}<option value="__other" ${other?"selected":""}>Other (not in CRM)…</option></select>
   <input id="pf_sname" placeholder="School / client name" value="${esc(other?e.schoolName:"")}" style="margin-top:6px;${other?"":"display:none"}"></div>
   <div class="phint pqb" id="pf_qb"></div><div class="phint" id="pf_hint"></div>
   <div class="grid pq">${fld("pf_stu","Students",e.students,"number")}<div><label>Price is</label><select id="pf_basis"><option value="year" ${e.basis!=="month"?"selected":""}>Per year</option><option value="month" ${e.basis==="month"?"selected":""}>Per month</option></select></div>${fld("pf_price","Price quoted per student (₹)",e.price,"number")}${fld("pf_amt","Amount (₹)",e.amount??(+e.students>0&&+e.price>0?calc({students:+e.students,price:+e.price,basis:e.basis}).y:""),"number")}${fld("pf_gst","GST amount (₹)",e.gstAmt??"","number")}${fld("pf_total","Total payment (₹)",e.total,"number")}</div>
@@ -2121,6 +2121,7 @@ function payChange(e){const t=e.target;if(!pf||!t)return;
 function savePlan(){
   const d=pf.d,sid=val("pf_school"),nm=sid==="__other"?val("pf_sname"):((schools.find(s=>s.id===sid)||{}).name||"");
   if(!sid)return err("Select a school");if(!nm)return err("Enter the school / client name");
+  if(sid!=="__other"&&payments.some(p=>p.schoolId===sid&&p.id!==d.id))return err("This school already has a payment plan — edit that plan instead");
   const t=toP(d.total);if(t<=0)return err("Enter the total payment amount");
   if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
@@ -2719,7 +2720,7 @@ function netDetail(s){
   ${row("Strength on record",s.strength?esc(String(s.strength))+" students":"")}</table>
   ${n.notes?`<h4>Notes</h4><div class="note">${esc(n.notes)}</div>`:""}
   <div class="row" style="margin-top:16px"><button data-net="edit">${sv(P.pencil,16)} ${netDone(s)?"Edit contract details":"Add contract details"}</button><button class="alt" data-nschool="${s.id}">Open school record</button>${end?`<button class="alt" data-net="remind">${sv(P.cal,16)} Renewal reminder</button>`:""}</div>`;
-  const payTab=(ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+`<button class="${ps.length?"alt ":""}ib" style="margin-top:12px" data-pnew="${s.id}">${sv(P.wallet,16)} ${ps.length?"Add another plan":"Create payment plan"}</button>`;
+  const payTab=(ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+(ps.length?"":`<button class="ib" style="margin-top:12px" data-pnew="${s.id}">${sv(P.wallet,16)} Create payment plan</button>`);
   return `<div class="dbrow"><button class="dback" data-net="back" aria-label="Back" title="Back">${sv(P.back,20)}</button></div>
   <div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div>
     <div class="hti"><h2>${esc(s.name||"—")}</h2><small>${esc([s.city,s.board].filter(Boolean).join(" · "))||"In the network"}</small></div></div>
@@ -2931,7 +2932,7 @@ function onClick(e){
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
   if(el=g("data-mtog"))return toggleUser(el);
-  if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
+  if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")&&!payments.some(p=>p.schoolId===nsel)?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
   if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
