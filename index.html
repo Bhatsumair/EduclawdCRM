@@ -2053,13 +2053,13 @@ function payDealBlock(s){
 
 /* ---- create / edit form with automatic installment split ---- */
 const dealTotal=s=>s&&s.deal&&s.deal.students&&s.deal.price?Math.round(calc(s.deal).yt*100)/100:0;
-function payForm(p,presetSchool){
+function payForm(p,presetSchool,inside){
   const e=p?structuredClone(p):{id:"pay_"+uid(),_kind:"payment",schoolId:presetSchool||"",schoolName:"",total:"",count:2,freq:"1",start:todayISO(),installments:[],notes:""};
   if(!p&&presetSchool){const dv=dealTotal(schools.find(x=>x.id===presetSchool));if(dv)e.total=dv}
   if(e.students===undefined){const sd=(schools.find(x=>x.id===e.schoolId)||{}).deal||{};e.students=sd.students||"";e.price=sd.price||"";e.basis=sd.basis||"year"}
   if(e.amount===undefined&&e.gstAmt!==undefined&&+e.total)e.amount=Math.round((+e.total-(+e.gstAmt||0))*100)/100;
   if(e.gstAmt===undefined&&+e.students>0&&+e.price>0)e.gstAmt=Math.round(calc({students:+e.students,price:+e.price,basis:e.basis}).y*18)/100;
-  pf={d:e,rows:(e.installments||[]).map(i=>({...i}))};
+  pf={d:e,rows:(e.installments||[]).map(i=>({...i})),inside:!!inside};
   if(!pf.rows.length)payRebuild(+e.count||1);
   const lock=!!e.schoolId&&schools.some(x=>x.id===e.schoolId),other=!e.schoolId&&!!e.schoolName,ss=schools.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||""));
   modal(`<h3>${p?"Edit":"New"} payment plan</h3>
@@ -2144,7 +2144,7 @@ function payChange(e){const t=e.target;if(!pf||!t)return;
 function savePlan(){
   const d=pf.d,sid=val("pf_school"),nm=sid==="__other"?val("pf_sname"):((schools.find(s=>s.id===sid)||{}).name||"");
   if(!sid)return err("Select a school");if(!nm)return err("Enter the school / client name");
-  if(!payments.some(x=>x.id===d.id)&&sid!=="__other"&&payments.some(p=>p.schoolId===sid))return err("This school already has a payment plan — edit that plan instead");
+  if(!pf.inside&&!payments.some(x=>x.id===d.id)&&sid!=="__other"&&payments.some(p=>p.schoolId===sid))return err("This school already has a payment plan — edit that plan instead");
   const t=toP(d.total);if(t<=0)return err("Enter the total payment amount");
   if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
@@ -2753,7 +2753,7 @@ function netDetail(s){
   ${row("Strength on record",s.strength?esc(String(s.strength))+" students":"")}</table>
   ${n.notes?`<h4>Notes</h4><div class="note">${esc(n.notes)}</div>`:""}
   <div class="row" style="margin-top:16px"><button data-net="edit">${sv(P.pencil,16)} ${netDone(s)?"Edit contract details":"Add contract details"}</button><button class="alt" data-nschool="${s.id}">Open school record</button>${end?`<button class="alt" data-net="remind">${sv(P.cal,16)} Renewal reminder</button>`:""}</div>`;
-  const payTab=(ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+(ps.length?"":`<button class="ib" style="margin-top:12px" data-pnew="${s.id}">${sv(P.wallet,16)} Create payment plan</button>`);
+  const payTab=(ps.length?ps.map(planBlock).join(""):`<div class="note">No payment plan yet.</div>`)+`<button class="${ps.length?"alt ":""}ib" style="margin-top:12px" data-pnew="${s.id}">${sv(P.wallet,16)} ${ps.length?"Add another plan":"Create payment plan"}</button>`;
   return `<div class="dbrow"><button class="dback" data-net="back" aria-label="Back" title="Back">${sv(P.back,20)}</button></div>
   <div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div>
     <div class="hti"><h2>${esc(s.name||"—")}</h2><small>${esc([s.city,s.board].filter(Boolean).join(" · "))||"In the network"}</small></div></div>
@@ -2959,7 +2959,7 @@ function onClick(e){
   if(el=g("data-exf"))return efFlip(el.dataset.exf);
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
   if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=el.dataset.psel;nsel=null}return render()}
-  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew)}
+  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew,true)}
   if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
   if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";sel=null;return render()}
