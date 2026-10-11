@@ -934,7 +934,7 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .tb em{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:2px;font-style:normal;font-size:10.5px;font-weight:800;color:var(--ink)}
 .mlb{height:22px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--mute)}.mcol.now .mlb{color:var(--teal2)}
 .mtb{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
-.mth,.mtr{display:grid;grid-template-columns:minmax(0,1.3fr) .8fr .8fr 1.1fr 1fr;gap:6px;align-items:center;padding:6px 10px}
+.mth,.mtr{display:grid;grid-template-columns:minmax(0,1.3fr) .7fr .7fr 1fr 1fr .9fr;gap:6px;align-items:center;padding:6px 10px}
 .mth{background:var(--soft);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--mute)}
 .mtr+.mtr{border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}.mtr span:first-child{font-weight:700}
 .mth span:not(:first-child),.mtr span:not(:first-child){text-align:right}
@@ -1071,6 +1071,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .fk{overflow:hidden;padding-left:17px}.fk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
 .clmr .c1{min-height:0;padding:3px 10px;font-size:11px;font-weight:700;border-radius:99px;box-shadow:none;margin-top:2px}.clmr .c1.ok{background:var(--teal);border-color:var(--teal);color:#fff}.clmr .c1.pay{background:#16a34a;border-color:#16a34a;color:#fff}
 [data-tstage]{cursor:pointer}.frw[data-tstage]:hover{background:color-mix(in srgb,var(--c) 6%,transparent);border-radius:10px}.fsum>div[data-tstage]:hover{filter:brightness(.97)}.fct b{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--c) 45%,transparent);text-underline-offset:3px}
+.mtr .wv{color:#15803d;font-weight:700}
 </style>
 </head>
 <body>
@@ -1389,8 +1390,8 @@ function insTrend(ss,ev){
     <div class="mch"><div class="may">${[...Array(nt+1).keys()].reverse().map(i=>`<span>${i*step}</span>`).join("")}</div>
       <div class="mpl"><div class="mgr">${[...Array(nt+1)].map(()=>"<i></i>").join("")}</div>
         ${data.map((d,i)=>`<div class="mcol ${i===5?"now":""}"><div class="mbx">${bar(d,"all",d.a,"la","school"+(d.a===1?"":"s")+" added")}${bar(d,"won",d.w,"lw","deal"+(d.w===1?"":"s")+" won")}</div><div class="mlb">${esc(monChip(d.m).split(" ")[0])}</div></div>`).join("")}</div></div>
-    <div class="mtb"><div class="mth"><span>Month</span><span>Added</span><span>Won</span><span>Value added</span><span>Growth</span></div>
-      ${data.slice().reverse().map(d=>`<div class="mtr"><span>${esc(monLabel(d.m).replace(/ \d{4}$/,""))}</span><span>${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}</span><span>${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</span><span>${d.av?inrS(d.av):"—"}</span><span class="g ${gcls(d.g)}">${gtxt(d.g)}</span></div>`).join("")}</div></div>`;
+    <div class="mtb"><div class="mth"><span>Month</span><span>Added</span><span>Won</span><span>Value added</span><span>Won value</span><span>Growth</span></div>
+      ${data.slice().reverse().map(d=>`<div class="mtr"><span>${esc(monLabel(d.m).replace(/ \d{4}$/,""))}</span><span>${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}</span><span>${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</span><span>${d.av?inrS(d.av):"—"}</span><span class="wv">${d.v?inrS(d.v):"—"}</span><span class="g ${gcls(d.g)}">${gtxt(d.g)}</span></div>`).join("")}</div></div>`;
 }
 function insRisk(ss){
   const now=Date.now(),open=ss.filter(OPEN_ST);
