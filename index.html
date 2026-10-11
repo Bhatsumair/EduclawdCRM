@@ -1111,6 +1111,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .stgb .sclr{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--soft);color:var(--mute);font-size:11px;text-decoration:none;flex:none}
 .stgr span u{display:block;height:4px;border-radius:99px;background:var(--soft);margin-top:4px;text-decoration:none;overflow:hidden}.stgr span u b{display:block;height:100%;background:var(--c);border-radius:99px}
 .stgr span{display:flex;flex-direction:column}
+.sidp{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,var(--card));color:var(--teal2);margin-right:6px;vertical-align:1px}
 </style>
 </head>
 <body>
@@ -1289,7 +1290,7 @@ async function syncNow(first){
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
       if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
-      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true;if(isAdmin())setTimeout(payAlerts,0)}
+      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true;if(isAdmin())setTimeout(()=>{assignSids();payAlerts()},0)}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
     if(!dirty.size)setMode("");
@@ -2678,7 +2679,7 @@ function networkView(f){
     name:(a,b)=>(a.name||"").localeCompare(b.name||""),
     signed:(a,b)=>(((b.deal||{}).signing)||"").localeCompare(((a.deal||{}).signing)||"")}[nsrt];
   const list=won.filter(s=>{const n=netOf(s);
-    return(npf==="all"||stOf(s)===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)).toLowerCase().includes(f))})
+    return(npf==="all"||stOf(s)===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)+" "+sidOf(s)).toLowerCase().includes(f))})
     .sort((a,b)=>srt(a,b)||(a.name||"").localeCompare(b.name||""));
   const orph=npf!=="none"?orphAll.filter(p=>(npf==="all"||planSum(p).status===npf)&&(!f||payName(p).toLowerCase().includes(f))):[];
   if(!list.length&&!orph.length)return kpi+seg+bar+noMatch(f?"No schools match your search":"Nothing in this group");
@@ -2687,7 +2688,7 @@ function networkView(f){
   return kpi+seg+bar+`<div class="nlist">`+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
     return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${{over:"#dc2626",pend:"#0d7f7a",done:"#16a34a",none:"#94a3b8"}[st]}" data-nsel="${s.id}">
     <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
-    <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
+    <div class="nsub">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(py.paid))}</b></div>
@@ -2720,6 +2721,7 @@ function netDetail(s){
   const contract=`<div class="nstat"><span class="pill ${scl}">${sl}</span><small>${l===null?"Add the billing start, period and authorised person":l<0?"Expired on "+fmtDate(end):l+" day"+(l===1?"":"s")+" left"}</small></div>
   ${pc===null?"":`<div class="nprog big"><div class="npt"><span>Billing from ${esc(fmtDate(n.billStart))}</span><b>${pc}% of the term done</b><span>${esc(fmtDate(end))}</span></div><div class="npb"><i class="${st}" style="width:${pc}%"></i></div></div>`}
   <h4>Contract</h4><table class="dtl">
+  ${row("School ID",n.sid?`<b>${esc(n.sid)}</b>`:"")}
   ${row("Signing date",s.deal&&s.deal.signing?fmtDate(s.deal.signing):"")}
   ${row("Billing starts",n.billStart?fmtDate(n.billStart):"")}
   ${row("Contract period",n.term?esc(termLabel(n.term)):"")}
@@ -2746,15 +2748,27 @@ function netDetail(s){
   ${tabs}${pay?payTab:contract}`;
 }
 /* ---- edit ---- */
+/* School ID: EDU-0001, EDU-0002 … — given automatically, never typed */
+const sidOf=s=>(s.net&&s.net.sid)||"";
+const nextSid=()=>"EDU-"+String(Math.max(0,...schools.map(x=>+((sidOf(x).match(/(\d+)$/)||[0,0])[1])))+1).padStart(4,"0");
+/* every Won school gets an ID once (oldest signing first), so the existing network is numbered too */
+function assignSids(){
+  if(!me||!isAdmin())return;
+  const need=schools.filter(s=>s.stage==="Won"&&!sidOf(s)).sort((a,b)=>(wonOn(a)||"9").localeCompare(wonOn(b)||"9"));
+  if(!need.length)return;
+  need.forEach(s=>{s.net=Object.assign({},s.net||{},{sid:nextSid()});s.updated=new Date().toISOString();push(s)});
+  cache();render();
+}
 function netForm(s){
   const n=netOf(s),sg=(s.deal&&s.deal.signing)||"";
   modal(`<h3>Contract details</h3>
   <p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">Sales person: ${esc(salesOf(s))} · deal ${insVal(s)?inr(insVal(s))+" / yr":"not set"}</small></p>
-  <div class="grid">${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
+  <div class="grid">${fld("n_sid","School ID",n.sid||nextSid())}${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
   <div><label>Contract period</label><select id="n_term"><option value="">Select period</option>${NET_TERMS.map(([v,l])=>`<option value="${v}" ${+n.term===v?"selected":""}>${l}</option>`).join("")}</select></div>
   ${fld("n_person","Authorised person",n.person)}${fld("n_desig","Designation",n.pdesig)}${fld("n_phone","Phone",n.pphone,"tel")}${fld("n_email","Email",n.pemail)}</div>
   <label>Notes (optional)</label><textarea id="n_notes" placeholder="e.g. renewal terms, invoicing contact">${esc(n.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-net="save" data-id="${s.id}">Save details</button><button class="alt" data-m="close">Cancel</button></div>`);
+  {const x=document.getElementById("n_sid");x.readOnly=true;x.tabIndex=-1;x.classList.add("ro")}
   document.getElementById("n_person").focus();
 }
 function netSave(id){
@@ -2764,7 +2778,7 @@ function netSave(id){
   if(bill&&sg&&bill<sg)return err("Billing can't start before the signing date");
   const o=structuredClone(s),was=netOf(s);
   if(sg)o.deal=Object.assign({},o.deal||{},{signing:sg});
-  o.net={billStart:bill,term:term?+term:"",person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
+  o.net={sid:was.sid||nextSid(),billStart:bill,term:term?+term:"",person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
   const ch=[];
   if((was.billStart||"")!==o.net.billStart)ch.push("billing start");
   if(String(was.term||"")!==String(o.net.term||""))ch.push("contract period");
