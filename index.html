@@ -1114,6 +1114,13 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .sidp{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,var(--card));color:var(--teal2);margin-right:6px;vertical-align:1px}
 .ncard{position:relative}.ncard .nhd{display:block;padding-right:112px}.ncard .nhd>b{display:block}.nrt{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}.nrt .sidp{margin:0}.ncard .nsub{padding-right:112px}
 .xplus{width:46px;height:46px;padding:0;display:grid;place-items:center;flex:none;border-radius:14px;min-height:0;background:var(--card);color:var(--teal2);border:1px solid color-mix(in srgb,var(--teal) 30%,var(--line));box-shadow:0 2px 8px rgba(13,127,122,.12)}.xplus:hover{background:color-mix(in srgb,var(--teal) 8%,var(--card))}
+
+/* PC only: warm background tone behind the page */
+@media(min-width:801px){
+  .app>section.card{background:linear-gradient(180deg,#fff7ec 0%,#fdf0e1 100%);border-color:#f1dcc2}
+  #side{background:linear-gradient(180deg,#fff6ea 0%,#fbe9d6 100%)}
+  body{background:radial-gradient(1100px 620px at 100% 0,rgba(251,191,140,.32),transparent 62%),radial-gradient(900px 640px at 8% 100%,rgba(244,170,120,.22),transparent 60%),linear-gradient(180deg,#fbf1e3,#f7e6d2)!important;background-attachment:fixed!important}
+}
 </style>
 </head>
 <body>
