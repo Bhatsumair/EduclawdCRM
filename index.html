@@ -934,7 +934,7 @@ header .applogo{width:30px;height:30px;border-radius:8px;flex:none;box-shadow:0 
 .tb em{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:2px;font-style:normal;font-size:10.5px;font-weight:800;color:var(--ink)}
 .mlb{height:22px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--mute)}.mcol.now .mlb{color:var(--teal2)}
 .mtb{margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:12.5px}
-.mth,.mtr{display:grid;grid-template-columns:minmax(0,1.3fr) .8fr .8fr 1.1fr 1fr;gap:6px;align-items:center;padding:6px 10px}
+.mth,.mtr{display:grid;grid-template-columns:minmax(0,1.3fr) .7fr .7fr 1fr 1fr .9fr;gap:6px;align-items:center;padding:6px 10px}
 .mth{background:var(--soft);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--mute)}
 .mtr+.mtr{border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}.mtr span:first-child{font-weight:700}
 .mth span:not(:first-child),.mtr span:not(:first-child){text-align:right}
@@ -1069,6 +1069,58 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 @media(min-width:801px){.fkg{grid-template-columns:repeat(3,minmax(0,1fr))}.fk.fkm{grid-column:auto}.fkn{font-size:22px}.fk.fkm .fkn{font-size:22px}}
 .ncard.kcard .npb i{background:var(--c)!important}
 .fk{overflow:hidden;padding-left:17px}.fk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.clmr .c1{min-height:0;padding:3px 10px;font-size:11px;font-weight:700;border-radius:99px;box-shadow:none;margin-top:2px}.clmr .c1.ok{background:var(--teal);border-color:var(--teal);color:#fff}.clmr .c1.pay{background:#16a34a;border-color:#16a34a;color:#fff}
+[data-tstage]{cursor:pointer}.frw[data-tstage]:hover{background:color-mix(in srgb,var(--c) 6%,transparent);border-radius:10px}.fsum>div[data-tstage]:hover{filter:brightness(.97)}.fct b{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--c) 45%,transparent);text-underline-offset:3px}
+.mtr .wv{color:#15803d;font-weight:700}
+
+/* CEO performance block */
+.tkg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.tk{border-radius:12px;padding:8px 11px;min-width:0;background:color-mix(in srgb,var(--c) 7%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line))}
+.tk small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}
+.tk b{display:block;font-size:17px;font-weight:800;color:color-mix(in srgb,var(--c) 70%,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.tk span{display:block;font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdl{display:inline;font-weight:800}.tdl.up{color:#15803d}.tdl.dn{color:#b91c1c}.tdl.nil{color:var(--mute)}
+@media(min-width:801px){.tkg{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.mleg .lc::before{background:#3b82f6!important}
+.tb.lc{background:linear-gradient(180deg,#60a5fa,#2563eb)}
+.mch.t2 .may{width:auto;min-width:34px}.mch.t2{grid-template-columns:auto minmax(0,1fr)}
+.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr .7fr}
+.mtb.t2 .mtr small{font-size:10.5px;color:var(--mute);font-weight:600}
+.mtr .cv{color:#1d4ed8;font-weight:700}
+@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:520px}}
+.mch.t2 .tb em{white-space:nowrap;font-size:10px}
+.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr}
+.mtb.t2 .mtr.one{display:block;color:var(--mute);font-size:12px;font-weight:600}
+@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:460px}.mtb.t2 .mtr.one{min-width:0}}
+.nlist{display:grid;gap:10px;min-width:0}.nlist>.it{margin:0}
+@media(min-width:801px){.nlist{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.nlist .ngrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1280px){.nlist .ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* deals: tabs + stage filter */
+.dtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:14px;background:var(--soft);margin-top:10px}
+.dtabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:0;padding:8px 4px;border-radius:11px;background:transparent;color:var(--teal2);border:0;box-shadow:none;font-size:12.5px;font-weight:700;white-space:nowrap}
+.dtabs button em{font-style:normal;font-size:11px;font-weight:800;min-width:20px;padding:1px 6px;border-radius:99px;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c)}
+.dtabs button.on{background:var(--c);color:#fff;box-shadow:0 4px 12px -6px var(--c)}
+.dtabs button.on em{background:rgba(255,255,255,.25);color:#fff}
+@media(max-width:520px){.dtabs{gap:4px}.dtabs button{flex-direction:column;gap:3px;padding:7px 2px;font-size:12px}.dtabs button em{font-size:10.5px}}
+.stgb.v2{border-left:4px solid var(--c)}
+.stgb.v2>i{background:var(--c)}
+.stgb.v2 em{background:color-mix(in srgb,var(--c) 14%,var(--card))!important;color:var(--c)!important}
+.stgb .sdist{display:flex;gap:2px;height:5px;border-radius:99px;overflow:hidden;margin-top:6px;max-width:260px;text-decoration:none}
+.stgb .sdist b{display:block;height:100%}
+.stgb .sclr{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--soft);color:var(--mute);font-size:11px;text-decoration:none;flex:none}
+.stgr span u{display:block;height:4px;border-radius:99px;background:var(--soft);margin-top:4px;text-decoration:none;overflow:hidden}.stgr span u b{display:block;height:100%;background:var(--c);border-radius:99px}
+.stgr span{display:flex;flex-direction:column}
+.sidp{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,var(--card));color:var(--teal2);margin-right:6px;vertical-align:1px}
+.ncard{position:relative}.ncard .nhd{display:block;padding-right:112px}.ncard .nhd>b{display:block}.nrt{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}.nrt .sidp{margin:0}.ncard .nsub{padding-right:112px}
+.xplus{width:46px;height:46px;padding:0;display:grid;place-items:center;flex:none;border-radius:14px;min-height:0;background:var(--card);color:var(--teal2);border:1px solid color-mix(in srgb,var(--teal) 30%,var(--line));box-shadow:0 2px 8px rgba(13,127,122,.12)}.xplus:hover{background:color-mix(in srgb,var(--teal) 8%,var(--card))}
+
+/* PC only: warm white–yellowish background */
+@media(min-width:801px){
+  .app>section.card{background:linear-gradient(180deg,#fffdf4 0%,#fff8e1 100%);border-color:#f3e6bf}
+  #side{background:linear-gradient(180deg,#fffcf0 0%,#fdf4d6 100%)}
+  body{background:radial-gradient(1100px 620px at 100% 0,rgba(253,224,130,.28),transparent 62%),radial-gradient(900px 640px at 8% 100%,rgba(250,214,120,.18),transparent 60%),linear-gradient(180deg,#fefaeb,#fbf1d4)!important;background-attachment:fixed!important}
+}
 </style>
 </head>
 <body>
@@ -1077,7 +1129,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 <div class="app">
   <section class="card" id="list">
     <nav class="tabs gnav" id="gnav"></nav>
-    <div class="topbar"><div id="greet"></div><div class="row" id="sbar"><input id="q" placeholder="Search school, city, board…" style="flex:1"><button id="add" class="plus" aria-label="Add school" title="Add school"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+    <div class="topbar"><div id="greet"></div><div class="row" id="sbar"><input id="q" placeholder="Search school, city, board…" style="flex:1"><button id="add" class="plus" aria-label="Add school" title="Add school"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button id="xexp" class="xplus" aria-label="Export to Excel" title="Export to Excel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/></svg></button></div></div>
     <div class="items" id="items"></div>
   </section>
   <section class="card" id="detail"></section>
@@ -1247,7 +1299,7 @@ async function syncNow(first){
     let changed=false;const sg=JSON.stringify(docs);
     if(first||sg!==lastSig.s){lastSig.s=sg;merge(docs.filter(d=>!isPayDoc(d)&&!isExpDoc(d)&&!isClaimDoc(d)).map(d=>({id:d.id,owner:d.owner,data:()=>d.data})));cache();
       if(isAdmin()){mergePay(docs.filter(isPayDoc));migratePlans();cachePay();mergeExp(docs.filter(isExpDoc));cacheExp()}else{payments=[];expenses=[];excats=[]}
-      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true;if(isAdmin())setTimeout(payAlerts,0)}
+      mergeClaims(docs.filter(isClaimDoc));cacheClm();changed=true;if(isAdmin())setTimeout(()=>{assignSids();payAlerts()},0)}
     if(isAdmin()){const t=await rpc("crm_team_list",{p_token:TOKEN}),st=JSON.stringify(t);if(st!==lastSig.t){lastSig.t=st;team=t;changed=true}}
     else if(!team.length||team[0].id!==me.id){team=[me];changed=true}
     if(!dirty.size)setMode("");
@@ -1305,11 +1357,11 @@ const savePw=safe(async()=>{
 });
 
 /* Educlawd CRM · Team analytics view, filters, feed pagination */
-let tsub="analytics",an={m:"all",p:"7d",d:"all",t:"all",from:"",to:"",lim:30,pg:1};
+let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1};
 const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
 const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
 const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
-const PL={today:"today","7d":"last 7 days","30d":"last 30 days",month:"this month",all:"all time",custom:"selected dates"};
+const PL={today:"today","7d":"last 7 days","30d":"last 30 days",month:"this month",year:"this year",all:"all time",custom:"selected dates"};
 const evKind=e=>e.kind||inferKind(e.type,e.text);
 const evUser=e=>e.byId||((team.find(u=>u.name===e.by)||{}).id)||(e.by?"name:"+e.by:"none");
 const ulabel=k=>k==="root-admin"?"Admin":k==="none"?"Before sign-in (no user)":k.startsWith("name:")?k.slice(5):((team.find(u=>u.id===k)||{}).name||"Unknown");
@@ -1319,6 +1371,7 @@ function anRange(){
   const n=new Date(),sod=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),p=an.p;
   if(p==="today")return[sod,Infinity];if(p==="7d")return[Date.now()-7*864e5,Infinity];if(p==="30d")return[Date.now()-30*864e5,Infinity];
   if(p==="month")return[new Date(n.getFullYear(),n.getMonth(),1).getTime(),Infinity];
+  if(p==="year")return[new Date(n.getFullYear(),0,1).getTime(),Infinity];
   if(p==="custom")return[an.from?new Date(an.from+"T00:00").getTime():0,an.to?new Date(an.to+"T23:59:59").getTime():Infinity];
   return[0,Infinity];
 }
@@ -1357,38 +1410,61 @@ function insFunnel(ss){
     <div class="brkh"><div class="bh1">Pipeline by stage<small>${tot} school${tot===1?"":"s"} · ${inr(openV)} open value</small></div>
       <div class="fwr"><b>${wr}</b><small>Win rate</small></div></div>
     ${tot?`<div class="fstack">${vis.map(r=>`<i style="flex:${r.n};background:${col(r.st)}" title="${esc(r.st)}: ${r.n}"></i>`).join("")}</div>`:""}
-    <div class="fsum"><div><small>Open</small><b>${openN}</b><span>${openV?inrS(openV):"—"}</span></div><div class="w"><small>Won</small><b>${won.n}</b><span>${won.v?inrS(won.v):"—"}</span></div><div class="l"><small>Lost</small><b>${lost.n}</b><span>${lost.v?inrS(lost.v):"—"}</span></div></div>
-    <div class="flist">${vis.map(r=>{const pc=tot?Math.round(r.n*100/tot):0;return `<div class="frw" style="--c:${col(r.st)}">
+    <div class="fsum"><div data-tstage="__open" title="Show open schools"><small>Open</small><b>${openN}</b><span>${openV?inrS(openV):"—"}</span></div><div class="w" data-tstage="Won" title="Show won schools"><small>Won</small><b>${won.n}</b><span>${won.v?inrS(won.v):"—"}</span></div><div class="l" data-tstage="Lost" title="Show lost schools"><small>Lost</small><b>${lost.n}</b><span>${lost.v?inrS(lost.v):"—"}</span></div></div>
+    <div class="flist">${vis.map(r=>{const pc=tot?Math.round(r.n*100/tot):0;return `<div class="frw" style="--c:${col(r.st)}" data-tstage="${esc(r.st)}" title="Show ${esc(r.st)} schools">
       <div class="fnm"><i></i><b>${esc(r.st)}</b></div>
       <div class="ftk"><i style="width:${Math.max(3,Math.round(r.n*100/mx))}%"></i></div>
       <div class="fct"><b>${r.n}</b><small>${pc}%</small></div>
       <div class="fvl">${r.v?inrS(r.v):"—"}</div></div>`}).join("")||noMatch("No schools yet")}</div></div>`;
 }
-function insTrend(ss,ev){
-  const now=new Date(),ms=[];
-  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push(localISO(d).slice(0,7))}
-  const data=ms.map(m=>{const add=ss.filter(s=>monKey((s.created||"").slice(0,10))===m),wn=ss.filter(s=>s.stage==="Won"&&monKey(wonOn(s))===m);
-    return{m,a:add.length,w:wn.length,av:add.reduce((x,s)=>x+insVal(s),0),v:wn.reduce((x,s)=>x+insVal(s),0)}});
-  /* month-on-month growth, in schools added and in the deal value they carry */
-  const gr=(c,p)=>p===null||p===undefined?null:p===0?(c?Infinity:0):Math.round((c-p)*100/p);
-  data.forEach((d,i)=>{d.g=gr(d.a,i?data[i-1].a:null);d.gv=gr(d.av,i?data[i-1].av:null);d.gw=gr(d.w,i?data[i-1].w:null)});
-  const gtxt=g=>g===null?"—":g===Infinity?"New":(g>0?"▲ ":g<0?"▼ ":"")+Math.abs(g)+"%";
-  const gcls=g=>g===null?"nil":g===Infinity||g>0?"up":g<0?"dn":"nil";
-  const cur=data[5];const mx=Math.max(1,...data.map(d=>Math.max(d.a,d.w))),step=Math.max(1,Math.ceil(mx/4)),nt=Math.ceil(mx/step),top=step*nt,pm=esc(monChip(data[4].m).split(" ")[0]),cm=esc(monChip(cur.m).split(" ")[0]);
-  const sumA=data.reduce((a,d)=>a+d.a,0),sumW=data.reduce((a,d)=>a+d.w,0),sumV=data.reduce((a,d)=>a+d.v,0);
-  const bar=(d,f,n,cls,lbl)=>n?`<button type="button" class="tb ${cls}" data-tmo="${d.m}" data-f="${f}" style="height:${Math.round(n*100/top)}%" title="${n} ${lbl} — tap to see them"><em>${n}</em></button>`:`<span class="tb ${cls} z"></span>`;
+/* CEO trend: follows the period filter (day / week / month / quarter buckets), money first */
+let insBk=[];
+function insTrend(ss){
+  const DAY=864e5,iso=t=>localISO(new Date(t)).slice(0,10),now=Date.now();
+  let[from,to]=anRange();
+  /* open-ended periods run to the END of the current day / month / year, so a deal signed later this month still counts */
+  if(to===Infinity){const d=new Date();to=an.p==="month"?new Date(d.getFullYear(),d.getMonth()+1,1).getTime()-1:an.p==="year"?new Date(d.getFullYear()+1,0,1).getTime()-1:new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()-1}
+  const df=(an.d||"all")!=="all",ids=new Set(ss.map(s=>s.id)),limIds=an.m!=="all"||df?ids:null;
+  const pays=[];payments.forEach(p=>{if(limIds&&!(p.schoolId&&limIds.has(p.schoolId)))return;(p.installments||[]).forEach(i=>{if(i.paidOn)pays.push({d:i.paidOn,v:toP(paidAmt(i))})})});
+  const addD=s=>(s.created||"").slice(0,10),wonList=ss.filter(s=>s.stage==="Won"&&wonOn(s));
+  if(!from){const ds=[...ss.map(addD),...wonList.map(wonOn),...pays.map(x=>x.d)].filter(Boolean).sort();from=ds.length?new Date(ds[0]+"T00:00").getTime():now-365*DAY}
+  const span=(to-from)/DAY,unit=span<=32?"day":span<=92?"week":span<=731?"month":"quarter";
+  const bks=[];const sd=new Date(from);sd.setHours(0,0,0,0);
+  if(unit==="day"){for(let t=sd.getTime();t<=to;t+=DAY){const d=new Date(t);bks.push({a:t,b:t+DAY-1,l:d.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:d.toLocaleDateString("en-IN",{weekday:"short"}),c:String(d.getDate())})}}
+  else if(unit==="week"){for(let t=sd.getTime();t<=to;t+=7*DAY){const a=new Date(t),b=new Date(Math.min(t+7*DAY-1,to));bks.push({a:t,b:t+7*DAY-1,l:a.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:"to "+b.toLocaleDateString("en-IN",{day:"numeric",month:"short"})})}}
+  else{const step=unit==="month"?1:3;let d=new Date(sd.getFullYear(),unit==="month"?sd.getMonth():Math.floor(sd.getMonth()/3)*3,1);
+    while(d.getTime()<=to){const n=new Date(d.getFullYear(),d.getMonth()+step,1);bks.push({a:d.getTime(),b:n.getTime()-1,l:unit==="month"?d.toLocaleString("en-IN",{month:"short"}):"Q"+(Math.floor(d.getMonth()/3)+1),s:String(d.getFullYear()).slice(2)});d=n}}
+  const inB=(ds,b)=>{if(!ds)return false;const t=new Date(ds+"T12:00").getTime();return t>=b.a&&t<=b.b};
+  bks.forEach(b=>{const ad=ss.filter(s=>inB(addD(s),b)),wn=wonList.filter(s=>inB(wonOn(s),b));
+    Object.assign(b,{ad,wn,a_n:ad.length,a_v:ad.reduce((x,s)=>x+insVal(s),0),w_n:wn.length,w_v:wn.reduce((x,s)=>x+insVal(s),0),c_v:fromP(pays.filter(x=>inB(x.d,b)).reduce((x,p)=>x+p.v,0))})});
+  insBk=bks;
+  const T=k=>bks.reduce((x,b)=>x+b[k],0),tA=T("a_n"),tW=T("w_n"),tWV=T("w_v"),tC=T("c_v"),tAV=T("a_v"),avg=tW?tWV/tW:0;
+  /* previous period of the same length, for the change arrows */
+  const hasPrev=an.p!=="all"&&!(an.p==="custom"&&!an.from),pa=from-(to-from),pb=from-1;
+  const pin=ds=>{if(!ds)return false;const t=new Date(ds+"T12:00").getTime();return t>=pa&&t<=pb};
+  const P=hasPrev?{a:ss.filter(s=>pin(addD(s))).length,w:wonList.filter(s=>pin(wonOn(s))).length,wv:wonList.filter(s=>pin(wonOn(s))).reduce((x,s)=>x+insVal(s),0),c:fromP(pays.filter(x=>pin(x.d)).reduce((x,p)=>x+p.v,0))}:null;
+  const dl=(c,p)=>{if(!P)return"";if(!p)return c?`<span class="tdl up">New</span>`:`<span class="tdl nil">—</span>`;const g=Math.round((c-p)*100/p);return `<span class="tdl ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲":g<0?"▼":""} ${Math.abs(g)}%</span>`};
+  const tile=(c,l,v,sub,d)=>`<div class="tk" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}${d||""}</span></div>`;
+  const kp=`<div class="tkg">
+    ${tile("#16a34a","Revenue won",inr(tWV),tW+" deal"+(tW===1?"":"s")+" ",P&&dl(tWV,P.wv))}
+    ${tile("#2563eb","Cash collected",inr(tC),"",P&&dl(tC,P.c))}
+    ${tile("#0d7f7a","Deals won",String(tW),"",P&&dl(tW,P.w))}
+    ${tile("#7c3aed","Schools added",String(tA),inrS(tAV)+" pipeline ",P&&dl(tA,P.a))}
+    ${tile("#d97706","Avg deal size",avg?inr(avg):"—","")}
+    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","")}</div>`;
+  const mx=Math.max(1,...bks.map(b=>Math.max(b.w_v,b.c_v))),nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p},top=nice(mx),many=bks.length>12;
+  const bar=(i,v,cls,lbl)=>v?`<button type="button" class="tb ${cls}" data-tbk="${i}" data-f="${cls==="lw"?"won":"all"}" style="height:${Math.max(2,Math.round(v*100/top))}%" title="${lbl}: ${inr(v)}">${many?"":`<em>${inrS(v)}</em>`}</button>`:`<span class="tb ${cls} z"></span>`;
+  const chart=`<div class="mch t2"><div class="may">${[4,3,2,1,0].map(k=>`<span>${k?inrS(top*k/4):"0"}</span>`).join("")}</div>
+    <div class="mpl" style="grid-template-columns:repeat(${bks.length},minmax(0,1fr))"><div class="mgr">${[0,1,2,3,4].map(()=>"<i></i>").join("")}</div>
+    ${bks.map((b,i)=>`<div class="mcol ${b.b>=now&&b.a<=now?"now":""}"><div class="mbx">${bar(i,b.w_v,"lw","Revenue won")}${bar(i,b.c_v,"lc","Collected")}</div><div class="mlb">${many&&i%Math.ceil(bks.length/12)?"":esc(b.c&&bks.length>7?b.c:b.l)}</div></div>`).join("")}</div></div>`;
+  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.a_n||b.w_n||b.c_v),hid=bks.length-rows.length;
+  const gr=(i)=>{const p=bks[i-1];if(!p)return `<span class="g nil">—</span>`;const c=bks[i].w_v,v=p.w_v;if(!v)return c?`<span class="g up">New</span>`:`<span class="g nil">—</span>`;const g=Math.round((c-v)*100/v);return `<span class="g ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲ ":g<0?"▼ ":""}${Math.abs(g)}%</span>`};
+  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Added</span><span>Won</span><span>Won value</span><span>Collected</span><span>Avg deal</span>${fine?"":"<span>Growth</span>"}</div>
+    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.a_n?`<button class="nmb la" data-tbk="${i}" data-f="all">${b.a_n}</button>`:"0"}</span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span><span>${b.w_n?inrS(b.w_v/b.w_n):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
   return `<div class="brk wide mow">
-    <div class="brkh"><div class="bh1">Last 6 months<small>Month-on-month · schools added and deals won</small></div>
-      <div class="mleg" style="margin:0;flex:none"><span class="la">Added</span><span class="lw">Won</span></div></div>
-    <div class="mok">
-      <div><small>Added in ${cm}</small><b>${cur.a}</b><span class="${gcls(cur.g)}">${gtxt(cur.g)} vs ${pm}</span></div>
-      <div><small>Won in ${cm}</small><b>${cur.w}</b><span class="${gcls(cur.gw)}">${gtxt(cur.gw)} vs ${pm}</span></div>
-      <div><small>6-month total</small><b>${sumA} / ${sumW}</b><span>added / won</span></div></div>
-    <div class="mch"><div class="may">${[...Array(nt+1).keys()].reverse().map(i=>`<span>${i*step}</span>`).join("")}</div>
-      <div class="mpl"><div class="mgr">${[...Array(nt+1)].map(()=>"<i></i>").join("")}</div>
-        ${data.map((d,i)=>`<div class="mcol ${i===5?"now":""}"><div class="mbx">${bar(d,"all",d.a,"la","school"+(d.a===1?"":"s")+" added")}${bar(d,"won",d.w,"lw","deal"+(d.w===1?"":"s")+" won")}</div><div class="mlb">${esc(monChip(d.m).split(" ")[0])}</div></div>`).join("")}</div></div>
-    <div class="mtb"><div class="mth"><span>Month</span><span>Added</span><span>Won</span><span>Value added</span><span>Growth</span></div>
-      ${data.slice().reverse().map(d=>`<div class="mtr"><span>${esc(monLabel(d.m).replace(/ \d{4}$/,""))}</span><span>${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}</span><span>${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</span><span>${d.av?inrS(d.av):"—"}</span><span class="g ${gcls(d.g)}">${gtxt(d.g)}</span></div>`).join("")}</div></div>`;
+    <div class="brkh"><div class="bh1">Performance · ${esc(PL[an.p]||"")}<small>${unit==="day"?"Day by day":unit==="week"?"Week by week":unit==="month"?"Month by month":"Quarter by quarter"}${P?" · change vs the previous period":""}</small></div>
+      <div class="mleg" style="margin:0;flex:none"><span class="lw">Revenue won</span><span class="lc">Collected</span></div></div>
+    ${kp}${chart}${tbl}</div>`;
 }
 function insRisk(ss){
   const now=Date.now(),open=ss.filter(OPEN_ST);
@@ -1493,14 +1569,14 @@ function analyticsView(){
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
-  return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="d" aria-label="Deal stage">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}<optgroup label="Stage">${STAGES.map(v=>opt(v,v,an.d)).join("")}</optgroup></select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
+  return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="d" aria-label="Deal stage">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}<optgroup label="Stage">${STAGES.map(v=>opt(v,v,an.d)).join("")}</optgroup></select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
   ${insKc("#2563eb",P.receipt,inrS(col.t),"Collected "+pl,col.n+" payment"+(col.n===1?"":"s")+" received")}
   ${insKc("#7c3aed",P.flag,cl>=WR_MIN?Math.round(won*100/cl)+"%":"—","Win rate",cl>=WR_MIN?won+" won of "+cl+" closed":"needs "+WR_MIN+" closed deals")}
   ${insKc("#db2777",P.net||P.home,(ss.length?Math.round(won*100/ss.length):0)+"%","Conversion",won+" won of "+ss.length+" school"+(ss.length===1?"":"s"))}</div>
-  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss,ev)}${insRisk(ss)}
+  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss)}${insRisk(ss)}
   <div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
   <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div></div>`;
 }
@@ -1607,6 +1683,51 @@ function doExport(){
   a.href=URL.createObjectURL(blob);a.download=`Educlawd-CRM_${sl(b.ml)}_${sl(b.pl)}_${ds}.xlsx`;document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
   toast("📥","Excel file downloaded · "+b.sheets.length+(b.sheets.length>1?" sheets":" sheet"));
+}
+/* ---- module exports: Expenses (claims), Finance, School Network ---- */
+function xlsxSave(base,sheets){
+  if(!sheets.some(s=>s.rows.length)){toast("📭","Nothing to export yet");return}
+  const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const blob=makeXlsx(sheets),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=`Educlawd-CRM_${base}_${ds}.xlsx`;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  toast("📥","Excel file downloaded · "+sheets.length+(sheets.length>1?" sheets":" sheet"));
+}
+const CST_L={draft:"Not sent",sent:"Awaiting approval",approved:"Approved (to pay)",paid:"Paid",rejected:"Rejected"};
+function exportClaims(){
+  const list=(isAdmin()?claims.filter(c=>clmSt(c)!=="draft"||c.byId===me.id):clmMine()).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  xlsxSave(isAdmin()?"Expense-claims":"My-expenses",[{name:"Expense claims",cols:[{h:"Date",w:13},{h:"Member",w:20},{h:"Category",w:14},{h:"Description",w:36},{h:"Amount (₹)",w:13},{h:"Status",w:18},{h:"Sent on",w:18},{h:"Decided on",w:18},{h:"Decided by",w:18},{h:"Remark",w:30},{h:"Paid on",w:13},{h:"Payment mode",w:14},{h:"Reference",w:18}],
+    rows:list.map(c=>[xDD(c.date),clmWho(c),c.cat||"",xW(c.note||""),xR(c.amount),CST_L[clmSt(c)]||clmSt(c),xDT(c.sentAt),xDT(c.decidedAt),c.decidedBy||"",xW(c.remark||""),xDD(c.paidOn),c.payMode||"",c.payRef||""])}]);
+}
+function exportFinance(){
+  if(!isAdmin())return;
+  const inM=d=>exm==="all"||monKey(d)===exm;
+  const rows=[];
+  outRecs().forEach(e=>rows.push([xDD(e.date),"Expense",catLabel(e),e.title||"",e.paidTo||"",e.mode||"",e.ref||"",xW(e.notes||""),xR(-(+e.amount||0))]));
+  claimExp().forEach(e=>rows.push([xDD(e.date),"Expense","Expense Claims",e.n+" claim"+(e.n===1?"":"s"),e.paidTo||"",e.mode||"",e.ref||"","",xR(-(+e.amount||0))]));
+  inRecs().forEach(e=>rows.push([xDD(e.date),"Income",catLabel(e),e.title||"",e.paidTo||"",e.mode||"",e.ref||"",xW(e.notes||""),xR(+e.amount||0)]));
+  incList().forEach(x=>rows.push([xDD(x.date),"Income","Educlawd (payment plan)","Installment "+x.k+" of "+x.n,x.title||"",x.mode||"",x.ref||"","",xR(+x.amount||0)]));
+  const sel=rows.filter(r=>inM(r[0].v)).sort((a,b)=>(b[0].v||"").localeCompare(a[0].v||""));
+  const M=new Map();rows.forEach(r=>{const k=monKey(r[0].v)||"—",m=M.get(k)||{i:0,o:0,n:0};r[8].v>=0?m.i+=r[8].v:m.o+=-r[8].v;m.n++;M.set(k,m)});
+  const mon=[...M.keys()].sort().reverse().map(k=>{const m=M.get(k);return[k==="—"?"No date":monLabel(k),m.n,xR(m.i),xR(m.o),xR(m.i-m.o)]});
+  const C=new Map();sel.forEach(r=>{const k=r[1]+"|"+r[2],c=C.get(k)||{t:r[1],c:r[2],n:0,v:0};c.n++;c.v+=Math.abs(r[8].v);C.set(k,c)});
+  const cats=[...C.values()].sort((a,b)=>a.t.localeCompare(b.t)||b.v-a.v).map(c=>[c.t,c.c,c.n,xR(c.v)]);
+  xlsxSave("Finance"+(exm==="all"?"":"_"+exm),[
+    {name:"Transactions",cols:[{h:"Date",w:13},{h:"Type",w:10},{h:"Category",w:22},{h:"Title",w:28},{h:"Paid to / Received from",w:28},{h:"Mode",w:14},{h:"Reference",w:18},{h:"Notes",w:32},{h:"Amount (₹)",w:14}],rows:sel},
+    {name:"By category",cols:[{h:"Type",w:10},{h:"Category",w:26},{h:"Transactions",w:13},{h:"Total (₹)",w:15}],rows:cats},
+    {name:"Monthly summary",cols:[{h:"Month",w:18},{h:"Transactions",w:13},{h:"Income (₹)",w:15},{h:"Expense (₹)",w:15},{h:"Net (₹)",w:15}],rows:mon}]);
+}
+function exportNetwork(){
+  if(!isAdmin())return;
+  const won=wonSchools().slice().sort((a,b)=>(+(sidOf(a).match(/\d+$/)||[1e9])[0])-(+(sidOf(b).match(/\d+$/)||[1e9])[0]));
+  const ST={over:"Overdue",pend:"Pending",done:"Fully paid",none:"No plan"};
+  const net=won.map(s=>{const n=netOf(s),py=netPay(s),end=netEnd(s);return[sidOf(s),s.name||"",s.city||"",s.state||"",s.board||"",salesOf(s),xDD(s.deal&&s.deal.signing),xDD(n.billStart),xDD(end),n.term?+n.term:"",n.person||"",n.pdesig||"",n.pphone||"",n.pemail||"",
+    py?xR(fromP(py.tot)):"",py?xR(fromP(py.paid)):"",py?xR(fromP(py.due)):"",py&&py.next?xDD(py.next.due):"",ST[py?py.st:"none"],py?py.n:0]});
+  const inst=[];payments.forEach(p=>{const s=schools.find(x=>x.id===p.schoolId);(p.installments||[]).forEach((i,k)=>{inst.push([s?sidOf(s):"",payName(p),k+1,(p.installments||[]).length,xDD(i.due),xR(i.amount),i.paidOn?"Paid":instSt(i)==="over"?"Overdue":"Pending",xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""])})});
+  inst.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||a[2]-b[2]);
+  xlsxSave("School-Network",[
+    {name:"School network",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"City",w:16},{h:"State / UT",w:18},{h:"Board",w:14},{h:"Sales person",w:18},{h:"Signed",w:13},{h:"Contract starts",w:14},{h:"Contract ends",w:14},{h:"Term (months)",w:12},{h:"Authorised person",w:22},{h:"Designation",w:16},{h:"Phone",w:14},{h:"Email",w:26},{h:"Contract value (₹)",w:16},{h:"Collected (₹)",w:15},{h:"Outstanding (₹)",w:15},{h:"Next due",w:13},{h:"Payment status",w:14},{h:"Plans",w:8}],rows:net},
+    {name:"Installments",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Installment",w:11},{h:"Of",w:6},{h:"Payment date",w:13},{h:"Amount (₹)",w:14},{h:"Status",w:11},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:inst}]);
 }
 /*EXPORT-END*/
 
@@ -1766,29 +1887,32 @@ function contactsView(f){
   return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
 }
 let dtab="month",dstg="all";
+const OPEN_STAGES=()=>STAGES.filter(g=>g!=="Won"&&g!=="Lost");
 function stageSheet(){
-  const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price),n=g=>g==="all"?every.length:every.filter(s=>(s.stage||"Lead")===g).length;
+  const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price&&s.stage!=="Won"&&s.stage!=="Lost"),n=g=>g==="all"?every.length:every.filter(s=>(s.stage||"Lead")===g).length,mx=Math.max(1,...OPEN_STAGES().map(n));
   const row=(v,l)=>{const c=n(v),col=v==="all"?"#0d7f7a":STC[v]||"#64748b";
-    return `<button class="stgr ${dstg===v?"on":""} ${c?"":"z"}" style="--c:${col}" data-dstgc="${esc(v)}"><i></i><span>${esc(l)}</span><em>${c}</em></button>`};
-  modal(`<div class="shh"><h3 style="margin:0">Filter by stage</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div><div class="stgl">${row("all","All stages")}${STAGES.map(g=>row(g,g)).join("")}</div>`,"side");
+    return `<button class="stgr ${dstg===v?"on":""} ${c?"":"z"}" style="--c:${col}" data-dstgc="${esc(v)}"><i></i><span>${esc(l)}${v==="all"?"":`<u><b style="width:${Math.round(c*100/mx)}%"></b></u>`}</span><em>${c}</em></button>`};
+  modal(`<div class="shh"><h3 style="margin:0">Filter by stage</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div><div class="stgl">${row("all","All open stages")}${OPEN_STAGES().map(g=>row(g,g)).join("")}</div>`,"side");
 }
 function dealsView(f){
   const eom=new Date();eom.setMonth(eom.getMonth()+1,0);eom.setHours(23,59,59,999);
   const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
-  if(dstg!=="all"&&!STAGES.includes(dstg))dstg="all";
-  const all=dstg==="all"?every:every.filter(r=>(r.s.stage||"Lead")===dstg);
-  const closed=r=>r.s.stage==="Won"||r.s.stage==="Lost";
-  const open=all.filter(r=>!closed(r)),
-    month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),cl=all.filter(closed);
-  const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15);
-  const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),closed:cl.sort((x,y)=>(y.sd||0)-(x.sd||0))};
-  const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>
-  <button class="stgb" data-dstgo="1" aria-label="Filter by stage"><i style="background:${dstg==="all"?"#0d7f7a":STC[dstg]||"#64748b"}"></i><span><small>Stage</small><b>${dstg==="all"?"All stages":esc(dstg)}</b></span><em>${dstg==="all"?every.length:every.filter(r=>(r.s.stage||"Lead")===dstg).length}</em>${sv('<path d="m6 9 6 6 6-6"/>',18)}</button>`;
+  if(dstg!=="all"&&!OPEN_STAGES().includes(dstg))dstg="all";
+  if(dtab==="closed")dtab="won";
+  const isOpen=r=>r.s.stage!=="Won"&&r.s.stage!=="Lost",openAll=every.filter(isOpen),open=dstg==="all"?openAll:openAll.filter(r=>(r.s.stage||"Lead")===dstg);
+  const month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),won=every.filter(r=>r.s.stage==="Won"),lost=every.filter(r=>r.s.stage==="Lost");
+  const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15),recent=(x,y)=>(y.sd||0)-(x.sd||0);
+  const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),won:won.sort(recent),lost:lost.sort(recent)};
+  const T=[["month","This month",month.length,"#0d7f7a"],["upcoming","Upcoming",upc.length,"#2563eb"],["won","Won",won.length,"#16a34a"],["lost","Lost",lost.length,"#dc2626"]];
+  const tabs=`<div class="dtabs">${T.map(([k,l,n,c])=>`<button class="${dtab===k?"on":""}" style="--c:${c}" data-dt="${k}"><span>${l}</span><em>${n}</em></button>`).join("")}</div>`;
+  const openTab=dtab==="month"||dtab==="upcoming";
+  const dist=OPEN_STAGES().map(g=>[g,openAll.filter(r=>(r.s.stage||"Lead")===g).length]).filter(x=>x[1]);
+  const stg=openTab?`<button class="stgb v2" data-dstgo="1" aria-label="Filter by stage" style="--c:${dstg==="all"?"#0d7f7a":STC[dstg]||"#64748b"}"><i></i><span><small>Stage</small><b>${dstg==="all"?"All open stages":esc(dstg)}</b>${dstg==="all"&&dist.length?`<u class="sdist">${dist.map(([g,n])=>`<b style="flex:${n};background:${STC[g]||"#64748b"}" title="${esc(g)}: ${n}"></b>`).join("")}</u>`:""}</span><em>${dstg==="all"?openAll.length:open.length}</em>${dstg!=="all"?`<a class="sclr" data-dstgc="all" title="Clear stage filter" aria-label="Clear stage filter">✕</a>`:""}${sv('<path d="m6 9 6 6 6-6"/>',18)}</button>`:"";
+  const seg=tabs+stg;
   const rows=sets[dtab].filter(r=>(r.s.name||"").toLowerCase().includes(f));
-  if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
+  if(!rows.length)return seg+noMatch(f?"No deals match your search":openTab&&dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":dtab==="won"?"No won deals yet":"No lost deals");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
-  const lab={month:"This month",upcoming:"Upcoming",closed:"Closed"}[dtab];
-  return seg+`<div class="hero dh"><div class="dhl"><small>Total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
+  return seg+`<div class="hero dh"><div class="dhl"><small>Total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?(openTab?"Signing ":"Signed ")+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
 }
 
 /* Educlawd CRM · Navigation list and main render() */
@@ -1802,7 +1926,10 @@ function render(){
   const f=filter.toLowerCase(),n=allTasks().length;
   $("#q").placeholder=PH[gtab];$("#add").style.display=gtab==="home"||gtab==="network"||gtab==="expenses"||gtab==="claims"?"":"none";$("#add").title=$("#add").ariaLabel=gtab==="network"?"Add payment plan":gtab==="claims"?"Record an expense":gtab==="expenses"?"Record expense or income":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="reports"||gtab==="profile"?"none":"";
   $("#greet").innerHTML=gtab==="home"?greetHtml():"";
+  $("#xexp").style.display=gtab==="claims"||(isAdmin()&&(gtab==="expenses"||gtab==="network"))?"":"none";
+  const msl=[...document.querySelectorAll("#items .mstrip")].map(x=>x.scrollLeft); // keep the month strip where it was
   $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,reports:analyticsView,expenses:expensesView,network:networkView,claims:claimsView,profile:profileView}[gtab])(f);
+  document.querySelectorAll("#items .mstrip").forEach((x,k)=>{if(msl[k])x.scrollLeft=msl[k];const on=x.querySelector("button.on");if(on&&(on.offsetLeft<x.scrollLeft||on.offsetLeft+on.offsetWidth>x.scrollLeft+x.clientWidth))on.scrollIntoView({block:"nearest",inline:"nearest"})});
   const ov=allTasks().filter(r=>new Date(r.t.due)<Date.now()).length,nv=GN.map(([k,l])=>`<button class="${gtab===k?"on":""}" data-g="${k}">${GI[k]}<span>${l}</span>${k==="tasks"&&ov?`<i class="bdg">${ov>9?"9+":ov}</i>`:""}</button>`).join("");
   if(nv!==navSig||!$("#gnav").firstChild){navSig=nv;$("#gnav").innerHTML=nv}
   const narrow=matchMedia("(max-width:800px)").matches;
@@ -1980,17 +2107,17 @@ function payDealBlock(s){
 
 /* ---- create / edit form with automatic installment split ---- */
 const dealTotal=s=>s&&s.deal&&s.deal.students&&s.deal.price?Math.round(calc(s.deal).yt*100)/100:0;
-function payForm(p,presetSchool){
+function payForm(p,presetSchool,inside){
   const e=p?structuredClone(p):{id:"pay_"+uid(),_kind:"payment",schoolId:presetSchool||"",schoolName:"",total:"",count:2,freq:"1",start:todayISO(),installments:[],notes:""};
   if(!p&&presetSchool){const dv=dealTotal(schools.find(x=>x.id===presetSchool));if(dv)e.total=dv}
   if(e.students===undefined){const sd=(schools.find(x=>x.id===e.schoolId)||{}).deal||{};e.students=sd.students||"";e.price=sd.price||"";e.basis=sd.basis||"year"}
   if(e.amount===undefined&&e.gstAmt!==undefined&&+e.total)e.amount=Math.round((+e.total-(+e.gstAmt||0))*100)/100;
   if(e.gstAmt===undefined&&+e.students>0&&+e.price>0)e.gstAmt=Math.round(calc({students:+e.students,price:+e.price,basis:e.basis}).y*18)/100;
-  pf={d:e,rows:(e.installments||[]).map(i=>({...i}))};
+  pf={d:e,rows:(e.installments||[]).map(i=>({...i})),inside:!!inside};
   if(!pf.rows.length)payRebuild(+e.count||1);
   const lock=!!e.schoolId&&schools.some(x=>x.id===e.schoolId),other=!e.schoolId&&!!e.schoolName,ss=schools.slice().sort((a,b)=>(a.name||"").localeCompare(b.name||""));
   modal(`<h3>${p?"Edit":"New"} payment plan</h3>
-  <div${lock?' style="display:none"':""}><label>School</label><select id="pf_school"><option value="">Select school</option>${ss.map(s=>`<option value="${s.id}" ${s.id===e.schoolId?"selected":""}>${esc(s.name)}${s.stage==="Won"?" · Won":""}</option>`).join("")}<option value="__other" ${other?"selected":""}>Other (not in CRM)…</option></select>
+  <div${lock?' style="display:none"':""}><label>School</label><select id="pf_school"><option value="">Select school</option>${ss.filter(s=>s.stage==="Won"||s.id===e.schoolId).map(s=>{const has=payments.some(p=>p.schoolId===s.id&&p.id!==e.id);return `<option value="${s.id}" ${s.id===e.schoolId?"selected":""} ${has?"disabled":""}>${esc(s.name)}${has?" · plan added":""}</option>`}).join("")}${other?`<option value="__other" selected>Other (not in CRM)…</option>`:""}</select>
   <input id="pf_sname" placeholder="School / client name" value="${esc(other?e.schoolName:"")}" style="margin-top:6px;${other?"":"display:none"}"></div>
   <div class="phint pqb" id="pf_qb"></div><div class="phint" id="pf_hint"></div>
   <div class="grid pq">${fld("pf_stu","Students",e.students,"number")}<div><label>Price is</label><select id="pf_basis"><option value="year" ${e.basis!=="month"?"selected":""}>Per year</option><option value="month" ${e.basis==="month"?"selected":""}>Per month</option></select></div>${fld("pf_price","Price quoted per student (₹)",e.price,"number")}${fld("pf_amt","Amount (₹)",e.amount??(+e.students>0&&+e.price>0?calc({students:+e.students,price:+e.price,basis:e.basis}).y:""),"number")}${fld("pf_gst","GST amount (₹)",e.gstAmt??"","number")}${fld("pf_total","Total payment (₹)",e.total,"number")}</div>
@@ -2071,13 +2198,22 @@ function payChange(e){const t=e.target;if(!pf||!t)return;
 function savePlan(){
   const d=pf.d,sid=val("pf_school"),nm=sid==="__other"?val("pf_sname"):((schools.find(s=>s.id===sid)||{}).name||"");
   if(!sid)return err("Select a school");if(!nm)return err("Enter the school / client name");
+  if(!pf.inside&&!payments.some(x=>x.id===d.id)&&sid!=="__other"&&payments.some(p=>p.schoolId===sid))return err("This school already has a payment plan — edit that plan instead");
   const t=toP(d.total);if(t<=0)return err("Enter the total payment amount");
   if(pf.rows.some(r=>!r.due))return err("Every installment needs a due date");
   if(pf.rows.some(r=>!r.paidOn&&toP(r.amount)<=0))return err("Every installment needs an amount above ₹0");
   const s=pf.rows.reduce((a,r)=>a+toP(paidAmt(r)),0);if(s!==t)return err(`Installments add up to ${inr(fromP(s))} but the total is ${inr(fromP(t))}. Tap “Split equally” or adjust the amounts.`);
   const old=payments.find(x=>x.id===d.id),p={...d,_kind:"payment",schoolId:sid==="__other"?"":sid,schoolName:nm,total:fromP(t),count:pf.rows.length,start:(pf.rows[0]&&pf.rows[0].due)||d.start,freq:val("pf_freq"),students:+val("pf_stu")||"",price:+val("pf_price")||"",basis:val("pf_basis"),gstAmt:val("pf_gst")===""?0:+val("pf_gst"),amount:+val("pf_amt")||"",notes:val("pf_notes"),
     installments:pf.rows.map(({manual,editing,...r})=>({...r,amount:fromP(toP(r.amount))})),created:d.created||new Date().toISOString(),createdBy:d.createdBy||(me?me.name:"")};
-  payLog(p,old?`Plan updated · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`:`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
+  if(!old)payLog(p,`Plan created · ${inr(p.total)} in ${p.count} installment${p.count===1?"":"s"}`);
+  else{/* one "updated" entry that says what changed; nothing logged if nothing changed */
+    const ch=[],oi=old.installments||[],ni=p.installments;
+    if(toP(old.total)!==toP(p.total))ch.push(`total ${inr(old.total)} → ${inr(p.total)}`);
+    if(oi.length!==ni.length)ch.push(`installments ${oi.length} → ${ni.length}`);
+    else{const dd=ni.filter((x,k)=>oi[k]&&oi[k].due!==x.due).length,aa=ni.filter((x,k)=>oi[k]&&toP(oi[k].amount)!==toP(x.amount)).length;if(dd)ch.push(`${dd} payment date${dd===1?"":"s"}`);if(aa&&toP(old.total)===toP(p.total))ch.push(`${aa} amount${aa===1?"":"s"}`)}
+    if((old.notes||"")!==(p.notes||""))ch.push("notes");
+    if(String(old.freq)!==String(p.freq))ch.push("frequency");
+    if(ch.length)payLog(p,"Plan updated · "+ch.join(", "))}
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);setTimeout(payAlerts,300);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
@@ -2198,7 +2334,7 @@ function expensesView(f){
     &&(!f||(x.title+" educlawd payment received installment "+x.mode+" "+x.ref).toLowerCase().includes(f)));
   const nIn=ilist.length+coll.length,nOut=list.length;
   const chips=`<div class="ety">${[["all","All",nIn+nOut,""],["in","Income",nIn,"i"],["out","Expense",nOut,"o"]].map(([k,l,n,c])=>`<button class="${ety===k?"on ":""}${c}" data-ety="${k}">${l} (${n})</button>`).join("")}</div>`;
-  return kpi+seg+strip+sumbar+(etab==="cat"?expSummary(list,ilist,coll):chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
+  return kpi+seg+strip+(etab==="cat"?sumbar+expSummary(list,ilist,coll):chips+expTx(ety==="in"?[]:list,ety==="out"?[]:ilist,ety==="out"?[]:coll,f));
 }
 /* receivables: unpaid installments from payment plans — overdue, next 30 days, and the next few to collect */
 function expRecv(){
@@ -2452,7 +2588,7 @@ function clmRow(c,own){
   return `<div class="exr clmr"${tap?` data-clm="edit" data-id="${c.id}" title="Tap to edit"`:""}>
     <div class="exav" style="background:${CLM_COL[c.cat]||"#64748b"}">${CLM_ICON[c.cat]||"🧾"}</div>
     <div class="exm"><b>${esc(c.note||c.cat)}</b><small><span class="exg">${esc(c.cat)}</span>${esc(fmtDate(c.date))}${own?"":" · "+esc(clmWho(c))}${c.remark?" · “"+esc(c.remark)+"”":""}</small></div>
-    <div class="exa"><span class="pill ${sc2}">${sl}</span><b>${inr(c.amount)}</b>${!own&&isAdmin()&&st==="rejected"?`<button class="cdel" data-clm="rdel" data-id="${c.id}" title="Delete this rejected expense">Delete</button>`:""}</div></div>`;
+    <div class="exa"><span class="pill ${sc2}">${sl}</span><b>${inr(c.amount)}</b>${!own&&isAdmin()&&st==="rejected"?`<button class="cdel" data-clm="rdel" data-id="${c.id}" title="Delete this rejected expense">Delete</button>`:""}${isAdmin()&&!own&&st==="sent"?`<button class="c1 ok" data-clm="ok1" data-id="${c.id}" title="Approve this expense">Approve</button>`:""}${isAdmin()&&st==="approved"&&(!own||c.byId===me.id)?`<button class="c1 pay" data-clm="pay" data-id="one:${c.id}" title="Mark this expense paid">Mark paid</button>`:""}</div></div>`;
 }
 /* ---- the admin's approval queue ---- */
 function clmAdminView(f){
@@ -2525,11 +2661,14 @@ function clmAct(el){
     if(!armed(el,"Tap again to approve"))return;
     rows.forEach(c=>{c.status="approved";c.decidedAt=new Date().toISOString();c.decidedBy=me?me.name:"";delete c.remark;saveClaim(c)});
     return toast("✅",rows.length+" expense"+(rows.length===1?"":"s")+" approved · mark them paid to add to Finance")}
+  if(a==="ok1"){const c=claims.find(x=>x.id===id);if(!isAdmin()||!c||clmSt(c)!=="sent")return;
+    if(!armed(el,"Tap again"))return;Object.assign(c,{status:"approved",decidedAt:new Date().toISOString(),decidedBy:me?me.name:""});delete c.remark;saveClaim(c);
+    return toast("✅","Expense approved · mark it paid to add to Finance")}
   if(a==="rdel"){const c=claims.find(x=>x.id===id);if(!isAdmin()||!c||clmSt(c)!=="rejected")return;
     if(!armed(el,"Tap again"))return;toast("🗑️","Rejected expense deleted");return removeClaim(c)}
   if(a==="pay"||a==="paysave"){
     if(!isAdmin())return;
-    const[u,mk]=String(id).split("|"),rows=id==="own"?clmMine().filter(c=>clmSt(c)==="approved"):claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
+    const[u,mk]=String(id).split("|"),rows=String(id).startsWith("one:")?claims.filter(c=>c.id===id.slice(4)&&clmSt(c)==="approved"):id==="own"?clmMine().filter(c=>clmSt(c)==="approved"):claims.filter(c=>(c.byId||"none")===u&&(monKey(c.date)||"0000-00")===mk&&clmSt(c)==="approved");
     if(!rows.length)return;
     if(a==="pay")return clmPayForm(id,rows);
     const dt=val("cp_date");if(!dt)return err("Pick the payment date");
@@ -2596,24 +2735,25 @@ function networkView(f){
   const stOf=s=>{const y=netPay(s);return y?y.st:"none"},orphAll=payments.filter(p=>!wonOf(p));
   const cnt=k=>k==="all"?won.length+orphAll.length:won.filter(s=>stOf(s)===k).length+(k==="none"?0:orphAll.filter(p=>planSum(p).status===k).length);
   const seg=`<div class="seg2 pseg nseg">${[["all","All"],["over","Overdue"],["pend","Pending"],["done","Paid"],["none","No Plan"]].map(([k,l])=>`<button class="${npf===k?"on":""}" data-npft="${k}">${l} (${cnt(k)})</button>`).join("")}</div>`;
-  const bar=`<label class="sfld"><small>Sort by</small><select data-nsrt="1" aria-label="Sort by">${[["value","Highest contract value"],["due","Next payment due soonest"],["out","Most outstanding"],["renew","Contract ending soonest"],["name","School name A–Z"],["signed","Recently signed"]].map(([v,l])=>`<option value="${v}" ${nsrt===v?"selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
+  const bar=`<label class="sfld"><small>Sort by</small><select data-nsrt="1" aria-label="Sort by">${[["value","Highest contract value"],["due","Next payment due soonest"],["out","Most outstanding"],["renew","Contract ending soonest"],["sid","School ID"],["name","School name A–Z"],["signed","Recently signed"]].map(([v,l])=>`<option value="${v}" ${nsrt===v?"selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
   const tv=s=>{const y=netPay(s);return y?y.tot:0};
   const srt={value:(a,b)=>tv(b)-tv(a),
     due:(a,b)=>{const x=netPay(a),y=netPay(b);return((x&&x.next&&x.next.due)||"9999").localeCompare((y&&y.next&&y.next.due)||"9999")},
     out:(a,b)=>((netPay(b)||{due:0}).due)-((netPay(a)||{due:0}).due),
     renew:(a,b)=>((netEnd(a)||"9999")).localeCompare(netEnd(b)||"9999"),
     name:(a,b)=>(a.name||"").localeCompare(b.name||""),
-    signed:(a,b)=>(((b.deal||{}).signing)||"").localeCompare(((a.deal||{}).signing)||"")}[nsrt];
+    signed:(a,b)=>(((b.deal||{}).signing)||"").localeCompare(((a.deal||{}).signing)||""),
+    sid:(a,b)=>(+(sidOf(a).match(/\d+$/)||[1e9])[0])-(+(sidOf(b).match(/\d+$/)||[1e9])[0])}[nsrt];
   const list=won.filter(s=>{const n=netOf(s);
-    return(npf==="all"||stOf(s)===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)).toLowerCase().includes(f))})
+    return(npf==="all"||stOf(s)===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)+" "+sidOf(s)).toLowerCase().includes(f))})
     .sort((a,b)=>srt(a,b)||(a.name||"").localeCompare(b.name||""));
   const orph=npf!=="none"?orphAll.filter(p=>(npf==="all"||planSum(p).status===npf)&&(!f||payName(p).toLowerCase().includes(f))):[];
   if(!list.length&&!orph.length)return kpi+seg+bar+noMatch(f?"No schools match your search":"Nothing in this group");
   const PL={over:["Overdue","ps-over"],pend:["Pending","ps-pend"],done:["Fully Paid","ps-paid"],none:["No Plan","s-Lead"]};
   const td=todayISO();
-  return kpi+seg+bar+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
+  return kpi+seg+bar+`<div class="nlist">`+list.map(s=>{const py=netPay(s),st=py?py.st:"none",[sl,scl]=PL[st],pc=py&&py.tot?Math.min(100,Math.round(py.paid*100/py.tot)):0,nx=py&&py.next,nxo=nx&&nx.due<td;
     return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${{over:"#dc2626",pend:"#0d7f7a",done:"#16a34a",none:"#94a3b8"}[st]}" data-nsel="${s.id}">
-    <div class="r"><b>${esc(s.name||"—")}</b><span class="pill ${scl}">${sl}</span></div>
+    <div class="r nhd"><b>${esc(s.name||"—")}</b><span class="nrt">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}<span class="pill ${scl}">${sl}</span></span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Signed</small><b>${s.deal&&s.deal.signing?fmtDate(s.deal.signing):"—"}</b></span><span><small>Contract starts</small><b>${netOf(s).billStart?fmtDate(netOf(s).billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span></div>
     ${py?`<div class="ngrid"><div><small>Contract value</small><b>${inr(fromP(py.tot))}</b></div>
@@ -2622,7 +2762,7 @@ function networkView(f){
       <div><small>Next due</small><b class="${nxo?"od":nx&&nx.due===td?"dt":""}">${nx?(nx.due===td?"Today · ":"")+fmtDate(nx.due):"—"}</b></div></div>
     <div class="nprog"><div class="npt"><span>${py.np}/${py.ni} installment${py.ni===1?"":"s"} paid</span><b>${pc}% collected</b><span>${py.over?`<em class="od">${py.over} overdue</em>`:py.n>1?py.n+" plans":""}</span></div>
       <div class="npb"><i class="${st==="over"?"exp":st==="done"?"live":"soon"}" style="width:${pc}%"></i></div></div>`
-    :`<small class="nfoot od">No Payment Plan Yet — Tap To Create One</small>`}</div>`}).join("")
+    :`<small class="nfoot od">No Payment Plan Yet — Tap To Create One</small>`}</div>`}).join("")+`</div>`
     +(orph.length?`<div class="dl2" style="margin:14px 2px 6px">Other payment plans</div>`+orph.map(payCard).join(""):"");
 }
 function payCard(p){const m=planSum(p),td=todayISO(),[sl,scl]=PST[m.status],nx=m.next,nxo=nx&&instSt(nx,td)==="over";
@@ -2647,6 +2787,7 @@ function netDetail(s){
   const contract=`<div class="nstat"><span class="pill ${scl}">${sl}</span><small>${l===null?"Add the billing start, period and authorised person":l<0?"Expired on "+fmtDate(end):l+" day"+(l===1?"":"s")+" left"}</small></div>
   ${pc===null?"":`<div class="nprog big"><div class="npt"><span>Billing from ${esc(fmtDate(n.billStart))}</span><b>${pc}% of the term done</b><span>${esc(fmtDate(end))}</span></div><div class="npb"><i class="${st}" style="width:${pc}%"></i></div></div>`}
   <h4>Contract</h4><table class="dtl">
+  ${row("School ID",n.sid?`<b>${esc(n.sid)}</b>`:"")}
   ${row("Signing date",s.deal&&s.deal.signing?fmtDate(s.deal.signing):"")}
   ${row("Billing starts",n.billStart?fmtDate(n.billStart):"")}
   ${row("Contract period",n.term?esc(termLabel(n.term)):"")}
@@ -2673,15 +2814,30 @@ function netDetail(s){
   ${tabs}${pay?payTab:contract}`;
 }
 /* ---- edit ---- */
+/* School ID: ECWD-1001, ECWD-1002 … — given automatically, never typed */
+const sidOf=s=>(s.net&&s.net.sid)||"";
+const nextSid=()=>"ECWD-"+(Math.max(1000,...schools.map(x=>/^ECWD-\d+$/.test(sidOf(x))?+sidOf(x).slice(5):0))+1);
+/* every Won school gets an ID once (oldest signing first), so the existing network is numbered too */
+function assignSids(){
+  if(!me||!isAdmin())return;
+  /* earlier EDU-0001 style IDs become ECWD-1001 style */
+  const old=schools.filter(s=>/^EDU-\d+$/.test(sidOf(s)));
+  old.forEach(s=>{s.net=Object.assign({},s.net,{sid:"ECWD-"+(1000+ +sidOf(s).slice(4))});s.updated=new Date().toISOString();push(s)});
+  const need=schools.filter(s=>s.stage==="Won"&&!sidOf(s)).sort((a,b)=>(wonOn(a)||"9").localeCompare(wonOn(b)||"9"));
+  if(!need.length){if(old.length){cache();render()}return}
+  need.forEach(s=>{s.net=Object.assign({},s.net||{},{sid:nextSid()});s.updated=new Date().toISOString();push(s)});
+  cache();render();
+}
 function netForm(s){
   const n=netOf(s),sg=(s.deal&&s.deal.signing)||"";
   modal(`<h3>Contract details</h3>
   <p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">Sales person: ${esc(salesOf(s))} · deal ${insVal(s)?inr(insVal(s))+" / yr":"not set"}</small></p>
-  <div class="grid">${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
+  <div class="grid">${fld("n_sid","School ID",n.sid||nextSid())}${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
   <div><label>Contract period</label><select id="n_term"><option value="">Select period</option>${NET_TERMS.map(([v,l])=>`<option value="${v}" ${+n.term===v?"selected":""}>${l}</option>`).join("")}</select></div>
   ${fld("n_person","Authorised person",n.person)}${fld("n_desig","Designation",n.pdesig)}${fld("n_phone","Phone",n.pphone,"tel")}${fld("n_email","Email",n.pemail)}</div>
   <label>Notes (optional)</label><textarea id="n_notes" placeholder="e.g. renewal terms, invoicing contact">${esc(n.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-net="save" data-id="${s.id}">Save details</button><button class="alt" data-m="close">Cancel</button></div>`);
+  {const x=document.getElementById("n_sid");x.readOnly=true;x.tabIndex=-1;x.classList.add("ro")}
   document.getElementById("n_person").focus();
 }
 function netSave(id){
@@ -2691,7 +2847,7 @@ function netSave(id){
   if(bill&&sg&&bill<sg)return err("Billing can't start before the signing date");
   const o=structuredClone(s),was=netOf(s);
   if(sg)o.deal=Object.assign({},o.deal||{},{signing:sg});
-  o.net={billStart:bill,term:term?+term:"",person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
+  o.net={sid:was.sid||nextSid(),billStart:bill,term:term?+term:"",person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
   const ch=[];
   if((was.billStart||"")!==o.net.billStart)ch.push("billing start");
   if(String(was.term||"")!==String(o.net.term||""))ch.push("contract period");
@@ -2857,13 +3013,16 @@ function onClick(e){
   if(el=g("data-exf"))return efFlip(el.dataset.exf);
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
   if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=el.dataset.psel;nsel=null}return render()}
-  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew)}
+  if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew,true)}
   if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
   if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
   if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";sel=null;return render()}
   if(el=g("data-mst")){mst=el.dataset.mst;return render()}
   if(el=g("data-tsl"))return insSchools(el.dataset.tsl,el.dataset.f);
   if(el=g("data-tmo"))return insMonth(el.dataset.tmo,el.dataset.f);
+  if(el=g("data-tbk")){const b=insBk[+el.dataset.tbk];if(!b)return;const w=el.dataset.f==="won";return insSheet(`${w?"Deals won":"Schools added"} · ${esc(b.l)} ${esc(b.s)}`,w?b.wn:b.ad)}
+  if(el=g("data-tstage")){const st=el.dataset.tstage,ss=schools.filter(s=>mOK(owner(s))&&dOK(s));
+    return insSheet(st==="__open"?"Open pipeline":esc(st),st==="__open"?ss.filter(OPEN_ST):ss.filter(s=>(s.stage||"Lead")===st))}
   if(el=g("data-tgo")){const id=el.dataset.tgo;close();gtab="home";sel=id;tab="activity";filter="";$("#q").value="";return render()}
   if(el=g("data-pick")){an.m=an.m===el.dataset.pick?"all":el.dataset.pick;an.lim=30;an.pg=1;return render()}
   if(el=g("data-pg")){const n=+el.dataset.pg;if(n>=1&&!el.disabled){an.pg=n;render();const f=document.getElementById("feedtop");if(f)f.scrollIntoView({block:"start"})}return}
@@ -2875,10 +3034,11 @@ function onClick(e){
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
   if(el=g("data-mtog"))return toggleUser(el);
-  if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
+  if(t.closest&&t.closest("#xexp"))return gtab==="claims"?exportClaims():gtab==="expenses"?exportFinance():gtab==="network"?exportNetwork():undefined;
+  if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")&&!payments.some(p=>p.schoolId===nsel)?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
-  if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
+  if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
   if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
   if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
