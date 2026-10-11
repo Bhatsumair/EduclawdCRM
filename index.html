@@ -1095,6 +1095,22 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .nlist{display:grid;gap:10px;min-width:0}.nlist>.it{margin:0}
 @media(min-width:801px){.nlist{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.nlist .ngrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1280px){.nlist .ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* deals: tabs + stage filter */
+.dtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px;border-radius:14px;background:var(--soft);margin-top:10px}
+.dtabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:0;padding:8px 4px;border-radius:11px;background:transparent;color:var(--teal2);border:0;box-shadow:none;font-size:12.5px;font-weight:700;white-space:nowrap}
+.dtabs button em{font-style:normal;font-size:11px;font-weight:800;min-width:20px;padding:1px 6px;border-radius:99px;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--c)}
+.dtabs button.on{background:var(--c);color:#fff;box-shadow:0 4px 12px -6px var(--c)}
+.dtabs button.on em{background:rgba(255,255,255,.25);color:#fff}
+@media(max-width:520px){.dtabs{gap:4px}.dtabs button{flex-direction:column;gap:3px;padding:7px 2px;font-size:12px}.dtabs button em{font-size:10.5px}}
+.stgb.v2{border-left:4px solid var(--c)}
+.stgb.v2>i{background:var(--c)}
+.stgb.v2 em{background:color-mix(in srgb,var(--c) 14%,var(--card))!important;color:var(--c)!important}
+.stgb .sdist{display:flex;gap:2px;height:5px;border-radius:99px;overflow:hidden;margin-top:6px;max-width:260px;text-decoration:none}
+.stgb .sdist b{display:block;height:100%}
+.stgb .sclr{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--soft);color:var(--mute);font-size:11px;text-decoration:none;flex:none}
+.stgr span u{display:block;height:4px;border-radius:99px;background:var(--soft);margin-top:4px;text-decoration:none;overflow:hidden}.stgr span u b{display:block;height:100%;background:var(--c);border-radius:99px}
+.stgr span{display:flex;flex-direction:column}
 </style>
 </head>
 <body>
@@ -1816,29 +1832,32 @@ function contactsView(f){
   return rows.length?rows.map(({p,s})=>`<div class="ct cl"><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0;cursor:pointer" data-sel="${s.id}" data-tabto="contacts"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<div class="cm"><small>${esc(s.name)}</small></div></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):noMatch(f?"No contacts match your search":"No contacts yet.<br><small>Open a school and tap “Add contact”</small>");
 }
 let dtab="month",dstg="all";
+const OPEN_STAGES=()=>STAGES.filter(g=>g!=="Won"&&g!=="Lost");
 function stageSheet(){
-  const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price),n=g=>g==="all"?every.length:every.filter(s=>(s.stage||"Lead")===g).length;
+  const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price&&s.stage!=="Won"&&s.stage!=="Lost"),n=g=>g==="all"?every.length:every.filter(s=>(s.stage||"Lead")===g).length,mx=Math.max(1,...OPEN_STAGES().map(n));
   const row=(v,l)=>{const c=n(v),col=v==="all"?"#0d7f7a":STC[v]||"#64748b";
-    return `<button class="stgr ${dstg===v?"on":""} ${c?"":"z"}" style="--c:${col}" data-dstgc="${esc(v)}"><i></i><span>${esc(l)}</span><em>${c}</em></button>`};
-  modal(`<div class="shh"><h3 style="margin:0">Filter by stage</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div><div class="stgl">${row("all","All stages")}${STAGES.map(g=>row(g,g)).join("")}</div>`,"side");
+    return `<button class="stgr ${dstg===v?"on":""} ${c?"":"z"}" style="--c:${col}" data-dstgc="${esc(v)}"><i></i><span>${esc(l)}${v==="all"?"":`<u><b style="width:${Math.round(c*100/mx)}%"></b></u>`}</span><em>${c}</em></button>`};
+  modal(`<div class="shh"><h3 style="margin:0">Filter by stage</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div><div class="stgl">${row("all","All open stages")}${OPEN_STAGES().map(g=>row(g,g)).join("")}</div>`,"side");
 }
 function dealsView(f){
   const eom=new Date();eom.setMonth(eom.getMonth()+1,0);eom.setHours(23,59,59,999);
   const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
-  if(dstg!=="all"&&!STAGES.includes(dstg))dstg="all";
-  const all=dstg==="all"?every:every.filter(r=>(r.s.stage||"Lead")===dstg);
-  const closed=r=>r.s.stage==="Won"||r.s.stage==="Lost";
-  const open=all.filter(r=>!closed(r)),
-    month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),cl=all.filter(closed);
-  const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15);
-  const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),closed:cl.sort((x,y)=>(y.sd||0)-(x.sd||0))};
-  const seg=`<div class="seg2"><button class="${dtab==="month"?"on":""}" data-dt="month">This month (${month.length})</button><button class="${dtab==="upcoming"?"on":""}" data-dt="upcoming">Upcoming (${upc.length})</button><button class="${dtab==="closed"?"on":""}" data-dt="closed">Closed (${cl.length})</button></div>
-  <button class="stgb" data-dstgo="1" aria-label="Filter by stage"><i style="background:${dstg==="all"?"#0d7f7a":STC[dstg]||"#64748b"}"></i><span><small>Stage</small><b>${dstg==="all"?"All stages":esc(dstg)}</b></span><em>${dstg==="all"?every.length:every.filter(r=>(r.s.stage||"Lead")===dstg).length}</em>${sv('<path d="m6 9 6 6 6-6"/>',18)}</button>`;
+  if(dstg!=="all"&&!OPEN_STAGES().includes(dstg))dstg="all";
+  if(dtab==="closed")dtab="won";
+  const isOpen=r=>r.s.stage!=="Won"&&r.s.stage!=="Lost",openAll=every.filter(isOpen),open=dstg==="all"?openAll:openAll.filter(r=>(r.s.stage||"Lead")===dstg);
+  const month=open.filter(r=>r.sd&&r.sd<=eom),upc=open.filter(r=>!r.sd||r.sd>eom),won=every.filter(r=>r.s.stage==="Won"),lost=every.filter(r=>r.s.stage==="Lost");
+  const byDate=(x,y)=>(x.sd?x.sd:1e15)-(y.sd?y.sd:1e15),recent=(x,y)=>(y.sd||0)-(x.sd||0);
+  const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),won:won.sort(recent),lost:lost.sort(recent)};
+  const T=[["month","This month",month.length,"#0d7f7a"],["upcoming","Upcoming",upc.length,"#2563eb"],["won","Won",won.length,"#16a34a"],["lost","Lost",lost.length,"#dc2626"]];
+  const tabs=`<div class="dtabs">${T.map(([k,l,n,c])=>`<button class="${dtab===k?"on":""}" style="--c:${c}" data-dt="${k}"><span>${l}</span><em>${n}</em></button>`).join("")}</div>`;
+  const openTab=dtab==="month"||dtab==="upcoming";
+  const dist=OPEN_STAGES().map(g=>[g,openAll.filter(r=>(r.s.stage||"Lead")===g).length]).filter(x=>x[1]);
+  const stg=openTab?`<button class="stgb v2" data-dstgo="1" aria-label="Filter by stage" style="--c:${dstg==="all"?"#0d7f7a":STC[dstg]||"#64748b"}"><i></i><span><small>Stage</small><b>${dstg==="all"?"All open stages":esc(dstg)}</b>${dstg==="all"&&dist.length?`<u class="sdist">${dist.map(([g,n])=>`<b style="flex:${n};background:${STC[g]||"#64748b"}" title="${esc(g)}: ${n}"></b>`).join("")}</u>`:""}</span><em>${dstg==="all"?openAll.length:open.length}</em>${dstg!=="all"?`<a class="sclr" data-dstgc="all" title="Clear stage filter" aria-label="Clear stage filter">✕</a>`:""}${sv('<path d="m6 9 6 6 6-6"/>',18)}</button>`:"";
+  const seg=tabs+stg;
   const rows=sets[dtab].filter(r=>(r.s.name||"").toLowerCase().includes(f));
-  if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":"No closed deals yet<br><small>Deals marked Won or Lost appear here</small>");
+  if(!rows.length)return seg+noMatch(f?"No deals match your search":openTab&&dstg!=="all"?"No "+esc(dstg)+" deals in this view":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":dtab==="won"?"No won deals yet":"No lost deals");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
-  const lab={month:"This month",upcoming:"Upcoming",closed:"Closed"}[dtab];
-  return seg+`<div class="hero dh"><div class="dhl"><small>Total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?"Signing "+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
+  return seg+`<div class="hero dh"><div class="dhl"><small>Total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?(openTab?"Signing ":"Signed ")+fmtDate(s.deal.signing):"No signing date"}${dtab==="month"&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
 }
 
 /* Educlawd CRM · Navigation list and main render() */
@@ -2934,8 +2953,8 @@ function onClick(e){
   if(el=g("data-mtog"))return toggleUser(el);
   if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")&&!payments.some(p=>p.schoolId===nsel)?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
-  if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
+  if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
   if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
   if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
