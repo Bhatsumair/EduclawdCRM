@@ -1392,12 +1392,14 @@ function insFunnel(ss){
 let insBk=[];
 function insTrend(ss){
   const DAY=864e5,iso=t=>localISO(new Date(t)).slice(0,10),now=Date.now();
-  let[from,to]=anRange();if(to===Infinity)to=now;
+  let[from,to]=anRange();
+  /* open-ended periods run to the END of the current day / month / year, so a deal signed later this month still counts */
+  if(to===Infinity){const d=new Date();to=an.p==="month"?new Date(d.getFullYear(),d.getMonth()+1,1).getTime()-1:an.p==="year"?new Date(d.getFullYear()+1,0,1).getTime()-1:new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()-1}
   const df=(an.d||"all")!=="all",ids=new Set(ss.map(s=>s.id)),limIds=an.m!=="all"||df?ids:null;
   const pays=[];payments.forEach(p=>{if(limIds&&!(p.schoolId&&limIds.has(p.schoolId)))return;(p.installments||[]).forEach(i=>{if(i.paidOn)pays.push({d:i.paidOn,v:toP(paidAmt(i))})})});
   const addD=s=>(s.created||"").slice(0,10),wonList=ss.filter(s=>s.stage==="Won"&&wonOn(s));
   if(!from){const ds=[...ss.map(addD),...wonList.map(wonOn),...pays.map(x=>x.d)].filter(Boolean).sort();from=ds.length?new Date(ds[0]+"T00:00").getTime():now-365*DAY}
-  const span=(to-from)/DAY,unit=span<=1.01?"day":span<=14?"day":span<=92?"week":span<=731?"month":"quarter";
+  const span=(to-from)/DAY,unit=span<=32?"day":span<=92?"week":span<=731?"month":"quarter";
   const bks=[];const sd=new Date(from);sd.setHours(0,0,0,0);
   if(unit==="day"){for(let t=sd.getTime();t<=to;t+=DAY){const d=new Date(t);bks.push({a:t,b:t+DAY-1,l:d.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:d.toLocaleDateString("en-IN",{weekday:"short"}),c:String(d.getDate())})}}
   else if(unit==="week"){for(let t=sd.getTime();t<=to;t+=7*DAY){const a=new Date(t),b=new Date(Math.min(t+7*DAY-1,to));bks.push({a:t,b:t+7*DAY-1,l:a.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:"to "+b.toLocaleDateString("en-IN",{day:"numeric",month:"short"})})}}
