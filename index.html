@@ -1126,6 +1126,8 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .csl{display:grid;gap:6px;margin-top:10px}
 .csr{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer}
 .csr:hover{border-color:var(--teal)}.csd{font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.2}
+.dtabs.ntabs{grid-template-columns:repeat(5,minmax(0,1fr));margin:12px 0}
+@media(max-width:520px){.dtabs.ntabs button{font-size:11.5px}}
 </style>
 </head>
 <body>
@@ -2749,7 +2751,7 @@ function networkView(f){
   if(!m.n&&!payments.length)return kpi+noMatch("<div style='font-size:34px'>🏫</div>No won schools yet.<br><small>A school joins the network as soon as its stage is set to Won</small>");
   const stOf=s=>{const y=netPay(s);return y?y.st:"none"},orphAll=payments.filter(p=>!wonOf(p));
   const cnt=k=>k==="all"?won.length+orphAll.length:won.filter(s=>stOf(s)===k).length+(k==="none"?0:orphAll.filter(p=>planSum(p).status===k).length);
-  const seg=`<div class="seg2 pseg nseg">${[["all","All"],["over","Overdue"],["pend","Pending"],["done","Paid"],["none","No Plan"]].map(([k,l])=>`<button class="${npf===k?"on":""}" data-npft="${k}">${l} (${cnt(k)})</button>`).join("")}</div>`;
+  const seg=`<div class="dtabs ntabs">${[["all","All","#0d7f7a"],["over","Overdue","#dc2626"],["pend","Pending","#d97706"],["done","Paid","#16a34a"],["none","No Plan","#64748b"]].map(([k,l,c])=>`<button class="${npf===k?"on":""}" style="--c:${c}" data-npft="${k}"><span>${l}</span><em>${cnt(k)}</em></button>`).join("")}</div>`;
   const bar=`<label class="sfld"><small>Sort by</small><select data-nsrt="1" aria-label="Sort by">${[["value","Highest contract value"],["due","Next payment due soonest"],["out","Most outstanding"],["renew","Contract ending soonest"],["sid","School ID"],["name","School name A–Z"],["signed","Recently signed"]].map(([v,l])=>`<option value="${v}" ${nsrt===v?"selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
   const tv=s=>{const y=netPay(s);return y?y.tot:0};
   const srt={value:(a,b)=>tv(b)-tv(a),
