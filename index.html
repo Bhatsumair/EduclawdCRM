@@ -1070,6 +1070,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .ncard.kcard .npb i{background:var(--c)!important}
 .fk{overflow:hidden;padding-left:17px}.fk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
 .clmr .c1{min-height:0;padding:3px 10px;font-size:11px;font-weight:700;border-radius:99px;box-shadow:none;margin-top:2px}.clmr .c1.ok{background:var(--teal);border-color:var(--teal);color:#fff}.clmr .c1.pay{background:#16a34a;border-color:#16a34a;color:#fff}
+[data-tstage]{cursor:pointer}.frw[data-tstage]:hover{background:color-mix(in srgb,var(--c) 6%,transparent);border-radius:10px}.fsum>div[data-tstage]:hover{filter:brightness(.97)}.fct b{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--c) 45%,transparent);text-underline-offset:3px}
 </style>
 </head>
 <body>
@@ -1358,8 +1359,8 @@ function insFunnel(ss){
     <div class="brkh"><div class="bh1">Pipeline by stage<small>${tot} school${tot===1?"":"s"} · ${inr(openV)} open value</small></div>
       <div class="fwr"><b>${wr}</b><small>Win rate</small></div></div>
     ${tot?`<div class="fstack">${vis.map(r=>`<i style="flex:${r.n};background:${col(r.st)}" title="${esc(r.st)}: ${r.n}"></i>`).join("")}</div>`:""}
-    <div class="fsum"><div><small>Open</small><b>${openN}</b><span>${openV?inrS(openV):"—"}</span></div><div class="w"><small>Won</small><b>${won.n}</b><span>${won.v?inrS(won.v):"—"}</span></div><div class="l"><small>Lost</small><b>${lost.n}</b><span>${lost.v?inrS(lost.v):"—"}</span></div></div>
-    <div class="flist">${vis.map(r=>{const pc=tot?Math.round(r.n*100/tot):0;return `<div class="frw" style="--c:${col(r.st)}">
+    <div class="fsum"><div data-tstage="__open" title="Show open schools"><small>Open</small><b>${openN}</b><span>${openV?inrS(openV):"—"}</span></div><div class="w" data-tstage="Won" title="Show won schools"><small>Won</small><b>${won.n}</b><span>${won.v?inrS(won.v):"—"}</span></div><div class="l" data-tstage="Lost" title="Show lost schools"><small>Lost</small><b>${lost.n}</b><span>${lost.v?inrS(lost.v):"—"}</span></div></div>
+    <div class="flist">${vis.map(r=>{const pc=tot?Math.round(r.n*100/tot):0;return `<div class="frw" style="--c:${col(r.st)}" data-tstage="${esc(r.st)}" title="Show ${esc(r.st)} schools">
       <div class="fnm"><i></i><b>${esc(r.st)}</b></div>
       <div class="ftk"><i style="width:${Math.max(3,Math.round(r.n*100/mx))}%"></i></div>
       <div class="fct"><b>${r.n}</b><small>${pc}%</small></div>
@@ -2868,6 +2869,8 @@ function onClick(e){
   if(el=g("data-mst")){mst=el.dataset.mst;return render()}
   if(el=g("data-tsl"))return insSchools(el.dataset.tsl,el.dataset.f);
   if(el=g("data-tmo"))return insMonth(el.dataset.tmo,el.dataset.f);
+  if(el=g("data-tstage")){const st=el.dataset.tstage,ss=schools.filter(s=>mOK(owner(s))&&dOK(s));
+    return insSheet(st==="__open"?"Open pipeline":esc(st),st==="__open"?ss.filter(OPEN_ST):ss.filter(s=>(s.stage||"Lead")===st))}
   if(el=g("data-tgo")){const id=el.dataset.tgo;close();gtab="home";sel=id;tab="activity";filter="";$("#q").value="";return render()}
   if(el=g("data-pick")){an.m=an.m===el.dataset.pick?"all":el.dataset.pick;an.lim=30;an.pg=1;return render()}
   if(el=g("data-pg")){const n=+el.dataset.pg;if(n>=1&&!el.disabled){an.pg=n;render();const f=document.getElementById("feedtop");if(f)f.scrollIntoView({block:"start"})}return}
