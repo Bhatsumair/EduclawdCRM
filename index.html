@@ -1072,6 +1072,26 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .clmr .c1{min-height:0;padding:3px 10px;font-size:11px;font-weight:700;border-radius:99px;box-shadow:none;margin-top:2px}.clmr .c1.ok{background:var(--teal);border-color:var(--teal);color:#fff}.clmr .c1.pay{background:#16a34a;border-color:#16a34a;color:#fff}
 [data-tstage]{cursor:pointer}.frw[data-tstage]:hover{background:color-mix(in srgb,var(--c) 6%,transparent);border-radius:10px}.fsum>div[data-tstage]:hover{filter:brightness(.97)}.fct b{text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--c) 45%,transparent);text-underline-offset:3px}
 .mtr .wv{color:#15803d;font-weight:700}
+
+/* CEO performance block */
+.tkg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.tk{border-radius:12px;padding:8px 11px;min-width:0;background:color-mix(in srgb,var(--c) 7%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line))}
+.tk small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}
+.tk b{display:block;font-size:17px;font-weight:800;color:color-mix(in srgb,var(--c) 70%,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.tk span{display:block;font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdl{display:inline;font-weight:800}.tdl.up{color:#15803d}.tdl.dn{color:#b91c1c}.tdl.nil{color:var(--mute)}
+@media(min-width:801px){.tkg{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.mleg .lc::before{background:#3b82f6!important}
+.tb.lc{background:linear-gradient(180deg,#60a5fa,#2563eb)}
+.mch.t2 .may{width:auto;min-width:34px}.mch.t2{grid-template-columns:auto minmax(0,1fr)}
+.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr .7fr}
+.mtb.t2 .mtr small{font-size:10.5px;color:var(--mute);font-weight:600}
+.mtr .cv{color:#1d4ed8;font-weight:700}
+@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:520px}}
+.mch.t2 .tb em{white-space:nowrap;font-size:10px}
+.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr}
+.mtb.t2 .mtr.one{display:block;color:var(--mute);font-size:12px;font-weight:600}
+@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:460px}.mtb.t2 .mtr.one{min-width:0}}
 </style>
 </head>
 <body>
@@ -1312,7 +1332,7 @@ let tsub="analytics",an={m:"all",p:"7d",d:"all",t:"all",from:"",to:"",lim:30,pg:
 const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
 const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
 const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
-const PL={today:"today","7d":"last 7 days","30d":"last 30 days",month:"this month",all:"all time",custom:"selected dates"};
+const PL={today:"today","7d":"last 7 days","30d":"last 30 days",month:"this month",year:"this year",all:"all time",custom:"selected dates"};
 const evKind=e=>e.kind||inferKind(e.type,e.text);
 const evUser=e=>e.byId||((team.find(u=>u.name===e.by)||{}).id)||(e.by?"name:"+e.by:"none");
 const ulabel=k=>k==="root-admin"?"Admin":k==="none"?"Before sign-in (no user)":k.startsWith("name:")?k.slice(5):((team.find(u=>u.id===k)||{}).name||"Unknown");
@@ -1322,6 +1342,7 @@ function anRange(){
   const n=new Date(),sod=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),p=an.p;
   if(p==="today")return[sod,Infinity];if(p==="7d")return[Date.now()-7*864e5,Infinity];if(p==="30d")return[Date.now()-30*864e5,Infinity];
   if(p==="month")return[new Date(n.getFullYear(),n.getMonth(),1).getTime(),Infinity];
+  if(p==="year")return[new Date(n.getFullYear(),0,1).getTime(),Infinity];
   if(p==="custom")return[an.from?new Date(an.from+"T00:00").getTime():0,an.to?new Date(an.to+"T23:59:59").getTime():Infinity];
   return[0,Infinity];
 }
@@ -1367,31 +1388,52 @@ function insFunnel(ss){
       <div class="fct"><b>${r.n}</b><small>${pc}%</small></div>
       <div class="fvl">${r.v?inrS(r.v):"—"}</div></div>`}).join("")||noMatch("No schools yet")}</div></div>`;
 }
-function insTrend(ss,ev){
-  const now=new Date(),ms=[];
-  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push(localISO(d).slice(0,7))}
-  const data=ms.map(m=>{const add=ss.filter(s=>monKey((s.created||"").slice(0,10))===m),wn=ss.filter(s=>s.stage==="Won"&&monKey(wonOn(s))===m);
-    return{m,a:add.length,w:wn.length,av:add.reduce((x,s)=>x+insVal(s),0),v:wn.reduce((x,s)=>x+insVal(s),0)}});
-  /* month-on-month growth, in schools added and in the deal value they carry */
-  const gr=(c,p)=>p===null||p===undefined?null:p===0?(c?Infinity:0):Math.round((c-p)*100/p);
-  data.forEach((d,i)=>{d.g=gr(d.a,i?data[i-1].a:null);d.gv=gr(d.av,i?data[i-1].av:null);d.gw=gr(d.w,i?data[i-1].w:null)});
-  const gtxt=g=>g===null?"—":g===Infinity?"New":(g>0?"▲ ":g<0?"▼ ":"")+Math.abs(g)+"%";
-  const gcls=g=>g===null?"nil":g===Infinity||g>0?"up":g<0?"dn":"nil";
-  const cur=data[5];const mx=Math.max(1,...data.map(d=>Math.max(d.a,d.w))),step=Math.max(1,Math.ceil(mx/4)),nt=Math.ceil(mx/step),top=step*nt,pm=esc(monChip(data[4].m).split(" ")[0]),cm=esc(monChip(cur.m).split(" ")[0]);
-  const sumA=data.reduce((a,d)=>a+d.a,0),sumW=data.reduce((a,d)=>a+d.w,0),sumV=data.reduce((a,d)=>a+d.v,0);
-  const bar=(d,f,n,cls,lbl)=>n?`<button type="button" class="tb ${cls}" data-tmo="${d.m}" data-f="${f}" style="height:${Math.round(n*100/top)}%" title="${n} ${lbl} — tap to see them"><em>${n}</em></button>`:`<span class="tb ${cls} z"></span>`;
+/* CEO trend: follows the period filter (day / week / month / quarter buckets), money first */
+let insBk=[];
+function insTrend(ss){
+  const DAY=864e5,iso=t=>localISO(new Date(t)).slice(0,10),now=Date.now();
+  let[from,to]=anRange();if(to===Infinity)to=now;
+  const df=(an.d||"all")!=="all",ids=new Set(ss.map(s=>s.id)),limIds=an.m!=="all"||df?ids:null;
+  const pays=[];payments.forEach(p=>{if(limIds&&!(p.schoolId&&limIds.has(p.schoolId)))return;(p.installments||[]).forEach(i=>{if(i.paidOn)pays.push({d:i.paidOn,v:toP(paidAmt(i))})})});
+  const addD=s=>(s.created||"").slice(0,10),wonList=ss.filter(s=>s.stage==="Won"&&wonOn(s));
+  if(!from){const ds=[...ss.map(addD),...wonList.map(wonOn),...pays.map(x=>x.d)].filter(Boolean).sort();from=ds.length?new Date(ds[0]+"T00:00").getTime():now-365*DAY}
+  const span=(to-from)/DAY,unit=span<=1.01?"day":span<=14?"day":span<=92?"week":span<=731?"month":"quarter";
+  const bks=[];const sd=new Date(from);sd.setHours(0,0,0,0);
+  if(unit==="day"){for(let t=sd.getTime();t<=to;t+=DAY){const d=new Date(t);bks.push({a:t,b:t+DAY-1,l:d.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:d.toLocaleDateString("en-IN",{weekday:"short"}),c:String(d.getDate())})}}
+  else if(unit==="week"){for(let t=sd.getTime();t<=to;t+=7*DAY){const a=new Date(t),b=new Date(Math.min(t+7*DAY-1,to));bks.push({a:t,b:t+7*DAY-1,l:a.toLocaleDateString("en-IN",{day:"numeric",month:"short"}),s:"to "+b.toLocaleDateString("en-IN",{day:"numeric",month:"short"})})}}
+  else{const step=unit==="month"?1:3;let d=new Date(sd.getFullYear(),unit==="month"?sd.getMonth():Math.floor(sd.getMonth()/3)*3,1);
+    while(d.getTime()<=to){const n=new Date(d.getFullYear(),d.getMonth()+step,1);bks.push({a:d.getTime(),b:n.getTime()-1,l:unit==="month"?d.toLocaleString("en-IN",{month:"short"}):"Q"+(Math.floor(d.getMonth()/3)+1),s:String(d.getFullYear()).slice(2)});d=n}}
+  const inB=(ds,b)=>{if(!ds)return false;const t=new Date(ds+"T12:00").getTime();return t>=b.a&&t<=b.b};
+  bks.forEach(b=>{const ad=ss.filter(s=>inB(addD(s),b)),wn=wonList.filter(s=>inB(wonOn(s),b));
+    Object.assign(b,{ad,wn,a_n:ad.length,a_v:ad.reduce((x,s)=>x+insVal(s),0),w_n:wn.length,w_v:wn.reduce((x,s)=>x+insVal(s),0),c_v:fromP(pays.filter(x=>inB(x.d,b)).reduce((x,p)=>x+p.v,0))})});
+  insBk=bks;
+  const T=k=>bks.reduce((x,b)=>x+b[k],0),tA=T("a_n"),tW=T("w_n"),tWV=T("w_v"),tC=T("c_v"),tAV=T("a_v"),avg=tW?tWV/tW:0;
+  /* previous period of the same length, for the change arrows */
+  const hasPrev=an.p!=="all"&&!(an.p==="custom"&&!an.from),pa=from-(to-from),pb=from-1;
+  const pin=ds=>{if(!ds)return false;const t=new Date(ds+"T12:00").getTime();return t>=pa&&t<=pb};
+  const P=hasPrev?{a:ss.filter(s=>pin(addD(s))).length,w:wonList.filter(s=>pin(wonOn(s))).length,wv:wonList.filter(s=>pin(wonOn(s))).reduce((x,s)=>x+insVal(s),0),c:fromP(pays.filter(x=>pin(x.d)).reduce((x,p)=>x+p.v,0))}:null;
+  const dl=(c,p)=>{if(!P)return"";if(!p)return c?`<span class="tdl up">New</span>`:`<span class="tdl nil">—</span>`;const g=Math.round((c-p)*100/p);return `<span class="tdl ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲":g<0?"▼":""} ${Math.abs(g)}%</span>`};
+  const tile=(c,l,v,sub,d)=>`<div class="tk" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}${d||""}</span></div>`;
+  const kp=`<div class="tkg">
+    ${tile("#16a34a","Revenue won",inr(tWV),tW+" deal"+(tW===1?"":"s")+" ",P&&dl(tWV,P.wv))}
+    ${tile("#2563eb","Cash collected",inr(tC),"from payment plans ",P&&dl(tC,P.c))}
+    ${tile("#0d7f7a","Deals won",String(tW),"",P&&dl(tW,P.w))}
+    ${tile("#7c3aed","Schools added",String(tA),inrS(tAV)+" pipeline ",P&&dl(tA,P.a))}
+    ${tile("#d97706","Avg deal size",avg?inr(avg):"—",tW?"per won deal":"no wins yet")}
+    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","won ÷ added in period")}</div>`;
+  const mx=Math.max(1,...bks.map(b=>Math.max(b.w_v,b.c_v))),nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p},top=nice(mx),many=bks.length>12;
+  const bar=(i,v,cls,lbl)=>v?`<button type="button" class="tb ${cls}" data-tbk="${i}" data-f="${cls==="lw"?"won":"all"}" style="height:${Math.max(2,Math.round(v*100/top))}%" title="${lbl}: ${inr(v)}">${many?"":`<em>${inrS(v)}</em>`}</button>`:`<span class="tb ${cls} z"></span>`;
+  const chart=`<div class="mch t2"><div class="may">${[4,3,2,1,0].map(k=>`<span>${k?inrS(top*k/4):"0"}</span>`).join("")}</div>
+    <div class="mpl" style="grid-template-columns:repeat(${bks.length},minmax(0,1fr))"><div class="mgr">${[0,1,2,3,4].map(()=>"<i></i>").join("")}</div>
+    ${bks.map((b,i)=>`<div class="mcol ${b.b>=now&&b.a<=now?"now":""}"><div class="mbx">${bar(i,b.w_v,"lw","Revenue won")}${bar(i,b.c_v,"lc","Collected")}</div><div class="mlb">${many&&i%Math.ceil(bks.length/12)?"":esc(b.c&&bks.length>7?b.c:b.l)}</div></div>`).join("")}</div></div>`;
+  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.a_n||b.w_n||b.c_v),hid=bks.length-rows.length;
+  const gr=(i)=>{const p=bks[i-1];if(!p)return `<span class="g nil">—</span>`;const c=bks[i].w_v,v=p.w_v;if(!v)return c?`<span class="g up">New</span>`:`<span class="g nil">—</span>`;const g=Math.round((c-v)*100/v);return `<span class="g ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲ ":g<0?"▼ ":""}${Math.abs(g)}%</span>`};
+  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Added</span><span>Won</span><span>Won value</span><span>Collected</span><span>Avg deal</span>${fine?"":"<span>Growth</span>"}</div>
+    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.a_n?`<button class="nmb la" data-tbk="${i}" data-f="all">${b.a_n}</button>`:"0"}</span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span><span>${b.w_n?inrS(b.w_v/b.w_n):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
   return `<div class="brk wide mow">
-    <div class="brkh"><div class="bh1">Last 6 months<small>Month-on-month · schools added and deals won</small></div>
-      <div class="mleg" style="margin:0;flex:none"><span class="la">Added</span><span class="lw">Won</span></div></div>
-    <div class="mok">
-      <div><small>Added in ${cm}</small><b>${cur.a}</b><span class="${gcls(cur.g)}">${gtxt(cur.g)} vs ${pm}</span></div>
-      <div><small>Won in ${cm}</small><b>${cur.w}</b><span class="${gcls(cur.gw)}">${gtxt(cur.gw)} vs ${pm}</span></div>
-      <div><small>6-month total</small><b>${sumA} / ${sumW}</b><span>added / won</span></div></div>
-    <div class="mch"><div class="may">${[...Array(nt+1).keys()].reverse().map(i=>`<span>${i*step}</span>`).join("")}</div>
-      <div class="mpl"><div class="mgr">${[...Array(nt+1)].map(()=>"<i></i>").join("")}</div>
-        ${data.map((d,i)=>`<div class="mcol ${i===5?"now":""}"><div class="mbx">${bar(d,"all",d.a,"la","school"+(d.a===1?"":"s")+" added")}${bar(d,"won",d.w,"lw","deal"+(d.w===1?"":"s")+" won")}</div><div class="mlb">${esc(monChip(d.m).split(" ")[0])}</div></div>`).join("")}</div></div>
-    <div class="mtb"><div class="mth"><span>Month</span><span>Added</span><span>Won</span><span>Value added</span><span>Won value</span><span>Growth</span></div>
-      ${data.slice().reverse().map(d=>`<div class="mtr"><span>${esc(monLabel(d.m).replace(/ \d{4}$/,""))}</span><span>${d.a?`<button class="nmb la" data-tmo="${d.m}" data-f="all">${d.a}</button>`:"0"}</span><span>${d.w?`<button class="nmb lw" data-tmo="${d.m}" data-f="won">${d.w}</button>`:"0"}</span><span>${d.av?inrS(d.av):"—"}</span><span class="wv">${d.v?inrS(d.v):"—"}</span><span class="g ${gcls(d.g)}">${gtxt(d.g)}</span></div>`).join("")}</div></div>`;
+    <div class="brkh"><div class="bh1">Performance · ${esc(PL[an.p]||"")}<small>${unit==="day"?"Day by day":unit==="week"?"Week by week":unit==="month"?"Month by month":"Quarter by quarter"}${P?" · change vs the previous period":""}</small></div>
+      <div class="mleg" style="margin:0;flex:none"><span class="lw">Revenue won</span><span class="lc">Collected</span></div></div>
+    ${kp}${chart}${tbl}</div>`;
 }
 function insRisk(ss){
   const now=Date.now(),open=ss.filter(OPEN_ST);
@@ -1496,14 +1538,14 @@ function analyticsView(){
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
-  return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="d" aria-label="Deal stage">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}<optgroup label="Stage">${STAGES.map(v=>opt(v,v,an.d)).join("")}</optgroup></select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
+  return `<div class="tfl"><select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select><select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select><select data-an="d" aria-label="Deal stage">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}<optgroup label="Stage">${STAGES.map(v=>opt(v,v,an.d)).join("")}</optgroup></select><select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>${an.p==="custom"?`<input type="date" data-an="from" value="${esc(an.from)}" aria-label="From"><input type="date" data-an="to" value="${esc(an.to)}" aria-label="To">`:""}<button class="alt ib tex" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)} Export</button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
   ${insKc("#2563eb",P.receipt,inrS(col.t),"Collected "+pl,col.n+" payment"+(col.n===1?"":"s")+" received")}
   ${insKc("#7c3aed",P.flag,cl>=WR_MIN?Math.round(won*100/cl)+"%":"—","Win rate",cl>=WR_MIN?won+" won of "+cl+" closed":"needs "+WR_MIN+" closed deals")}
   ${insKc("#db2777",P.net||P.home,(ss.length?Math.round(won*100/ss.length):0)+"%","Conversion",won+" won of "+ss.length+" school"+(ss.length===1?"":"s"))}</div>
-  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss,ev)}${insRisk(ss)}
+  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss)}${insRisk(ss)}
   <div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
   <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div></div>`;
 }
@@ -2870,6 +2912,7 @@ function onClick(e){
   if(el=g("data-mst")){mst=el.dataset.mst;return render()}
   if(el=g("data-tsl"))return insSchools(el.dataset.tsl,el.dataset.f);
   if(el=g("data-tmo"))return insMonth(el.dataset.tmo,el.dataset.f);
+  if(el=g("data-tbk")){const b=insBk[+el.dataset.tbk];if(!b)return;const w=el.dataset.f==="won";return insSheet(`${w?"Deals won":"Schools added"} · ${esc(b.l)} ${esc(b.s)}`,w?b.wn:b.ad)}
   if(el=g("data-tstage")){const st=el.dataset.tstage,ss=schools.filter(s=>mOK(owner(s))&&dOK(s));
     return insSheet(st==="__open"?"Open pipeline":esc(st),st==="__open"?ss.filter(OPEN_ST):ss.filter(s=>(s.stage||"Lead")===st))}
   if(el=g("data-tgo")){const id=el.dataset.tgo;close();gtab="home";sel=id;tab="activity";filter="";$("#q").value="";return render()}
