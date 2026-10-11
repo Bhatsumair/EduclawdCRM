@@ -2670,14 +2670,15 @@ function networkView(f){
   const stOf=s=>{const y=netPay(s);return y?y.st:"none"},orphAll=payments.filter(p=>!wonOf(p));
   const cnt=k=>k==="all"?won.length+orphAll.length:won.filter(s=>stOf(s)===k).length+(k==="none"?0:orphAll.filter(p=>planSum(p).status===k).length);
   const seg=`<div class="seg2 pseg nseg">${[["all","All"],["over","Overdue"],["pend","Pending"],["done","Paid"],["none","No Plan"]].map(([k,l])=>`<button class="${npf===k?"on":""}" data-npft="${k}">${l} (${cnt(k)})</button>`).join("")}</div>`;
-  const bar=`<label class="sfld"><small>Sort by</small><select data-nsrt="1" aria-label="Sort by">${[["value","Highest contract value"],["due","Next payment due soonest"],["out","Most outstanding"],["renew","Contract ending soonest"],["name","School name A–Z"],["signed","Recently signed"]].map(([v,l])=>`<option value="${v}" ${nsrt===v?"selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
+  const bar=`<label class="sfld"><small>Sort by</small><select data-nsrt="1" aria-label="Sort by">${[["value","Highest contract value"],["due","Next payment due soonest"],["out","Most outstanding"],["renew","Contract ending soonest"],["sid","School ID"],["name","School name A–Z"],["signed","Recently signed"]].map(([v,l])=>`<option value="${v}" ${nsrt===v?"selected":""}>${esc(l)}</option>`).join("")}</select></label>`;
   const tv=s=>{const y=netPay(s);return y?y.tot:0};
   const srt={value:(a,b)=>tv(b)-tv(a),
     due:(a,b)=>{const x=netPay(a),y=netPay(b);return((x&&x.next&&x.next.due)||"9999").localeCompare((y&&y.next&&y.next.due)||"9999")},
     out:(a,b)=>((netPay(b)||{due:0}).due)-((netPay(a)||{due:0}).due),
     renew:(a,b)=>((netEnd(a)||"9999")).localeCompare(netEnd(b)||"9999"),
     name:(a,b)=>(a.name||"").localeCompare(b.name||""),
-    signed:(a,b)=>(((b.deal||{}).signing)||"").localeCompare(((a.deal||{}).signing)||"")}[nsrt];
+    signed:(a,b)=>(((b.deal||{}).signing)||"").localeCompare(((a.deal||{}).signing)||""),
+    sid:(a,b)=>(+(sidOf(a).match(/\d+$/)||[1e9])[0])-(+(sidOf(b).match(/\d+$/)||[1e9])[0])}[nsrt];
   const list=won.filter(s=>{const n=netOf(s);
     return(npf==="all"||stOf(s)===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)+" "+sidOf(s)).toLowerCase().includes(f))})
     .sort((a,b)=>srt(a,b)||(a.name||"").localeCompare(b.name||""));
