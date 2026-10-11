@@ -1113,6 +1113,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .stgr span{display:flex;flex-direction:column}
 .sidp{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.3px;padding:1px 7px;border-radius:6px;background:color-mix(in srgb,var(--teal) 12%,var(--card));color:var(--teal2);margin-right:6px;vertical-align:1px}
 .ncard{position:relative}.ncard .nhd{display:block;padding-right:112px}.ncard .nhd>b{display:block}.nrt{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}.nrt .sidp{margin:0}.ncard .nsub{padding-right:112px}
+.xplus{width:46px;height:46px;padding:0;display:grid;place-items:center;flex:none;border-radius:14px;min-height:0;background:var(--card);color:var(--teal2);border:1px solid color-mix(in srgb,var(--teal) 30%,var(--line));box-shadow:0 2px 8px rgba(13,127,122,.12)}.xplus:hover{background:color-mix(in srgb,var(--teal) 8%,var(--card))}
 </style>
 </head>
 <body>
@@ -1121,7 +1122,7 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 <div class="app">
   <section class="card" id="list">
     <nav class="tabs gnav" id="gnav"></nav>
-    <div class="topbar"><div id="greet"></div><div class="row" id="sbar"><input id="q" placeholder="Search school, city, board…" style="flex:1"><button id="add" class="plus" aria-label="Add school" title="Add school"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div></div>
+    <div class="topbar"><div id="greet"></div><div class="row" id="sbar"><input id="q" placeholder="Search school, city, board…" style="flex:1"><button id="add" class="plus" aria-label="Add school" title="Add school"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button id="xexp" class="xplus" aria-label="Export to Excel" title="Export to Excel" style="display:none"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/></svg></button></div></div>
     <div class="items" id="items"></div>
   </section>
   <section class="card" id="detail"></section>
@@ -1676,6 +1677,51 @@ function doExport(){
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
   toast("📥","Excel file downloaded · "+b.sheets.length+(b.sheets.length>1?" sheets":" sheet"));
 }
+/* ---- module exports: Expenses (claims), Finance, School Network ---- */
+function xlsxSave(base,sheets){
+  if(!sheets.some(s=>s.rows.length)){toast("📭","Nothing to export yet");return}
+  const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const blob=makeXlsx(sheets),a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download=`Educlawd-CRM_${base}_${ds}.xlsx`;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  toast("📥","Excel file downloaded · "+sheets.length+(sheets.length>1?" sheets":" sheet"));
+}
+const CST_L={draft:"Not sent",sent:"Awaiting approval",approved:"Approved (to pay)",paid:"Paid",rejected:"Rejected"};
+function exportClaims(){
+  const list=(isAdmin()?claims.filter(c=>clmSt(c)!=="draft"||c.byId===me.id):clmMine()).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  xlsxSave(isAdmin()?"Expense-claims":"My-expenses",[{name:"Expense claims",cols:[{h:"Date",w:13},{h:"Member",w:20},{h:"Category",w:14},{h:"Description",w:36},{h:"Amount (₹)",w:13},{h:"Status",w:18},{h:"Sent on",w:18},{h:"Decided on",w:18},{h:"Decided by",w:18},{h:"Remark",w:30},{h:"Paid on",w:13},{h:"Payment mode",w:14},{h:"Reference",w:18}],
+    rows:list.map(c=>[xDD(c.date),clmWho(c),c.cat||"",xW(c.note||""),xR(c.amount),CST_L[clmSt(c)]||clmSt(c),xDT(c.sentAt),xDT(c.decidedAt),c.decidedBy||"",xW(c.remark||""),xDD(c.paidOn),c.payMode||"",c.payRef||""])}]);
+}
+function exportFinance(){
+  if(!isAdmin())return;
+  const inM=d=>exm==="all"||monKey(d)===exm;
+  const rows=[];
+  outRecs().forEach(e=>rows.push([xDD(e.date),"Expense",catLabel(e),e.title||"",e.paidTo||"",e.mode||"",e.ref||"",xW(e.notes||""),xR(-(+e.amount||0))]));
+  claimExp().forEach(e=>rows.push([xDD(e.date),"Expense","Expense Claims",e.n+" claim"+(e.n===1?"":"s"),e.paidTo||"",e.mode||"",e.ref||"","",xR(-(+e.amount||0))]));
+  inRecs().forEach(e=>rows.push([xDD(e.date),"Income",catLabel(e),e.title||"",e.paidTo||"",e.mode||"",e.ref||"",xW(e.notes||""),xR(+e.amount||0)]));
+  incList().forEach(x=>rows.push([xDD(x.date),"Income","Educlawd (payment plan)","Installment "+x.k+" of "+x.n,x.title||"",x.mode||"",x.ref||"","",xR(+x.amount||0)]));
+  const sel=rows.filter(r=>inM(r[0].v)).sort((a,b)=>(b[0].v||"").localeCompare(a[0].v||""));
+  const M=new Map();rows.forEach(r=>{const k=monKey(r[0].v)||"—",m=M.get(k)||{i:0,o:0,n:0};r[8].v>=0?m.i+=r[8].v:m.o+=-r[8].v;m.n++;M.set(k,m)});
+  const mon=[...M.keys()].sort().reverse().map(k=>{const m=M.get(k);return[k==="—"?"No date":monLabel(k),m.n,xR(m.i),xR(m.o),xR(m.i-m.o)]});
+  const C=new Map();sel.forEach(r=>{const k=r[1]+"|"+r[2],c=C.get(k)||{t:r[1],c:r[2],n:0,v:0};c.n++;c.v+=Math.abs(r[8].v);C.set(k,c)});
+  const cats=[...C.values()].sort((a,b)=>a.t.localeCompare(b.t)||b.v-a.v).map(c=>[c.t,c.c,c.n,xR(c.v)]);
+  xlsxSave("Finance"+(exm==="all"?"":"_"+exm),[
+    {name:"Transactions",cols:[{h:"Date",w:13},{h:"Type",w:10},{h:"Category",w:22},{h:"Title",w:28},{h:"Paid to / Received from",w:28},{h:"Mode",w:14},{h:"Reference",w:18},{h:"Notes",w:32},{h:"Amount (₹)",w:14}],rows:sel},
+    {name:"By category",cols:[{h:"Type",w:10},{h:"Category",w:26},{h:"Transactions",w:13},{h:"Total (₹)",w:15}],rows:cats},
+    {name:"Monthly summary",cols:[{h:"Month",w:18},{h:"Transactions",w:13},{h:"Income (₹)",w:15},{h:"Expense (₹)",w:15},{h:"Net (₹)",w:15}],rows:mon}]);
+}
+function exportNetwork(){
+  if(!isAdmin())return;
+  const won=wonSchools().slice().sort((a,b)=>(+(sidOf(a).match(/\d+$/)||[1e9])[0])-(+(sidOf(b).match(/\d+$/)||[1e9])[0]));
+  const ST={over:"Overdue",pend:"Pending",done:"Fully paid",none:"No plan"};
+  const net=won.map(s=>{const n=netOf(s),py=netPay(s),end=netEnd(s);return[sidOf(s),s.name||"",s.city||"",s.state||"",s.board||"",salesOf(s),xDD(s.deal&&s.deal.signing),xDD(n.billStart),xDD(end),n.term?+n.term:"",n.person||"",n.pdesig||"",n.pphone||"",n.pemail||"",
+    py?xR(fromP(py.tot)):"",py?xR(fromP(py.paid)):"",py?xR(fromP(py.due)):"",py&&py.next?xDD(py.next.due):"",ST[py?py.st:"none"],py?py.n:0]});
+  const inst=[];payments.forEach(p=>{const s=schools.find(x=>x.id===p.schoolId);(p.installments||[]).forEach((i,k)=>{inst.push([s?sidOf(s):"",payName(p),k+1,(p.installments||[]).length,xDD(i.due),xR(i.amount),i.paidOn?"Paid":instSt(i)==="over"?"Overdue":"Pending",xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""])})});
+  inst.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||a[2]-b[2]);
+  xlsxSave("School-Network",[
+    {name:"School network",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"City",w:16},{h:"State / UT",w:18},{h:"Board",w:14},{h:"Sales person",w:18},{h:"Signed",w:13},{h:"Contract starts",w:14},{h:"Contract ends",w:14},{h:"Term (months)",w:12},{h:"Authorised person",w:22},{h:"Designation",w:16},{h:"Phone",w:14},{h:"Email",w:26},{h:"Contract value (₹)",w:16},{h:"Collected (₹)",w:15},{h:"Outstanding (₹)",w:15},{h:"Next due",w:13},{h:"Payment status",w:14},{h:"Plans",w:8}],rows:net},
+    {name:"Installments",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Installment",w:11},{h:"Of",w:6},{h:"Payment date",w:13},{h:"Amount (₹)",w:14},{h:"Status",w:11},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:inst}]);
+}
 /*EXPORT-END*/
 
 /* Educlawd CRM · Team members: list, add / edit / remove users */
@@ -1873,6 +1919,7 @@ function render(){
   const f=filter.toLowerCase(),n=allTasks().length;
   $("#q").placeholder=PH[gtab];$("#add").style.display=gtab==="home"||gtab==="network"||gtab==="expenses"||gtab==="claims"?"":"none";$("#add").title=$("#add").ariaLabel=gtab==="network"?"Add payment plan":gtab==="claims"?"Record an expense":gtab==="expenses"?"Record expense or income":"Add school";$("#sbar").style.display=gtab==="tasks"||gtab==="team"||gtab==="reports"||gtab==="profile"?"none":"";
   $("#greet").innerHTML=gtab==="home"?greetHtml():"";
+  $("#xexp").style.display=gtab==="claims"||(isAdmin()&&(gtab==="expenses"||gtab==="network"))?"":"none";
   const msl=[...document.querySelectorAll("#items .mstrip")].map(x=>x.scrollLeft); // keep the month strip where it was
   $("#items").innerHTML=({home:homeView,tasks:tasksView,contacts:contactsView,deals:dealsView,team:teamView,reports:analyticsView,expenses:expensesView,network:networkView,claims:claimsView,profile:profileView}[gtab])(f);
   document.querySelectorAll("#items .mstrip").forEach((x,k)=>{if(msl[k])x.scrollLeft=msl[k];const on=x.querySelector("button.on");if(on&&(on.offsetLeft<x.scrollLeft||on.offsetLeft+on.offsetWidth>x.scrollLeft+x.clientWidth))on.scrollIntoView({block:"nearest",inline:"nearest"})});
@@ -2980,6 +3027,7 @@ function onClick(e){
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
   if(el=g("data-mtog"))return toggleUser(el);
+  if(t.closest&&t.closest("#xexp"))return gtab==="claims"?exportClaims():gtab==="expenses"?exportFinance():gtab==="network"?exportNetwork():undefined;
   if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")&&!payments.some(p=>p.schoolId===nsel)?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
