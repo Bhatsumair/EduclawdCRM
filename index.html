@@ -1418,11 +1418,11 @@ function insTrend(ss){
   const tile=(c,l,v,sub,d)=>`<div class="tk" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}${d||""}</span></div>`;
   const kp=`<div class="tkg">
     ${tile("#16a34a","Revenue won",inr(tWV),tW+" deal"+(tW===1?"":"s")+" ",P&&dl(tWV,P.wv))}
-    ${tile("#2563eb","Cash collected",inr(tC),"from payment plans ",P&&dl(tC,P.c))}
+    ${tile("#2563eb","Cash collected",inr(tC),"",P&&dl(tC,P.c))}
     ${tile("#0d7f7a","Deals won",String(tW),"",P&&dl(tW,P.w))}
     ${tile("#7c3aed","Schools added",String(tA),inrS(tAV)+" pipeline ",P&&dl(tA,P.a))}
-    ${tile("#d97706","Avg deal size",avg?inr(avg):"—",tW?"per won deal":"no wins yet")}
-    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","won ÷ added in period")}</div>`;
+    ${tile("#d97706","Avg deal size",avg?inr(avg):"—","")}
+    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","")}</div>`;
   const mx=Math.max(1,...bks.map(b=>Math.max(b.w_v,b.c_v))),nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p},top=nice(mx),many=bks.length>12;
   const bar=(i,v,cls,lbl)=>v?`<button type="button" class="tb ${cls}" data-tbk="${i}" data-f="${cls==="lw"?"won":"all"}" style="height:${Math.max(2,Math.round(v*100/top))}%" title="${lbl}: ${inr(v)}">${many?"":`<em>${inrS(v)}</em>`}</button>`:`<span class="tb ${cls} z"></span>`;
   const chart=`<div class="mch t2"><div class="may">${[4,3,2,1,0].map(k=>`<span>${k?inrS(top*k/4):"0"}</span>`).join("")}</div>
