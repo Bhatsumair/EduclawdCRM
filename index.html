@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a5f5b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="format-detection" content="telephone=no">
 <title>Educlawd CRM</title>
 <link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">
@@ -1128,6 +1128,17 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .csr:hover{border-color:var(--teal)}.csd{font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.2}
 .dtabs.ntabs{grid-template-columns:repeat(5,minmax(0,1fr));margin:12px 0}
 @media(max-width:520px){.dtabs.ntabs button{font-size:11.5px}}
+
+/* iOS: keep every page and sheet static — no sideways drag, no zoom-on-focus, no rubber-band */
+html,body{overflow-x:hidden;max-width:100%;touch-action:pan-y}
+.modal{overflow-x:hidden;overscroll-behavior:none;touch-action:pan-y}
+.modal .card{overflow-x:hidden;overscroll-behavior:contain;max-width:100vw;touch-action:pan-y}
+.modal .card *{max-width:100%}
+.grid>*,.modal .card>*{min-width:0}
+input,select,textarea{min-width:0;max-width:100%}
+input[type=date],input[type=time],input[type=month],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:42px}
+input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.grid.pq{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
