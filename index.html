@@ -1139,6 +1139,13 @@ input,select,textarea{min-width:0;max-width:100%}
 input[type=date],input[type=time],input[type=month],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-height:42px}
 input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-and-time-value{text-align:left;margin:0}
 @media(max-width:800px){.grid{grid-template-columns:1fr}.grid.pq{grid-template-columns:1fr 1fr}}
+
+/* Address · fetch current location */
+.addrw{position:relative}.addrw textarea{padding-right:52px;min-height:76px}
+.geo{position:absolute;right:7px;top:7px;width:38px;height:38px;min-height:0;padding:0;border-radius:11px;background:var(--soft);color:var(--teal);display:grid;place-items:center;border:1px solid var(--line)}
+.geo:hover{background:#e3f0ee}.geo svg{width:19px;height:19px}.geo.busy svg{animation:gspin .9s linear infinite}
+@keyframes gspin{to{transform:rotate(360deg)}}
+.geohint{font-size:11.5px;color:var(--mute);margin-top:4px;min-height:0}
 </style>
 </head>
 <body>
@@ -2994,7 +3001,29 @@ function getCity(){
   return cityList(null,val("f_state")).find(c=>c.toLowerCase()===t.toLowerCase())||t.replace(/\b([a-z])/g,m=>m.toUpperCase());
 }
 const BOARDS=["CBSE","ICSE / CISCE","State Board","IB","CAIE / IGCSE"];
-function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><textarea id="f_address">${esc(s.address||"")}</textarea>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
+const GEO_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>`;
+function geoFill(btn){
+  const hint=document.getElementById("geohint"),say=t=>{if(hint)hint.textContent=t};
+  if(!navigator.geolocation)return say("Location isn't available on this device.");
+  if(btn.classList.contains("busy"))return;btn.classList.add("busy");say("Getting your location…");
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:la,longitude:lo}=pos.coords,ta=document.getElementById("f_address");
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&accept-language=en&lat=${la}&lon=${lo}`);
+      if(!r.ok)throw 0;const j=await r.json(),a=j.address||{};
+      const addr=String(j.display_name||"").replace(/,\s*India$/,"").trim();
+      if(ta&&addr)ta.value=addr;
+      const norm=x=>String(x||"").toLowerCase().replace(/&/g,"and").replace(/\s+/g," ").trim();
+      const st=IN_STATES.find(x=>norm(x)===norm(a.state)),ss=document.getElementById("f_state");
+      if(st&&ss){ss.value=st;cityRefill()}
+      const city=a.city||a.town||a.village||a.suburb||a.state_district||a.county,cs=document.getElementById("f_city_sel");
+      if(city&&cs&&!cs.disabled){const o=[...cs.options].find(o=>norm(o.value)===norm(city));if(o)cs.value=o.value;else{cs.value="__new";const ci=document.getElementById("f_city_new");if(ci)ci.value=city}cityPick(cs)}
+      say("Location added · check and edit if needed");
+    }catch(e){if(ta)ta.value=`${la.toFixed(6)}, ${lo.toFixed(6)}`;say("Couldn't look up the address — added the map coordinates instead.")}
+    btn.classList.remove("busy");
+  },e=>{btn.classList.remove("busy");say(e.code===1?"Location permission is off. Allow location for this app in your phone settings and try again.":"Couldn't get your location. Check that location is on and try again.")},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+}
+function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address">${esc(s.address||"")}</textarea><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
   if(t)t.value=ok?inr(c.yt)+" / year":"";
   e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
