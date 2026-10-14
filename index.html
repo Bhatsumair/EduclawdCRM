@@ -1318,7 +1318,7 @@ const mkDbc=()=>({doc:id=>({
 function stopSync(){clearInterval(syncTimer);syncTimer=null}
 function startSync(){stopSync();syncTimer=setInterval(()=>{if(!document.hidden)syncNow()},5000)}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&me)syncNow()});
-function endSession(msg){
+function endSession(msg){try{localStorage.removeItem("ecw_pos")}catch(e){}
   stopSync();const w=!!me;TOKEN="";me=null;dbc=null;team=[];schools=[];sel=null;payments=[];psel=null;nsel=null;expenses=[];excats=[];claims=[];lastSig={s:"",t:""};dirty.clear();
   try{localStorage.removeItem(SLS)}catch(e){}
   hadMe=w;kickMsg=msg||"";route();
@@ -1342,7 +1342,7 @@ async function syncNow(first){
     else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
   }finally{syncing=false}
 }
-async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);startSync()}
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);restorePos();startSync()}
 const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
 
 /* Educlawd CRM · Login screen, sign out, profile card, change password */
@@ -1952,7 +1952,27 @@ function dealsView(f){
 const GN=[["home","Home"],["tasks","Tasks"],["contacts","Contacts"],["deals","Deals"]];
 const gnList=()=>[...GN,["claims","Expenses"],...(isAdmin()?[["expenses","Finance"],["network","School Network"],["reports","Team Insights"],["team","Team"]]:[]),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
 const PH={home:"Search school, city, board…",tasks:"Search tasks or schools…",contacts:"Search contacts…",deals:"Search deals…",payments:"Search payment plans by school…",expenses:"Search transactions…",network:"Search network by school, city, person…",claims:"Search expenses…",reports:"",team:"",profile:""};
+/* Keep each page where you left it: same page → same scroll; back to a page → its last scroll; also survives the phone reloading the app (e.g. after a call) */
+const POSK="ecw_pos",scrMap={};let lastKey="",posT=0;
+const scrEl=()=>document.querySelector(".app");
+const viewState=()=>({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt});
+const viewKey=()=>[gtab,(gtab==="network"?(psel||nsel):sel)||"-",dtab,ttab,etab,exm,clmV,clmT,npf].join("|");
+function savePos(){const a=scrEl();if(!a||!me)return;scrMap[viewKey()]=a.scrollTop;try{localStorage.setItem(POSK,JSON.stringify({u:me.id,t:Date.now(),top:a.scrollTop,st:viewState()}))}catch(e){}}
 function render(){
+  const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
+  render0();
+  const k=viewKey(),same=k===lastKey;lastKey=k;
+  if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{if(lastKey===k&&Math.abs(a.scrollTop-want)>2)a.scrollTop=want})}
+}
+function restorePos(){ // after a fresh start, reopen the page you were on (within 30 min)
+  let p=null;try{p=JSON.parse(localStorage.getItem(POSK)||"null")}catch(e){}
+  if(!p||!me||p.u!==me.id||Date.now()-p.t>30*60*1000||!p.st)return;
+  const s=p.st;({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt}=Object.assign(viewState(),s));
+  lastKey="";render();const a=scrEl();if(a){a.scrollTop=p.top;setTimeout(()=>{a.scrollTop=p.top},120)}lastKey=viewKey();scrMap[lastKey]=p.top;
+}
+addEventListener("scroll",e=>{if(e.target!==scrEl())return;clearTimeout(posT);posT=setTimeout(savePos,150)},true);
+addEventListener("pagehide",savePos);document.addEventListener("visibilitychange",()=>{if(document.hidden)savePos()});
+function render0(){
   if(!me)return;
   if(gtab==="payments")gtab="network"; // Payments now lives inside School Network
   if((gtab==="team"||gtab==="payments"||gtab==="reports"||gtab==="expenses"||gtab==="network")&&!isAdmin())gtab="home";
