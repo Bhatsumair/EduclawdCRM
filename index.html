@@ -3046,7 +3046,7 @@ function geoFill(btn){
     btn.classList.remove("busy");
   },e=>{btn.classList.remove("busy");say(e.code===1?"Location permission is off. Allow location for this app in your phone settings and try again.":"Couldn't get your location. Check that location is on and try again.")},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
-/* Phone: swipe left / right anywhere in the content to move between the module's tabs */
+/* Phone: swipe left / right in the content to move between the module's tabs — the tab bar stays put, only the data slides and follows your finger */
 (function(){
   let s=null;
   const NOSW=".modal,#modalRoot,.dwr,input,textarea,select,.mstrip,.chips,.mtb.t2,.dtabs,.seg2,.tabs,[data-noswipe]";
@@ -3057,26 +3057,42 @@ function geoFill(btn){
     const t=[...box.querySelectorAll(".tabs:not(.gnav)")].find(vis);if(t)return t;
     const g=[...box.querySelectorAll(".seg2:not(.fseg)")].filter(vis);return g[g.length-1]||null;
   };
+  const dataEls=b=>{const out=[];for(let n=b;n&&n.id!=="items"&&n.id!=="detail"&&n.id!=="list";n=n.parentElement){for(let x=n.nextElementSibling;x;x=x.nextElementSibling)out.push(x)}return out};
+  const btns=b=>[...b.querySelectorAll("button")].filter(x=>!x.disabled&&x.offsetParent!==null);
+  const setX=(els,x,o)=>els.forEach(e=>{e.style.transform=x?`translate3d(${x}px,0,0)`:"";e.style.opacity=o==null?"":o});
+  const EASE="cubic-bezier(.22,.8,.3,1)";
   document.addEventListener("touchstart",e=>{
     s=null;if(innerWidth>800||e.touches.length!==1)return;
     const t=e.touches[0],el=e.target;if(!(el instanceof Element))return;
     const box=el.closest("#list,#detail");if(!box||el.closest(NOSW)||hscroll(el))return;
     if(t.clientX<24||t.clientX>innerWidth-24)return; // leave the screen edges to the phone's own back gesture
-    s={x:t.clientX,y:t.clientY,t:Date.now(),box};
-  },{passive:true});
-  document.addEventListener("touchend",e=>{
-    if(!s)return;const t=e.changedTouches[0],dx=t.clientX-s.x,dy=t.clientY-s.y,box=s.box,dt=Date.now()-s.t;s=null;
-    if(Math.abs(dx)<60||Math.abs(dx)<Math.abs(dy)*1.6||dt>800)return;
     const b=bar(box);if(!b)return;
-    const bs=[...b.querySelectorAll("button")].filter(x=>!x.disabled&&x.offsetParent!==null),i=bs.findIndex(x=>x.classList.contains("on"));
-    const j=i<0?0:i+(dx<0?1:-1);if(j<0||j>=bs.length||j===i)return;
-    bs[j].click();
-    const nb=document.getElementById(box.id==="list"?"items":box.id);if(!nb)return;
-    nb.classList.remove("swl","swr");void nb.offsetWidth;nb.classList.add(dx<0?"swl":"swr");
-    setTimeout(()=>nb.classList.remove("swl","swr"),300);
-    const nbar=bar(nb),on=nbar&&nbar.querySelector("button.on");if(on&&on.scrollIntoView)on.scrollIntoView({block:"nearest",inline:"center"});
+    const bs=btns(b),i=Math.max(0,bs.findIndex(x=>x.classList.contains("on")));
+    s={x:t.clientX,y:t.clientY,t:Date.now(),box,b,bs,i,lock:0,els:null,dx:0};
   },{passive:true});
-  document.addEventListener("touchcancel",()=>{s=null},{passive:true});
+  document.addEventListener("touchmove",e=>{
+    if(!s)return;const t=e.touches[0],dx=t.clientX-s.x,dy=t.clientY-s.y;
+    if(!s.lock){if(Math.abs(dx)<10&&Math.abs(dy)<10)return;
+      if(Math.abs(dx)>Math.abs(dy)*1.2){s.lock=1;s.els=dataEls(s.b);s.els.forEach(x=>{x.style.willChange="transform";x.style.transition="none"})}else{s=null;return}}
+    if(e.cancelable)e.preventDefault();
+    const j=s.i+(dx<0?1:-1),edge=j<0||j>=s.bs.length;
+    s.dx=edge?dx*.22:dx;setX(s.els,s.dx,edge?"":String(1-Math.min(Math.abs(dx)/innerWidth,1)*.35));
+  },{passive:false});
+  const finish=()=>{
+    if(!s||!s.lock){s=null;return}
+    const {dx,els,bs,i,box,t}=s;s=null;const W=innerWidth,dir=dx<0?1:-1,j=i+dir,fast=Math.abs(dx)>40&&Date.now()-t<260;
+    if(j<0||j>=bs.length||(Math.abs(dx)<W*.25&&!fast)){ // not far enough → spring back
+      els.forEach(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`},{transform:"none"}],{duration:220,easing:EASE}));setX(els,0);els.forEach(x=>x.style.willChange="");return}
+    const out=-dir*W*.45;
+    Promise.all(els.map(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`,opacity:x.style.opacity||1},{transform:`translate3d(${out}px,0,0)`,opacity:0}],{duration:130,easing:"ease-in",fill:"forwards"}).finished.catch(()=>{}))).then(()=>{
+      bs[j].click();
+      const nb=document.getElementById(box.id),b2=nb&&bar(nb);if(!b2)return;
+      const n2=dataEls(b2);n2.forEach(x=>x.animate([{transform:`translate3d(${dir*W*.4}px,0,0)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:EASE}));
+      const on=b2.querySelector("button.on");if(on&&on.scrollIntoView)on.scrollIntoView({block:"nearest",inline:"center"});
+    });
+  };
+  document.addEventListener("touchend",finish,{passive:true});
+  document.addEventListener("touchcancel",finish,{passive:true});
 })();
 function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address">${esc(s.address||"")}</textarea><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
