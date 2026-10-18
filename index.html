@@ -2816,24 +2816,25 @@ function netMetrics(){
 }
 /* ---- list ---- */
 /* ===== Quarterly billing =====
-   Contracts run 1, 2 or 3 years, but the school is billed every 3 months counted from its
-   billing start date (billing from 1 Nov → Nov–Jan, Feb–Apr, May–Jul, Aug–Oct) on the students active that quarter:
+   Contracts run 1, 2 or 3 years, but the school is billed every financial-year quarter
+   (Q1 Apr–Jun · Q2 Jul–Sep · Q3 Oct–Dec · Q4 Jan–Mar) on the students active that quarter:
    active students × price per student (per month ×3, or per year ÷4) (+18% GST). A quarter the contract only partly
    covers is billed for its share of days. All of a school's bills live in one admin-only "pay_"
    document (kind:"qbill") whose installments are the bills, so Finance, collection reminders and
    reports pick them up like any other payment. */
-const QB_GST=0.18,QB_DUE_DAYS=15;
-const MSH=iso=>{const[y,m]=String(iso).split("-").map(Number);return new Date(y,m-1,1).toLocaleString("en-IN",{month:"short"}).slice(0,3)};
-/* "Nov 2026 – Jan 2027" when the quarter starts on the 1st, else exact dates */
-const qRange=(a,b)=>a.slice(8)==="01"?MSH(a)+(a.slice(0,4)!==b.slice(0,4)?" "+a.slice(0,4):"")+" – "+MSH(b)+" "+b.slice(0,4):fmtDate(a)+" – "+fmtDate(b);
+const QMON=["Apr–Jun","Jul–Sep","Oct–Dec","Jan–Mar"],QB_GST=0.18,QB_DUE_DAYS=15;
+const isoD=(y,m,d)=>y+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+function qOf(fy,q){const sm=[4,7,10,1][q-1],sy=q===4?fy+1:fy,last=new Date(sy,sm+2,0).getDate();
+  return{fy,q,key:fy+"Q"+q,from:isoD(sy,sm,1),to:isoD(sy,sm+2,last),label:"Q"+q+" FY"+String(fy).slice(2)+"-"+String(fy+1).slice(2),months:QMON[q-1]+" "+sy}}
+function fyQ(iso){const[y,m]=String(iso).split("-").map(Number);return qOf(m>=4?y:y-1,m>=4?Math.floor((m-4)/3)+1:4)}
+const nextQ=x=>x.q<4?qOf(x.fy,x.q+1):qOf(x.fy+1,1);
 const dSpan=(a,b)=>Math.round((new Date(b+"T12:00")-new Date(a+"T12:00"))/864e5)+1;
 const addDays=(iso,n)=>{const d=new Date(iso+"T12:00");d.setDate(d.getDate()+n);return localISO(d).slice(0,10)};
-/* the contract split into 3-month quarters from the billing start date */
+/* every quarter the contract touches, with the part of it that is billable */
 function contractQs(s){const n=netOf(s),end=netEnd(s);if(!n.billStart||!end)return[];
-  const out=[];
-  for(let k=0;k<30;k++){const from=addMonths(n.billStart,3*k);if(from>end)break;
-    const full=addDays(addMonths(n.billStart,3*(k+1)),-1),pt=full>end?end:full,days=dSpan(from,pt),qd=dSpan(from,full);
-    out.push({q:k+1,key:from,from,to:full,pf:from,pt,days,qd,part:days<qd,label:"Q"+(k+1),months:qRange(from,pt)})}
+  const out=[];let x=fyQ(n.billStart);
+  while(x.from<=end&&out.length<30){const pf=x.from<n.billStart?n.billStart:x.from,pt=x.to>end?end:x.to,days=dSpan(pf,pt),qd=dSpan(x.from,x.to);
+    out.push({...x,pf,pt,days,qd,part:days<qd});x=nextQ(x)}
   return out}
 const billDoc=s=>payments.find(p=>p.kind==="qbill"&&p.schoolId===s.id)||null;
 const billsOf=s=>((billDoc(s)||{}).installments)||[];
@@ -2843,7 +2844,7 @@ const bLbl=bs=>bs==="year"?"year":"month";
 const priceTxt=(r,bs)=>inr(+r)+" / student / "+bLbl(bs);
 const bOf=n=>n.basis==="year"?"year":"month";
 const qbAmt=(st,rate,days,qd,bs)=>{const b=Math.round((+st||0)*(+rate||0)*qPer(bs)*(days||1)/(qd||1))*100,g=Math.round(b*QB_GST/100)*100;return{b,g,t:b+g}}; // whole rupees
-const qbNo=(s,x)=>(sidOf(s)||"ECWD")+"/"+x.label+"-"+x.pf.slice(2,7).replace("-","");
+const qbNo=(s,x)=>(sidOf(s)||"ECWD")+"/"+x.label.replace(/\s+/g,"-");
 function qInfo(s){
   const n=netOf(s),qs=contractQs(s),bs=billsOf(s),td=todayISO(),byK=new Map(bs.map(b=>[b.qk,b]));
   const toBill=qs.filter(x=>x.pf<=td&&!byK.has(x.key));
@@ -2921,14 +2922,14 @@ function billsTab(s){
   const head=q.setup?`<div class="note qset">Add the <b>billing start date</b>, <b>contract period</b> and <b>price per student</b> (per month or per year) in the contract details to start quarterly billing.<div class="row" style="margin-top:10px"><button data-net="edit">${sv(P.pencil,15)} Add contract details</button></div></div>`
     :`<div class="hero qhero"><small>Billed quarterly · ${priceTxt(n.rate,bOf(n))} · +18% GST</small><div class="big">${inr(fromP(q.billed))}</div><div class="sub">billed · ${inr(fromP(q.paid))} collected · ${inr(fromP(q.due))} outstanding${q.oc?` · <b>${q.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${pc}%"></i></div></div>`;
   const billRow=(x,b)=>{const st=b.paidOn?"paid":b.due&&b.due<td?"over":"pend",[l,c]=PST[st],sub=[b.students+" students × "+inr(b.rate)+"/"+bLbl(b.basis)+(b.basis==="year"?" ÷ 4":" × 3 months")+(b.days&&b.qd&&b.days<b.qd?" × "+b.days+"/"+b.qd+" days":""),"GST "+inr(b.gst)].join(" · ");
-    return `<div class="inst qrow st-${st}"><div class="inum">${x?"Q"+x.q:esc(b.qn?"Q"+b.qn:"·")}</div><div class="ibody"><div class="r"><b>${esc(x?x.months:b.months||b.qlabel)}</b><span class="pill ${c}">${l}</span></div>
+    return `<div class="inst qrow st-${st}"><div class="inum">Q${(x||fyQ(b.from)).q}</div><div class="ibody"><div class="r"><b>${esc(b.qlabel)} <small class="qm">${esc(b.months||"")}</small></b><span class="pill ${c}">${l}</span></div>
       <div class="qamt">${inr(b.amount)}</div><small>${esc(sub)}</small><small>Bill ${esc(b.no||"")} · ${fmtDate(b.billedOn)} · due ${b.due===td&&!b.paidOn?"today":fmtDate(b.due)}</small>
       ${b.paidOn?`<small class="pd">Received ${inr(paidAmt(b))} on ${fmtDate(b.paidOn)}${b.mode?" · "+esc(b.mode):""}${b.ref?" · Ref "+esc(b.ref):""}</small>`:""}${b.notes?`<small>${esc(b.notes)}</small>`:""}</div>
       <div class="qbtn">${b.paidOn?`<button class="alt" data-pay="editpaid" data-i="${b.id}">Payment</button>`:`<button data-pay="paid" data-i="${b.id}">Mark paid</button>`}<button class="ghost" data-qb="edit" data-b="${b.id}" title="Edit bill" aria-label="Edit bill">${sv(P.pencil,15)}</button></div></div>`};
-  const openRow=x=>`<div class="inst qrow st-tobill"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill ps-bill">To bill</span></div>
+  const openRow=x=>`<div class="inst qrow st-tobill"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.label)} <small class="qm">${esc(x.months)}</small></b><span class="pill ps-bill">To bill</span></div>
       <small>${x.part?"Part quarter · "+fmtDate(x.pf)+" – "+fmtDate(x.pt)+" ("+x.days+" of "+x.qd+" days)":fmtDate(x.pf)+" – "+fmtDate(x.pt)}</small></div>
       <div class="qbtn"><button data-qb="new" data-k="${x.key}">${sv(P.receipt,15)} Generate bill</button></div></div>`;
-  const upRow=x=>`<div class="inst qrow st-up"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill s-Lead">Upcoming</span></div>
+  const upRow=x=>`<div class="inst qrow st-up"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.label)} <small class="qm">${esc(x.months)}</small></b><span class="pill s-Lead">Upcoming</span></div>
       <small>Starts ${fmtDate(x.pf)}${x.part?" · part quarter ("+x.days+" of "+x.qd+" days)":""}</small></div><div class="qbtn"><button class="alt" data-qb="new" data-k="${x.key}">Bill early</button></div></div>`;
   const rows=[],later=[];
   q.qs.forEach(x=>{const b=q.byK.get(x.key);if(b)rows.push(billRow(x,b));else if(x.pf<=td)rows.push(openRow(x));else(rows.some(r=>r.includes("st-up"))?later:rows).push(upRow(x))});
@@ -2951,7 +2952,7 @@ function netDetail(s){
   ${row("Billing starts",n.billStart?fmtDate(n.billStart):"")}
   ${row("Contract period",n.term?esc(termLabel(n.term)):"")}
   ${row("Contract ends",end?fmtDate(end):"")}
-  ${row("Billing","Every 3 months from the billing start date")}
+  ${row("Billing","Quarterly · Apr–Jun, Jul–Sep, Oct–Dec, Jan–Mar")}
   ${row("Price per student",+n.rate?`<b>${inr(+n.rate)} / ${bLbl(bOf(n))}</b> + 18% GST`:"")}
   ${row("Sales person",esc(salesOf(s)))}</table>
   <h4>Authorised person</h4><table class="dtl">
@@ -2997,10 +2998,10 @@ function qbForm(s,key,bid,pick){
   qbCalc();
 }
 function qbQuarter(s,key){const x=contractQs(s).find(y=>y.key===key);if(x)return x;const b=billsOf(s).find(y=>y.qk===key);
-  if(b)return{key,label:b.qn?"Q"+b.qn:b.qlabel,months:b.months,pf:b.from,pt:b.to,days:b.days,qd:b.qd,part:b.days<b.qd,q:b.qn||0};
-  return null}
+  if(b)return{key,label:b.qlabel,months:b.months,pf:b.from,pt:b.to,days:b.days,qd:b.qd,part:b.days<b.qd,q:fyQ(b.from).q};
+  const[fy,qq]=key.split("Q").map(Number),y=qOf(fy,qq);return{...y,pf:y.from,pt:y.to,days:dSpan(y.from,y.to),qd:dSpan(y.from,y.to),part:false}}
 function qbCalc(){const box=document.getElementById("qb_sum");if(!box||!qbf)return;const s=schools.find(x=>x.id===qbf.sid);if(!s)return;
-  const x=qbQuarter(s,val("qb_q"));if(!x)return;const st=+val("qb_st")||0,rate=+val("qb_rate")||0,bs=val("qb_basis"),a=qbAmt(st,rate,x.days,x.qd,bs);
+  const x=qbQuarter(s,val("qb_q")),st=+val("qb_st")||0,rate=+val("qb_rate")||0,bs=val("qb_basis"),a=qbAmt(st,rate,x.days,x.qd,bs);
   box.innerHTML=`<div class="qbl"><span>Period</span><b>${fmtDate(x.pf)} – ${fmtDate(x.pt)}</b></div>
   ${x.part?`<div class="qbl"><span>Part quarter</span><b>${x.days} of ${x.qd} days</b></div>`:""}
   <div class="qbl"><span>Amount <small>${st} × ${inr(rate)}/${bLbl(bs)}${bs==="year"?" ÷ 4":" × 3 months"}${x.part?" × "+x.days+"/"+x.qd+" days":""}</small></span><b>${inr(fromP(a.b))}</b></div>
@@ -3008,14 +3009,14 @@ function qbCalc(){const box=document.getElementById("qb_sum");if(!box||!qbf)retu
   <div class="qbl qbt"><span>Total bill</span><b>${inr(fromP(a.t))}</b></div>`}
 function qbSave(){
   if(!qbf)return;const s=schools.find(x=>x.id===qbf.sid);if(!s)return;
-  const x=qbQuarter(s,val("qb_q"));if(!x)return err("Pick a quarter");const st=Math.round(+val("qb_st")||0),rate=+val("qb_rate")||0,bs=val("qb_basis"),bd=val("qb_date"),due=val("qb_due");
+  const x=qbQuarter(s,val("qb_q")),st=Math.round(+val("qb_st")||0),rate=+val("qb_rate")||0,bs=val("qb_basis"),bd=val("qb_date"),due=val("qb_due");
   if(!(st>0))return err("Enter the number of active students");
   if(!(rate>0))return err("Enter the price per student");
   if(!bd)return err("Pick the bill date");if(!due)return err("Pick the payment due date");if(due<bd)return err("The due date can't be before the bill date");
   const was=billDoc(s),p=was?structuredClone(was):{id:"pay_"+uid(),_kind:"payment",kind:"qbill",schoolId:s.id,schoolName:s.name||"",total:0,installments:[],log:[]};
   if(p.installments.some(b=>b.qk===x.key&&b.id!==qbf.bid))return err(x.label+" is already billed");
   const a=qbAmt(st,rate,x.days,x.qd,bs),old=qbf.bid?p.installments.find(b=>b.id===qbf.bid):null;
-  const bill=Object.assign(old||{id:uid()},{qk:x.key,qn:x.q,qlabel:x.label+" ("+x.months+")",months:x.months,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,basis:bs,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes"),no:qbNo(s,x)});
+  const bill=Object.assign(old||{id:uid()},{qk:x.key,qlabel:x.label,months:x.months,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,basis:bs,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes"),no:qbNo(s,x)});
   if(old&&old.alerted&&old.alerted!==due)delete old.alerted;
   if(!old)p.installments.push(bill);
   p.installments.sort((u,v)=>(u.from||"").localeCompare(v.from||""));
@@ -3055,7 +3056,7 @@ function netForm(s){
   <p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">Sales person: ${esc(salesOf(s))} · deal ${insVal(s)?inr(insVal(s))+" / yr":"not set"}</small></p>
   <div class="grid">${fld("n_sid","School ID",n.sid||nextSid())}${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
   <div><label>Contract period</label><select id="n_term"><option value="">Select period</option>${NET_TERMS.concat(n.term&&!NET_TERMS.some(x=>x[0]===+n.term)?[[+n.term,termLabel(n.term)]]:[]).map(([v,l])=>`<option value="${v}" ${+n.term===v?"selected":""}>${l}</option>`).join("")}</select></div>
-  ${fld("n_rate","Price per student (₹)",n.rate||(s.deal&&+s.deal.price?+s.deal.price:""),"number")}<div><label>Price is</label><select id="n_basis">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(n.basis||(s.deal&&s.deal.basis==="year"?"year":"month"))===v?"selected":""}>${l}</option>`).join("")}</select></div><div class="dst" style="align-self:end;margin:0">Billed every 3 months from the billing start date on active students — monthly price ×3 or yearly price ÷4, +18% GST</div>
+  ${fld("n_rate","Price per student (₹)",n.rate||(s.deal&&+s.deal.price?+s.deal.price:""),"number")}<div><label>Price is</label><select id="n_basis">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(n.basis||(s.deal&&s.deal.basis==="year"?"year":"month"))===v?"selected":""}>${l}</option>`).join("")}</select></div><div class="dst" style="align-self:end;margin:0">Billed every quarter (Apr–Jun, Jul–Sep, Oct–Dec, Jan–Mar) on active students — monthly price ×3 or yearly price ÷4, +18% GST</div>
   ${fld("n_person","Authorised person",n.person)}${fld("n_desig","Designation",n.pdesig)}${fld("n_phone","Phone",n.pphone,"tel")}${fld("n_email","Email",n.pemail)}</div>
   <label>Notes (optional)</label><textarea id="n_notes" placeholder="e.g. renewal terms, invoicing contact">${esc(n.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-net="save" data-id="${s.id}">Save details</button><button class="alt" data-m="close">Cancel</button></div>`);
