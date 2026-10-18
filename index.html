@@ -1962,7 +1962,7 @@ function render(){
   const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
   render0();
   const k=viewKey(),same=k===lastKey;lastKey=k;
-  if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{if(lastKey===k&&Math.abs(a.scrollTop-want)>2)a.scrollTop=want})}
+  if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{const w2=same?want:(scrMap[k]||0);if(lastKey===k&&Math.abs(a.scrollTop-w2)>2)a.scrollTop=w2})}
 }
 function restorePos(){ // after a fresh start, reopen the page you were on (within 30 min)
   let p=null;try{p=JSON.parse(localStorage.getItem(POSK)||"null")}catch(e){}
@@ -3080,15 +3080,21 @@ function geoFill(btn){
   },{passive:false});
   const finish=()=>{
     if(!s||!s.lock){s=null;return}
-    const {dx,els,bs,i,box,t}=s;s=null;const W=innerWidth,dir=dx<0?1:-1,j=i+dir,fast=Math.abs(dx)>40&&Date.now()-t<260;
+    const s0=s,{dx,els,bs,i,box,t}=s;s=null;const W=innerWidth,dir=dx<0?1:-1,j=i+dir,fast=Math.abs(dx)>40&&Date.now()-t<260;
     if(j<0||j>=bs.length||(Math.abs(dx)<W*.25&&!fast)){ // not far enough → spring back
       els.forEach(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`},{transform:"none"}],{duration:220,easing:EASE}));setX(els,0);els.forEach(x=>x.style.willChange="");return}
     const out=-dir*W*.45;
     Promise.all(els.map(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`,opacity:x.style.opacity||1},{transform:`translate3d(${out}px,0,0)`,opacity:0}],{duration:130,easing:"ease-in",fill:"forwards"}).finished.catch(()=>{}))).then(()=>{
+      const app=document.querySelector(".app"),bt=s0.b.isConnected?s0.b.getBoundingClientRect().top:0,keep=app?Math.max(0,Math.min(app.scrollTop,app.scrollTop+bt-app.getBoundingClientRect().top-8)):0;
       bs[j].click();
+      if(app){app.scrollTop=keep;scrMap[viewKey()]=keep} // stay where you are (tab bar in view) instead of jumping
       const nb=document.getElementById(box.id),b2=nb&&bar(nb);if(!b2)return;
-      const n2=dataEls(b2);n2.forEach(x=>x.animate([{transform:`translate3d(${dir*W*.4}px,0,0)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:EASE}));
-      const on=b2.querySelector("button.on");if(on&&on.scrollIntoView)on.scrollIntoView({block:"nearest",inline:"center"});
+      const n2=dataEls(b2),from=`translate3d(${dir*W*.4}px,0,0)`;
+      n2.forEach(x=>{x.style.transition="none";x.style.transform=from;x.style.opacity="0"});
+      void b2.offsetWidth; // new data starts off to the side before the first paint — no flash
+      requestAnimationFrame(()=>{n2.forEach(x=>{x.style.transition=`transform .28s ${EASE},opacity .22s ease-out`;x.style.transform="";x.style.opacity=""});
+        setTimeout(()=>n2.forEach(x=>{x.style.transition="";x.style.willChange=""}),320)});
+      if(b2.scrollWidth>b2.clientWidth+2){const on=b2.querySelector("button.on");if(on)b2.scrollLeft=on.offsetLeft-(b2.clientWidth-on.offsetWidth)/2}
     });
   };
   document.addEventListener("touchend",finish,{passive:true});
