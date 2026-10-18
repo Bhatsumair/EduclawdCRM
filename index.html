@@ -1176,6 +1176,10 @@ details.qlater[open]>summary{margin-bottom:8px}
 .qbl{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:13.5px}.qbl small{color:var(--mute);margin-left:4px}
 .qbl.qbt{border-top:1px dashed var(--line);margin-top:4px;padding-top:8px;font-size:15px}.qbl.qbt b{color:var(--teal2);font-size:17px}
 @media(max-width:800px){.qbtn{width:100%;justify-content:flex-end}}
+
+.seg2.nvw{margin:0 0 12px}.dtabs.itabs{grid-template-columns:repeat(4,minmax(0,1fr));margin:12px 0}
+.invb{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.invb small{color:var(--mute);font-size:11.5px}.invb button{min-height:36px;padding:6px 14px;font-size:13px;flex:none}
 </style>
 </head>
 <body>
@@ -1780,13 +1784,13 @@ function exportNetwork(){
   const bills=[],inst=[];
   payments.forEach(p=>{const s=schools.find(x=>x.id===p.schoolId);(p.installments||[]).forEach((i,k)=>{
     const stt=i.paidOn?"Paid":instSt(i)==="over"?"Overdue":"Unpaid";
-    if(p.kind==="qbill")bills.push([s?sidOf(s):"",payName(p),i.qlabel||"",i.months||"",i.no||"",+i.students||0,xR(+i.rate||0),i.rate?(i.basis==="year"?"Per year":"Per month"):"",xR(+i.base||0),xR(+i.gst||0),xR(+i.amount||0),xDD(i.billedOn),xDD(i.due),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""]);
+    if(p.kind==="qbill")bills.push([s?sidOf(s):"",payName(p),i.inv||"",i.months||i.qlabel||"",+i.students||0,xR(+i.rate||0),i.rate?(i.basis==="year"?"Per year":"Per month"):"",xR(+i.base||0),xR(+i.gst||0),xR(+i.amount||0),xDD(i.billedOn),xDD(i.due),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""]);
     else inst.push([s?sidOf(s):"",payName(p),k+1,(p.installments||[]).length,xDD(i.due),xR(i.amount),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""])})});
-  bills.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||String(a[11]).localeCompare(String(b[11])));
+  bills.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||String(a[10]).localeCompare(String(b[10])));
   inst.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||a[2]-b[2]);
   xlsxSave("School-Network",[
     {name:"School network",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"City",w:16},{h:"State / UT",w:18},{h:"Board",w:14},{h:"Sales person",w:18},{h:"Signed",w:13},{h:"Contract starts",w:14},{h:"Contract ends",w:14},{h:"Term",w:10},{h:"Price / student (₹)",w:14},{h:"Price is",w:11},{h:"Authorised person",w:22},{h:"Designation",w:16},{h:"Phone",w:14},{h:"Email",w:26},{h:"Billed (₹)",w:15},{h:"Collected (₹)",w:15},{h:"Outstanding (₹)",w:15},{h:"Next due",w:13},{h:"Billing status",w:14},{h:"Quarters billed",w:12}],rows:net},
-    {name:"Quarterly bills",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Quarter",w:14},{h:"Months",w:14},{h:"Bill no.",w:24},{h:"Active students",w:12},{h:"Price / student (₹)",w:14},{h:"Price is",w:11},{h:"Amount (₹)",w:14},{h:"GST (₹)",w:12},{h:"Total (₹)",w:14},{h:"Bill date",w:13},{h:"Due date",w:13},{h:"Status",w:10},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:bills}]
+    {name:"Invoices",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Invoice no.",w:14},{h:"Period",w:24},{h:"Active students",w:12},{h:"Price / student (₹)",w:14},{h:"Price is",w:11},{h:"Amount (₹)",w:14},{h:"GST (₹)",w:12},{h:"Total (₹)",w:14},{h:"Bill date",w:13},{h:"Due date",w:13},{h:"Status",w:10},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:bills}]
     .concat(inst.length?[{name:"Earlier plan installments",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Installment",w:11},{h:"Of",w:6},{h:"Payment date",w:13},{h:"Amount (₹)",w:14},{h:"Status",w:11},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:inst}]:[]));
 }
 /*EXPORT-END*/
@@ -1982,8 +1986,8 @@ const PH={home:"Search school, city, board…",tasks:"Search tasks or schools…
 /* Keep each page where you left it: same page → same scroll; back to a page → its last scroll; also survives the phone reloading the app (e.g. after a call) */
 const POSK="ecw_pos",scrMap={};let lastKey="",posT=0;
 const scrEl=()=>document.querySelector(".app");
-const viewState=()=>({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt});
-const viewKey=()=>[gtab,(gtab==="network"?(psel||nsel):sel)||"-",dtab,ttab,etab,exm,clmV,clmT,npf].join("|");
+const viewState=()=>({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt,nview,invf});
+const viewKey=()=>[gtab,(gtab==="network"?(psel||nsel):sel)||"-",dtab,ttab,etab,exm,clmV,clmT,npf,nview,invf].join("|");
 function savePos(){const a=scrEl();if(!a||!me)return;scrMap[viewKey()]=a.scrollTop;try{localStorage.setItem(POSK,JSON.stringify({u:me.id,t:Date.now(),top:a.scrollTop,st:viewState()}))}catch(e){}}
 function render(){
   const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
@@ -1994,7 +1998,7 @@ function render(){
 function restorePos(){ // after a fresh start, reopen the page you were on (within 30 min)
   let p=null;try{p=JSON.parse(localStorage.getItem(POSK)||"null")}catch(e){}
   if(!p||!me||p.u!==me.id||Date.now()-p.t>30*60*1000||!p.st)return;
-  const s=p.st;({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt}=Object.assign(viewState(),s));
+  const s=p.st;({gtab,sel,nsel,psel,dtab,ttab,etab,exm,clmV,clmT,npf,ndt,nview,invf}=Object.assign(viewState(),s));
   lastKey="";render();const a=scrEl();if(a){a.scrollTop=p.top;setTimeout(()=>{a.scrollTop=p.top},120)}lastKey=viewKey();scrMap[lastKey]=p.top;
 }
 addEventListener("scroll",e=>{if(e.target!==scrEl())return;clearTimeout(posT);posT=setTimeout(savePos,150)},true);
@@ -2154,7 +2158,7 @@ function payAlerts(){
       const key=p.id+":"+i.id;if((s.tasks||[]).some(t=>t.payKey===key&&t.title.endsWith(fmtDate(i.due)))){i.alerted=i.due;ch=true;return}
       const d=new Date(i.due+"T10:00");d.setDate(d.getDate()-PAY_ALERT_DAYS);if(d.getTime()<Date.now()){d.setTime(Date.now()+30*6e4)}
       const o=bySchool.get(s.id)||structuredClone(s);
-      const what=p.kind==="qbill"?`${i.qlabel} bill`:`${ordN(k+1)} installment`;
+      const what=p.kind==="qbill"?invName(i):`${ordN(k+1)} installment`;
       (o.tasks=o.tasks||[]).push({id:uid(),type:"Call",title:`Payment collection: ${what} ${inr(i.amount)} due ${fmtDate(i.due)}`,due:d.toISOString(),payKey:key,by:"Auto reminder",byId:me.id});
       log(o,"Task",`Payment collection task added: ${what} ${inr(i.amount)} due ${fmtDate(i.due)}`);
       bySchool.set(s.id,o);i.alerted=i.due;ch=true});
@@ -2298,7 +2302,7 @@ function savePlan(){
   payFocus(p);pf=null;close();toast("💳",old?"Payment plan updated":"Payment plan created");savePay(p);setTimeout(payAlerts,300);
 }
 function paidForm(p,i){const k=p.installments.indexOf(i);
-  modal(`<h3>${i.paidOn?"Edit payment":"Record payment"}</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">${p.kind==="qbill"?esc(i.qlabel+" bill · "+(i.no||"")):"Installment "+(k+1)+" of "+p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
+  modal(`<h3>${i.paidOn?"Edit payment":"Record payment"}</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">${p.kind==="qbill"?esc(invName(i)):"Installment "+(k+1)+" of "+p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
   <div class="grid">${fld("pp_amt","Amount received (₹)",i.paidOn?paidAmt(i):i.amount,"number")}${fld("pp_date","Payment date",i.paidOn||todayISO(),"date")}<div><label>Payment mode</label><select id="pp_mode">${optsSel(PAY_MODES,i.mode)}</select></div>${fld("pp_ref","Reference / UTR / cheque no.",i.ref||"")}</div>
   ${p.kind==="qbill"?"":`<div class="dst">If the amount differs from ${inr(i.amount)}, the remaining unpaid installments are re-balanced so the plan still adds up to ${inr(p.total)}.</div>`}
   <div class="row" style="margin-top:12px"><button data-pay="savepaid" data-i="${i.id}">Save payment</button><button class="alt" data-m="close">Cancel</button>${i.paidOn?`<button class="ghost sp" style="color:var(--red)" data-pay="unpaid" data-i="${i.id}">Mark unpaid</button>`:""}</div>`)}
@@ -2315,7 +2319,7 @@ function payAct(el){
   if(a==="del"){if(!armed(el,"Tap again to delete"))return;return removePay(p)}
   const i=(p.installments||[]).find(x=>x.id===el.dataset.i),k=p.installments.indexOf(i);if(!i)return;
   if(a==="paid"||a==="editpaid")return paidForm(p,i);
-  const iw=p.kind==="qbill"?i.qlabel+" bill":"Installment "+(k+1);
+  const iw=p.kind==="qbill"?invName(i):"Installment "+(k+1);
   if(a==="unpaid"){delete i.paidOn;delete i.paidAmt;delete i.mode;delete i.ref;payLog(p,`${iw} marked unpaid`);close();toast("↩️","Marked unpaid");return savePay(p)}
   if(a==="savepaid"){
     const amt=toP(val("pp_amt")),dt=val("pp_date");if(amt<=0)return err("Enter the amount received");if(!dt)return err("Pick the payment date");
@@ -2361,7 +2365,7 @@ const catsSorted=()=>excats.slice().sort((a,b)=>(a.name||"").localeCompare(b.nam
 const payIncome=m=>{let t=0;payments.forEach(p=>(p.installments||[]).forEach(i=>{if(i.paidOn&&(m==="all"||monKey(i.paidOn)===m))t+=toP(paidAmt(i))}));return t};
 const ownIncome=m=>sumP(inRecs().filter(e=>m==="all"||monKey(e.date)===m));
 const incomeTot=m=>payIncome(m)+ownIncome(m);
-const incList=()=>{const o=[];payments.forEach(p=>{const ins=p.installments||[];ins.forEach((i,k)=>{if(i.paidOn)o.push({pid:p.id,id:p.id+":"+i.id,date:i.paidOn,title:payName(p),k:k+1,n:ins.length,qb:p.kind==="qbill",lab:p.kind==="qbill"?i.qlabel+" bill":"Installment "+(k+1)+" of "+ins.length,mode:i.mode||"",ref:i.ref||"",amount:paidAmt(i)})})});return o};
+const incList=()=>{const o=[];payments.forEach(p=>{const ins=p.installments||[];ins.forEach((i,k)=>{if(i.paidOn)o.push({pid:p.id,id:p.id+":"+i.id,date:i.paidOn,title:payName(p),k:k+1,n:ins.length,qb:p.kind==="qbill",lab:p.kind==="qbill"?invName(i):"Installment "+(k+1)+" of "+ins.length,mode:i.mode||"",ref:i.ref||"",amount:paidAmt(i)})})});return o};
 const payMonths=()=>{const s=new Set();payments.forEach(p=>(p.installments||[]).forEach(i=>{if(i.paidOn)s.add(monKey(i.paidOn))}));return[...s]};
 function mergeExp(docs){
   const loc=new Map([...expenses,...excats].map(o=>[o.id,o])),E=[],C=[],ids=new Set(docs.map(d=>d.id));
@@ -2432,7 +2436,7 @@ function expRecv(){
       <div class="s"><small>Next 30 days</small><b>${inr(fromP(sm(soon)))}</b><span>${soon.length} installment${soon.length===1?"":"s"}</span></div>
       <div><small>Later</small><b>${inr(fromP(all-sm(od)-sm(soon)))}</b><span>${un.length-od.length-soon.length} installment${un.length-od.length-soon.length===1?"":"s"}</span></div></div>
     ${un.slice(0,4).map(x=>{const o=x.i.due<td,t=x.i.due===td;return `<div class="rcr ${o?"o":t?"t":""}" data-psel="${x.p.id}" data-go="1" title="Open the payment plan in School Network">
-      <div class="exm"><b>${esc(payName(x.p))}</b><small>${x.p.kind==="qbill"?esc(x.i.qlabel)+" bill":ordN(x.k)+" of "+x.n} · ${o?"overdue since ":t?"due today · ":"due "}${fmtDate(x.i.due)}</small></div><div class="rca">${inr(x.i.amount)}</div></div>`}).join("")}
+      <div class="exm"><b>${esc(payName(x.p))}</b><small>${x.p.kind==="qbill"?esc(invName(x.i)):ordN(x.k)+" of "+x.n} · ${o?"overdue since ":t?"due today · ":"due "}${fmtDate(x.i.due)}</small></div><div class="rca">${inr(x.i.amount)}</div></div>`}).join("")}
     ${un.length>4?`<div class="rcm">+ ${un.length-4} more in School Network</div>`:""}</div>`;
 }
 const prevMon=m=>{const[y,mo]=m.split("-").map(Number),d=new Date(y,mo-2,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
@@ -2790,7 +2794,7 @@ function clmReject(id,n){
    The extra details live on the school document itself (s.net), so they sync like any other school field. */
 const NET_TERMS=[[12,"1 year"],[24,"2 years"],[36,"3 years"]];
 GI.network=sv(P.net='<circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><path d="M12 8v4M12 12 6.8 16.3M12 12l5.2 4.3"/>',22);
-let nsel=null,ndt="contract",nst="all",nsrt="value",npf="all";
+let nsel=null,ndt="contract",nst="all",nsrt="value",npf="all",nview="schools",invf="all";
 const wonSchools=()=>schools.filter(s=>s.stage==="Won");
 const wonOf=p=>p&&p.schoolId?wonSchools().find(s=>s.id===p.schoolId):null; // the network school a payment plan belongs to
 function payFocus(p){const ws=wonOf(p);gtab="network";if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=p.id;nsel=null}}
@@ -2833,7 +2837,7 @@ function contractQs(s){const n=netOf(s),end=netEnd(s);if(!n.billStart||!end)retu
   const out=[];
   for(let k=0;k<30;k++){const from=addMonths(n.billStart,3*k);if(from>end)break;
     const full=addDays(addMonths(n.billStart,3*(k+1)),-1),pt=full>end?end:full,days=dSpan(from,pt),qd=dSpan(from,full);
-    out.push({q:k+1,key:from,from,to:full,pf:from,pt,days,qd,part:days<qd,label:"Q"+(k+1),months:qRange(from,pt)})}
+    out.push({q:k+1,key:from,from,to:full,pf:from,pt,days,qd,part:days<qd,label:qRange(from,pt),months:qRange(from,pt)})}
   return out}
 const billDoc=s=>payments.find(p=>p.kind==="qbill"&&p.schoolId===s.id)||null;
 const billsOf=s=>((billDoc(s)||{}).installments)||[];
@@ -2843,7 +2847,6 @@ const bLbl=bs=>bs==="year"?"year":"month";
 const priceTxt=(r,bs)=>inr(+r)+" / student / "+bLbl(bs);
 const bOf=n=>n.basis==="year"?"year":"month";
 const qbAmt=(st,rate,days,qd,bs)=>{const b=Math.round((+st||0)*(+rate||0)*qPer(bs)*(days||1)/(qd||1))*100,g=Math.round(b*QB_GST/100)*100;return{b,g,t:b+g}}; // whole rupees
-const qbNo=(s,x)=>(sidOf(s)||"ECWD")+"/"+x.label+"-"+x.pf.slice(2,7).replace("-","");
 function qInfo(s){
   const n=netOf(s),qs=contractQs(s),bs=billsOf(s),td=todayISO(),byK=new Map(bs.map(b=>[b.qk,b]));
   const toBill=qs.filter(x=>x.pf<=td&&!byK.has(x.key));
@@ -2854,6 +2857,27 @@ function qInfo(s){
   return{qs,bs,byK,toBill,billed,paid,due:Math.max(0,billed-paid),over,oc,unpaid,next,st,setup,
     cur:qs.find(x=>x.pf<=td&&x.pt>=td)||null,upcoming:qs.find(x=>x.pf>td&&!byK.has(x.key))||null}}
 const QST={over:["Overdue","ps-over","#dc2626"],tobill:["To bill","ps-bill","#7c3aed"],pend:["Unpaid","ps-pend","#d97706"],done:["Paid","ps-paid","#16a34a"],setup:["Setup needed","s-Lead","#94a3b8"]};
+/* ---- all invoices (separate tab in School Network) ---- */
+const allBills=()=>payments.filter(p=>p.kind==="qbill").flatMap(p=>(p.installments||[]).map(b=>({p,b,s:schools.find(x=>x.id===p.schoolId)||null})));
+const nextInv=()=>"INV-"+(Math.max(1000,...allBills().map(x=>/^INV-\d+$/.test(x.b.inv||"")?+x.b.inv.slice(4):0))+1);
+const invName=b=>(b.inv?"Invoice "+b.inv:"Bill")+" · "+(b.months||b.qlabel||"");
+function invView(f,kpi,vseg){
+  const td=todayISO(),all=allBills(),stOf=b=>b.paidOn?"paid":b.due&&b.due<td?"over":"pend";
+  if(!["all","pend","over","paid"].includes(invf))invf="all";
+  const cnt=k=>k==="all"?all.length:all.filter(x=>stOf(x.b)===k).length;
+  const seg=`<div class="dtabs itabs">${[["all","All","#0d7f7a"],["pend","Unpaid","#d97706"],["over","Overdue","#dc2626"],["paid","Paid","#16a34a"]].map(([k,l,c])=>`<button class="${invf===k?"on":""}" style="--c:${c}" data-invf="${k}"><span>${l}</span><em>${cnt(k)}</em></button>`).join("")}</div>`;
+  const list=all.filter(x=>(invf==="all"||stOf(x.b)===invf)&&(!f||[x.b.inv,x.b.months,x.s&&x.s.name,x.s&&sidOf(x.s),x.p.schoolName].join(" ").toLowerCase().includes(f)))
+    .sort((a,b)=>(b.b.billedOn||"").localeCompare(a.b.billedOn||"")||String(b.b.inv||"").localeCompare(String(a.b.inv||""),undefined,{numeric:true}));
+  if(!all.length)return vseg+kpi+noMatch("<div style='font-size:34px'>🧾</div>No invoices yet.<br><small>Open a school and tap Generate invoice</small>");
+  if(!list.length)return vseg+kpi+seg+noMatch(f?"No invoices match your search":"Nothing in this group");
+  const tot=list.reduce((a,x)=>a+toP(x.b.amount),0);
+  return vseg+kpi+seg+`<div class="dl2" style="margin:4px 2px 8px">${list.length} invoice${list.length===1?"":"s"} · ${inr(fromP(tot))}</div><div class="nlist">`+list.map(({p,b,s})=>{const st=stOf(b),[l,c]=st==="pend"?["Unpaid","ps-pend"]:PST[st],col={paid:"#16a34a",over:"#dc2626",pend:"#d97706"}[st];
+    return `<div class="it invrow kcard ${s&&s.id===nsel?"on":""}" style="--c:${col}" data-plan="${p.id}" ${s?`data-invgo="${s.id}"`:""}>
+    <div class="r nhd"><b>${esc(b.inv||"—")}</b><span class="nrt"><span class="pill ${c}">${l}</span></span></div>
+    <div class="nsub">${esc(payName(p))}${s&&sidOf(s)?" · "+esc(sidOf(s)):""}</div>
+    <div class="ncon"><span><small>Period</small><b>${esc(b.months||b.qlabel||"")}</b></span><span><small>Invoice date</small><b>${fmtDate(b.billedOn)}</b></span><span><small>${b.paidOn?"Paid on":"Due"}</small><b class="${st==="over"?"od":""}">${fmtDate(b.paidOn||b.due)}</b></span></div>
+    <div class="invb"><div><small>${b.students} students × ${inr(b.rate)}/${bLbl(b.basis)} + GST ${inr(b.gst)}</small><div class="qamt">${inr(b.amount)}</div></div>${b.paidOn?"":`<button data-pay="paid" data-i="${b.id}">Mark paid</button>`}</div></div>`}).join("")+`</div>`;
+}
 /* ---- list ---- */
 function networkView(f){
   if(!isAdmin())return noMatch("Only the admin can see the school network");
@@ -2861,10 +2885,12 @@ function networkView(f){
   const tot=won.reduce((a,s)=>{const q=I(s);a.b+=q.billed;a.c+=q.paid;a.d+=q.due;a.oc+=q.oc;a.tb+=q.toBill.length;a.nb+=q.bs.length;if(!q.setup)a.on++;return a},{b:0,c:0,d:0,oc:0,tb:0,nb:0,on:0});
   const kc=(c,ic,v,l,sub)=>`<div class="kc money" style="--c:${c}"><div class="kic">${sv(ic,18)}</div><div class="kl">${l}</div><div class="kn">${v}</div><div class="ks">${esc(sub)}</div></div>`;
   const kpi=`<div class="kgrid lbl kx">${kc("#0d7f7a",P.net,String(won.length),"Won Schools",tot.on+" on quarterly billing")}
-  ${kc("#0d7f7a",P.wallet,inrS(fromP(tot.b)),"Billed",tot.nb+" bill"+(tot.nb===1?"":"s")+" raised")}
+  ${kc("#0d7f7a",P.wallet,inrS(fromP(tot.b)),"Billed",tot.nb+" invoice"+(tot.nb===1?"":"s")+" raised")}
   ${kc("#16a34a",P.check,inrS(fromP(tot.c)),"Collected",(tot.b?Math.round(tot.c*100/tot.b):0)+"% of billed")}
-  ${kc("#d97706",P.cal,inrS(fromP(tot.d)),"Outstanding",[tot.oc?tot.oc+" overdue":"",tot.tb?tot.tb+" quarter"+(tot.tb===1?"":"s")+" to bill":""].filter(Boolean).join(" · ")||"nothing overdue")}</div>`;
-  if(!won.length)return kpi+noMatch("<div style='font-size:34px'>🏫</div>No won schools yet.<br><small>A school joins the network as soon as its stage is set to Won</small>");
+  ${kc("#d97706",P.cal,inrS(fromP(tot.d)),"Outstanding",[tot.oc?tot.oc+" overdue":"",tot.tb?tot.tb+" quarter"+(tot.tb===1?"":"s")+" to invoice":""].filter(Boolean).join(" · ")||"nothing overdue")}</div>`;
+  const nInv=allBills().length,vseg=`<div class="seg2 nvw"><button class="${nview!=="inv"?"on":""}" data-nvw="schools">Schools (${won.length})</button><button class="${nview==="inv"?"on":""}" data-nvw="inv">Invoices (${nInv})</button></div>`;
+  if(nview==="inv")return invView(f,kpi,vseg);
+  if(!won.length)return vseg+kpi+noMatch("<div style='font-size:34px'>🏫</div>No won schools yet.<br><small>A school joins the network as soon as its stage is set to Won</small>");
   if(!QST[npf]&&npf!=="all")npf="all";
   const cnt=k=>k==="all"?won.length:won.filter(s=>I(s).st===k).length;
   const seg=`<div class="dtabs ntabs">${[["all","All","#0d7f7a"],["over","Overdue","#dc2626"],["tobill","To bill","#7c3aed"],["pend","Unpaid","#d97706"],["done","Paid","#16a34a"],["setup","Setup","#64748b"]].map(([k,l,c])=>`<button class="${npf===k?"on":""}" style="--c:${c}" data-npft="${k}"><span>${l}</span><em>${cnt(k)}</em></button>`).join("")}</div>`;
@@ -2880,13 +2906,13 @@ function networkView(f){
     return(npf==="all"||I(s).st===npf)&&(!f||((s.name||"")+" "+(s.city||"")+" "+(n.person||"")+" "+salesOf(s)+" "+sidOf(s)).toLowerCase().includes(f))})
     .sort((a,b)=>srt(a,b)||(a.name||"").localeCompare(b.name||""));
   const orph=npf==="all"?payments.filter(p=>p.kind!=="qbill"&&!wonOf(p)&&(!f||payName(p).toLowerCase().includes(f))):[];
-  if(!list.length&&!orph.length)return kpi+seg+bar+noMatch(f?"No schools match your search":"Nothing in this group");
+  if(!list.length&&!orph.length)return vseg+kpi+seg+bar+noMatch(f?"No schools match your search":"Nothing in this group");
   const td=todayISO();
-  return kpi+seg+bar+`<div class="nlist">`+list.map(s=>{const q=I(s),n=netOf(s),[sl,scl,col]=QST[q.st],nx=q.next,pc=q.billed?Math.min(100,Math.round(q.paid*100/q.billed)):0,nbq=q.qs.filter(x=>q.byK.has(x.key)).length;
+  return vseg+kpi+seg+bar+`<div class="nlist">`+list.map(s=>{const q=I(s),n=netOf(s),[sl,scl,col]=QST[q.st],nx=q.next,pc=q.billed?Math.min(100,Math.round(q.paid*100/q.billed)):0,nbq=q.qs.filter(x=>q.byK.has(x.key)).length;
     const foot=q.st==="setup"?`<small class="nfoot od">Add the price per quarter, contract period and billing start — tap to set up</small>`
-      :q.st==="over"?`<small class="nfoot od">${esc(nx.qlabel||"Bill")} · ${inr(nx.amount)} overdue since ${fmtDate(nx.due)}</small>`
-      :q.st==="tobill"?`<small class="nfoot qtb">${esc(q.toBill.map(x=>x.label).join(", "))} not billed yet — tap to generate</small>`
-      :q.st==="pend"?`<small class="nfoot">${esc(nx.qlabel||"Bill")} · ${inr(nx.amount)} due ${nx.due===td?"today":fmtDate(nx.due)}</small>`
+      :q.st==="over"?`<small class="nfoot od">${esc(invName(nx))} · ${inr(nx.amount)} overdue since ${fmtDate(nx.due)}</small>`
+      :q.st==="tobill"?`<small class="nfoot qtb">${esc(q.toBill.map(x=>x.label).join(", "))} not invoiced yet — tap to generate</small>`
+      :q.st==="pend"?`<small class="nfoot">${esc(invName(nx))} · ${inr(nx.amount)} due ${nx.due===td?"today":fmtDate(nx.due)}</small>`
       :`<small class="nfoot ok">All bills paid${q.upcoming?" · "+esc(q.upcoming.label)+" starts "+fmtDate(q.upcoming.pf):""}</small>`;
     return `<div class="it ncard kcard ${s.id===nsel?"on":""}" style="--c:${col}" data-nsel="${s.id}">
     <div class="r nhd"><b>${esc(s.name||"—")}</b><span class="nrt">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}<span class="pill ${scl}">${sl}</span></span></div>
@@ -2920,23 +2946,23 @@ function billsTab(s){
   const pc=q.billed?Math.min(100,Math.round(q.paid*100/q.billed)):0;
   const head=q.setup?`<div class="note qset">Add the <b>billing start date</b>, <b>contract period</b> and <b>price per student</b> (per month or per year) in the contract details to start quarterly billing.<div class="row" style="margin-top:10px"><button data-net="edit">${sv(P.pencil,15)} Add contract details</button></div></div>`
     :`<div class="hero qhero"><small>Billed quarterly · ${priceTxt(n.rate,bOf(n))} · +18% GST</small><div class="big">${inr(fromP(q.billed))}</div><div class="sub">billed · ${inr(fromP(q.paid))} collected · ${inr(fromP(q.due))} outstanding${q.oc?` · <b>${q.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${pc}%"></i></div></div>`;
-  const billRow=(x,b)=>{const st=b.paidOn?"paid":b.due&&b.due<td?"over":"pend",[l,c]=PST[st],sub=[b.students+" students × "+inr(b.rate)+"/"+bLbl(b.basis)+(b.basis==="year"?" ÷ 4":" × 3 months")+(b.days&&b.qd&&b.days<b.qd?" × "+b.days+"/"+b.qd+" days":""),"GST "+inr(b.gst)].join(" · ");
-    return `<div class="inst qrow st-${st}"><div class="inum">${x?"Q"+x.q:esc(b.qn?"Q"+b.qn:"·")}</div><div class="ibody"><div class="r"><b>${esc(x?x.months:b.months||b.qlabel)}</b><span class="pill ${c}">${l}</span></div>
-      <div class="qamt">${inr(b.amount)}</div><small>${esc(sub)}</small><small>Bill ${esc(b.no||"")} · ${fmtDate(b.billedOn)} · due ${b.due===td&&!b.paidOn?"today":fmtDate(b.due)}</small>
+  const billRow=(x,b)=>{const st=b.paidOn?"paid":b.due&&b.due<td?"over":"pend",[l,c]=st==="pend"?["Unpaid","ps-pend"]:PST[st],sub=[b.students+" students × "+inr(b.rate)+"/"+bLbl(b.basis)+(b.basis==="year"?" ÷ 4":" × 3 months")+(b.days&&b.qd&&b.days<b.qd?" × "+b.days+"/"+b.qd+" days":""),"GST "+inr(b.gst)].join(" · ");
+    return `<div class="inst qrow st-${st}"><div class="inum">${sv(P.receipt,16)}</div><div class="ibody"><div class="r"><b>${esc(x?x.months:b.months||b.qlabel)}</b><span class="pill ${c}">${l}</span></div>
+      <div class="qamt">${inr(b.amount)}</div><small>${esc(sub)}</small><small>${b.inv?"Invoice <b>"+esc(b.inv)+"</b>":"Bill"} · ${fmtDate(b.billedOn)} · due ${b.due===td&&!b.paidOn?"today":fmtDate(b.due)}</small>
       ${b.paidOn?`<small class="pd">Received ${inr(paidAmt(b))} on ${fmtDate(b.paidOn)}${b.mode?" · "+esc(b.mode):""}${b.ref?" · Ref "+esc(b.ref):""}</small>`:""}${b.notes?`<small>${esc(b.notes)}</small>`:""}</div>
       <div class="qbtn">${b.paidOn?`<button class="alt" data-pay="editpaid" data-i="${b.id}">Payment</button>`:`<button data-pay="paid" data-i="${b.id}">Mark paid</button>`}<button class="ghost" data-qb="edit" data-b="${b.id}" title="Edit bill" aria-label="Edit bill">${sv(P.pencil,15)}</button></div></div>`};
-  const openRow=x=>`<div class="inst qrow st-tobill"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill ps-bill">To bill</span></div>
+  const openRow=x=>`<div class="inst qrow st-tobill"><div class="inum">${sv(P.cal,16)}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill ps-bill">To bill</span></div>
       <small>${x.part?"Part quarter · "+fmtDate(x.pf)+" – "+fmtDate(x.pt)+" ("+x.days+" of "+x.qd+" days)":fmtDate(x.pf)+" – "+fmtDate(x.pt)}</small></div>
-      <div class="qbtn"><button data-qb="new" data-k="${x.key}">${sv(P.receipt,15)} Generate bill</button></div></div>`;
-  const upRow=x=>`<div class="inst qrow st-up"><div class="inum">Q${x.q}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill s-Lead">Upcoming</span></div>
-      <small>Starts ${fmtDate(x.pf)}${x.part?" · part quarter ("+x.days+" of "+x.qd+" days)":""}</small></div><div class="qbtn"><button class="alt" data-qb="new" data-k="${x.key}">Bill early</button></div></div>`;
+      <div class="qbtn"><button data-qb="new" data-k="${x.key}">${sv(P.receipt,15)} Generate invoice</button></div></div>`;
+  const upRow=x=>`<div class="inst qrow st-up"><div class="inum">${sv(P.cal,16)}</div><div class="ibody"><div class="r"><b>${esc(x.months)}</b><span class="pill s-Lead">Upcoming</span></div>
+      <small>Starts ${fmtDate(x.pf)}${x.part?" · part quarter ("+x.days+" of "+x.qd+" days)":""}</small></div><div class="qbtn"><button class="alt" data-qb="new" data-k="${x.key}">Invoice early</button></div></div>`;
   const rows=[],later=[];
   q.qs.forEach(x=>{const b=q.byK.get(x.key);if(b)rows.push(billRow(x,b));else if(x.pf<=td)rows.push(openRow(x));else(rows.some(r=>r.includes("st-up"))?later:rows).push(upRow(x))});
   q.bs.filter(b=>!q.qs.some(x=>x.key===b.qk)).forEach(b=>rows.push(billRow(null,b))); // bills outside the current contract dates
   const list=rows.length||later.length?`<h4>Quarters${q.qs.length?` · ${q.qs.length} in the contract`:""}</h4><div data-plan="${doc?doc.id:""}">${rows.join("")}${later.length?`<details class="qlater"><summary>${later.length} more quarter${later.length===1?"":"s"} until ${fmtDate(netEnd(s))}</summary>${later.join("")}</details>`:""}</div>`:"";
   const hist=doc&&(doc.log||[]).length?`<details class="qlater"><summary>Billing history</summary>${doc.log.slice(0,20).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}</details>`:"";
   const oldH=old.length?`<details class="qlater oldp"><summary>Earlier payment plans (${old.length})</summary>${old.map(planBlock).join("")}</details>`:"";
-  return head+list+(q.setup?"":`<button class="ib" style="margin-top:12px" data-qb="new">${sv(P.receipt,16)} Generate bill</button>`)+hist+oldH;
+  return head+list+(q.setup?"":`<button class="ib" style="margin-top:12px" data-qb="new">${sv(P.receipt,16)} Generate invoice</button>`)+hist+oldH;
 }
 function netDetail(s){
   const n=netOf(s),c=s.deal?calc(s.deal):null,end=netEnd(s),l=netLeft(s),st=netState(s),[sl,scl]=NSTL[st],pc=netPct(s);
@@ -2985,19 +3011,19 @@ function qbForm(s,key,bid,pick){
   const last=q.bs.filter(x=>x!==b).slice(-1)[0],stu=b?b.students:(last&&last.students)||(s.deal&&s.deal.students)||s.strength||"";
   const bd=b?b.billedOn:todayISO();
   qbf={sid:s.id,bid:bid||null};
-  modal(`<h3>${b?"Edit bill":"Generate quarterly bill"}</h3>
+  modal(`<h3>${b?"Edit invoice":"Generate invoice"}</h3>
   ${pick&&ready.length>1?`<label>School</label><select id="qb_school" onchange="qbForm(schools.find(x=>x.id===this.value),null,null,true)">${ready.map(x=>`<option value="${x.id}" ${x.id===s.id?"selected":""}>${esc(x.name||"—")}${qInfo(x).toBill.length?" · "+qInfo(x).toBill.length+" to bill":""}</option>`).join("")}</select>`:`<p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">${esc(sidOf(s))} · ${esc(termLabel(n.term))} contract · ${priceTxt(n.rate,bOf(n))}</small></p>`}
-  <label>Quarter</label><select id="qb_q" onchange="qbCalc()">${(b&&!opts.some(x=>x.key===b.qk)?[{key:b.qk,label:b.qlabel,months:b.months}]:[]).concat(opts).map(x=>`<option value="${x.key}" ${x.key===sel?"selected":""}>${esc(x.label)} · ${esc(x.months)}${x.part?" (part)":""}${x.pf>todayISO()?" · upcoming":""}</option>`).join("")}</select>
-  <div class="grid">${fld("qb_st","Active students",stu,"number")}${fld("qb_rate","Price per student (₹)",b?b.rate:(+n.rate||""),"number")}<div><label>Price is</label><select id="qb_basis" onchange="qbCalc()">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(b?bOf(b):bOf(n))===v?"selected":""}>${l}</option>`).join("")}</select></div>${fld("qb_date","Bill date",bd,"date")}${fld("qb_due","Payment due date",b?b.due:addDays(bd,QB_DUE_DAYS),"date")}</div>
+  <label>Quarter</label><select id="qb_q" onchange="qbCalc()">${(b&&!opts.some(x=>x.key===b.qk)?[{key:b.qk,label:b.qlabel,months:b.months}]:[]).concat(opts).map(x=>`<option value="${x.key}" ${x.key===sel?"selected":""}>${esc(x.months)}${x.part?" (part)":""}${x.pf>todayISO()?" · upcoming":""}</option>`).join("")}</select>
+  <div class="grid">${fld("qb_inv","Invoice number",b?(b.inv||nextInv()):nextInv())}${fld("qb_st","Active students",stu,"number")}${fld("qb_rate","Price per student (₹)",b?b.rate:(+n.rate||""),"number")}<div><label>Price is</label><select id="qb_basis" onchange="qbCalc()">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(b?bOf(b):bOf(n))===v?"selected":""}>${l}</option>`).join("")}</select></div>${fld("qb_date","Bill date",bd,"date")}${fld("qb_due","Payment due date",b?b.due:addDays(bd,QB_DUE_DAYS),"date")}</div>
   <div class="qbsum" id="qb_sum"></div>
   <label>Notes (optional)</label><textarea id="qb_notes" placeholder="e.g. invoice sent on WhatsApp">${esc(b&&b.notes||"")}</textarea>
-  <div class="row" style="margin-top:12px"><button data-qb="save">${b?"Save bill":"Generate bill"}</button><button class="alt" data-m="close">Cancel</button>${b&&!b.paidOn?`<button class="ghost sp" style="color:var(--red)" data-qb="del" data-b="${b.id}">Delete bill</button>`:""}</div>`,"side");
+  <div class="row" style="margin-top:12px"><button data-qb="save">${b?"Save invoice":"Generate invoice"}</button><button class="alt" data-m="close">Cancel</button>${b&&!b.paidOn?`<button class="ghost sp" style="color:var(--red)" data-qb="del" data-b="${b.id}">Delete invoice</button>`:""}</div>`,"side");
   ["qb_st","qb_rate"].forEach(i=>document.getElementById(i).addEventListener("input",qbCalc));
   document.getElementById("qb_date").addEventListener("change",e=>{const d=document.getElementById("qb_due");if(e.target.value&&!b)d.value=addDays(e.target.value,QB_DUE_DAYS)});
   qbCalc();
 }
 function qbQuarter(s,key){const x=contractQs(s).find(y=>y.key===key);if(x)return x;const b=billsOf(s).find(y=>y.qk===key);
-  if(b)return{key,label:b.qn?"Q"+b.qn:b.qlabel,months:b.months,pf:b.from,pt:b.to,days:b.days,qd:b.qd,part:b.days<b.qd,q:b.qn||0};
+  if(b)return{key,label:b.months||b.qlabel,months:b.months,pf:b.from,pt:b.to,days:b.days,qd:b.qd,part:b.days<b.qd,q:b.qn||0};
   return null}
 function qbCalc(){const box=document.getElementById("qb_sum");if(!box||!qbf)return;const s=schools.find(x=>x.id===qbf.sid);if(!s)return;
   const x=qbQuarter(s,val("qb_q"));if(!x)return;const st=+val("qb_st")||0,rate=+val("qb_rate")||0,bs=val("qb_basis"),a=qbAmt(st,rate,x.days,x.qd,bs);
@@ -3014,14 +3040,16 @@ function qbSave(){
   if(!bd)return err("Pick the bill date");if(!due)return err("Pick the payment due date");if(due<bd)return err("The due date can't be before the bill date");
   const was=billDoc(s),p=was?structuredClone(was):{id:"pay_"+uid(),_kind:"payment",kind:"qbill",schoolId:s.id,schoolName:s.name||"",total:0,installments:[],log:[]};
   if(p.installments.some(b=>b.qk===x.key&&b.id!==qbf.bid))return err(x.label+" is already billed");
+  const inv=val("qb_inv").toUpperCase();if(!inv)return err("Enter the invoice number");
+  if(allBills().some(y=>(y.b.inv||"").toUpperCase()===inv&&y.b.id!==qbf.bid))return err("Invoice number "+inv+" is already used");
   const a=qbAmt(st,rate,x.days,x.qd,bs),old=qbf.bid?p.installments.find(b=>b.id===qbf.bid):null;
-  const bill=Object.assign(old||{id:uid()},{qk:x.key,qn:x.q,qlabel:x.label+" ("+x.months+")",months:x.months,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,basis:bs,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes"),no:qbNo(s,x)});
+  const bill=Object.assign(old||{id:uid()},{qk:x.key,qlabel:x.months,months:x.months,inv,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,basis:bs,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes")});
   if(old&&old.alerted&&old.alerted!==due)delete old.alerted;
   if(!old)p.installments.push(bill);
   p.installments.sort((u,v)=>(u.from||"").localeCompare(v.from||""));
   p.total=fromP(p.installments.reduce((t,b)=>t+toP(b.amount),0));p.schoolName=s.name||"";
-  payLog(p,`${old?"Bill updated":"Bill generated"} · ${x.label} · ${st} students × ${inr(rate)}/${bLbl(bs)} · ${inr(bill.amount)} due ${fmtDate(due)}`);
-  nsel=s.id;psel=null;ndt="pay";qbf=null;close();toast("🧾",(old?"Bill updated · ":"Bill generated · ")+x.label+" · "+inr(bill.amount));savePay(p);
+  payLog(p,`${old?"Invoice updated":"Invoice generated"} · ${inv} · ${x.label} · ${st} students × ${inr(rate)}/${bLbl(bs)} · ${inr(bill.amount)} due ${fmtDate(due)}`);
+  nsel=s.id;psel=null;ndt="pay";qbf=null;close();toast("🧾",(old?"Invoice updated · ":"Invoice generated · ")+inv+" · "+inr(bill.amount));savePay(p);
 }
 function qbAct(el){
   const a=el.dataset.qb,s=schools.find(x=>x.id===nsel);
@@ -3030,7 +3058,7 @@ function qbAct(el){
   if(!s)return;
   if(a==="edit")return qbForm(s,null,el.dataset.b);
   if(a==="del"){if(!armed(el,"Tap again to delete"))return;const was=billDoc(s);if(!was)return;const p=structuredClone(was),b=p.installments.find(x=>x.id===el.dataset.b);if(!b||b.paidOn)return;
-    p.installments=p.installments.filter(x=>x!==b);p.total=fromP(p.installments.reduce((t,x)=>t+toP(x.amount),0));payLog(p,`Bill deleted · ${b.qlabel} · ${inr(b.amount)}`);
+    p.installments=p.installments.filter(x=>x!==b);p.total=fromP(p.installments.reduce((t,x)=>t+toP(x.amount),0));payLog(p,`Invoice deleted · ${b.inv||""} · ${b.qlabel} · ${inr(b.amount)}`);
     {const key=p.id+":"+b.id;if((s.tasks||[]).some(t=>t.payKey===key)){const o=structuredClone(s);o.tasks=o.tasks.filter(t=>t.payKey!==key);save(o)}}
     qbf=null;close();toast("🗑️","Bill deleted");return savePay(p)}
 }
@@ -3292,6 +3320,7 @@ function onClick(e){
   if(g("data-export"))return doExport();
   if(el=g("data-qb"))return qbAct(el);
   if(el=g("data-pay"))return payAct(el);
+  if(el=g("data-invgo")){nsel=el.dataset.invgo;psel=null;ndt="pay";return render()}
   if(el=g("data-net"))return netAct(el);
   if(el=g("data-gclm")){gtab="claims";clmV="appr";clmT="paid";filter="";$("#q").value="";return render()}
   if(el=g("data-clm"))return clmAct(el);
@@ -3300,6 +3329,8 @@ function onClick(e){
   if(el=g("data-cv")){clmV=el.dataset.cv;return render()}
   if(el=g("data-cc")){const h=document.getElementById("cf_cat");if(h){h.value=el.dataset.cc;document.querySelectorAll("#cf_cats [data-cc]").forEach(b2=>b2.classList.toggle("on",b2.dataset.cc===el.dataset.cc))}return}
   if(el=g("data-npft")){npf=el.dataset.npft;return render()}
+  if(el=g("data-nvw")){nview=el.dataset.nvw;return render()}
+  if(el=g("data-invf")){invf=el.dataset.invf;return render()}
   if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;ndt="contract";return render()}
   if(el=g("data-ndt")){ndt=el.dataset.ndt;return render()}
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
