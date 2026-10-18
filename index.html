@@ -1775,18 +1775,18 @@ function exportFinance(){
 function exportNetwork(){
   if(!isAdmin())return;
   const won=wonSchools().slice().sort((a,b)=>(+(sidOf(a).match(/\d+$/)||[1e9])[0])-(+(sidOf(b).match(/\d+$/)||[1e9])[0]));
-  const net=won.map(s=>{const n=netOf(s),q=qInfo(s),end=netEnd(s);return[sidOf(s),s.name||"",s.city||"",s.state||"",s.board||"",salesOf(s),xDD(s.deal&&s.deal.signing),xDD(n.billStart),xDD(end),n.term?termLabel(n.term):"",+n.rate?xR(+n.rate):"",+n.rate?(bOf(n)==="year"?"Per year":"Per month"):"",n.person||"",n.pdesig||"",n.pphone||"",n.pemail||"",
+  const net=won.map(s=>{const n=netOf(s),q=qInfo(s),end=netEnd(s);return[sidOf(s),s.name||"",s.city||"",s.state||"",s.board||"",salesOf(s),xDD(s.deal&&s.deal.signing),xDD(n.billStart),xDD(end),n.term?termLabel(n.term):"",+n.rate?xR(+n.rate):"",n.person||"",n.pdesig||"",n.pphone||"",n.pemail||"",
     xR(fromP(q.billed)),xR(fromP(q.paid)),xR(fromP(q.due)),q.next?xDD(q.next.due):"",QST[q.st][0],q.bs.length+"/"+q.qs.length]});
   const bills=[],inst=[];
   payments.forEach(p=>{const s=schools.find(x=>x.id===p.schoolId);(p.installments||[]).forEach((i,k)=>{
     const stt=i.paidOn?"Paid":instSt(i)==="over"?"Overdue":"Unpaid";
-    if(p.kind==="qbill")bills.push([s?sidOf(s):"",payName(p),i.qlabel||"",i.months||"",i.no||"",+i.students||0,xR(+i.rate||0),i.rate?(i.basis==="year"?"Per year":"Per month"):"",xR(+i.base||0),xR(+i.gst||0),xR(+i.amount||0),xDD(i.billedOn),xDD(i.due),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""]);
+    if(p.kind==="qbill")bills.push([s?sidOf(s):"",payName(p),i.qlabel||"",i.months||"",i.no||"",+i.students||0,xR(+i.rate||0),xR(+i.base||0),xR(+i.gst||0),xR(+i.amount||0),xDD(i.billedOn),xDD(i.due),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""]);
     else inst.push([s?sidOf(s):"",payName(p),k+1,(p.installments||[]).length,xDD(i.due),xR(i.amount),stt,xDD(i.paidOn),i.paidOn?xR(paidAmt(i)):"",i.mode||"",i.ref||""])})});
-  bills.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||String(a[11]).localeCompare(String(b[11])));
+  bills.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||String(a[10]).localeCompare(String(b[10])));
   inst.sort((a,b)=>String(a[1]).localeCompare(String(b[1]))||a[2]-b[2]);
   xlsxSave("School-Network",[
-    {name:"School network",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"City",w:16},{h:"State / UT",w:18},{h:"Board",w:14},{h:"Sales person",w:18},{h:"Signed",w:13},{h:"Contract starts",w:14},{h:"Contract ends",w:14},{h:"Term",w:10},{h:"Price / student (₹)",w:14},{h:"Price is",w:11},{h:"Authorised person",w:22},{h:"Designation",w:16},{h:"Phone",w:14},{h:"Email",w:26},{h:"Billed (₹)",w:15},{h:"Collected (₹)",w:15},{h:"Outstanding (₹)",w:15},{h:"Next due",w:13},{h:"Billing status",w:14},{h:"Quarters billed",w:12}],rows:net},
-    {name:"Quarterly bills",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Quarter",w:14},{h:"Months",w:14},{h:"Bill no.",w:24},{h:"Active students",w:12},{h:"Price / student (₹)",w:14},{h:"Price is",w:11},{h:"Amount (₹)",w:14},{h:"GST (₹)",w:12},{h:"Total (₹)",w:14},{h:"Bill date",w:13},{h:"Due date",w:13},{h:"Status",w:10},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:bills}]
+    {name:"School network",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"City",w:16},{h:"State / UT",w:18},{h:"Board",w:14},{h:"Sales person",w:18},{h:"Signed",w:13},{h:"Contract starts",w:14},{h:"Contract ends",w:14},{h:"Term",w:10},{h:"Price / student / qtr (₹)",w:16},{h:"Authorised person",w:22},{h:"Designation",w:16},{h:"Phone",w:14},{h:"Email",w:26},{h:"Billed (₹)",w:15},{h:"Collected (₹)",w:15},{h:"Outstanding (₹)",w:15},{h:"Next due",w:13},{h:"Billing status",w:14},{h:"Quarters billed",w:12}],rows:net},
+    {name:"Quarterly bills",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Quarter",w:14},{h:"Months",w:14},{h:"Bill no.",w:24},{h:"Active students",w:12},{h:"Price / student (₹)",w:14},{h:"Amount (₹)",w:14},{h:"GST (₹)",w:12},{h:"Total (₹)",w:14},{h:"Bill date",w:13},{h:"Due date",w:13},{h:"Status",w:10},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:bills}]
     .concat(inst.length?[{name:"Earlier plan installments",cols:[{h:"School ID",w:12},{h:"School",w:32},{h:"Installment",w:11},{h:"Of",w:6},{h:"Payment date",w:13},{h:"Amount (₹)",w:14},{h:"Status",w:11},{h:"Paid on",w:13},{h:"Received (₹)",w:14},{h:"Mode",w:14},{h:"Reference",w:18}],rows:inst}]:[]));
 }
 /*EXPORT-END*/
@@ -2818,7 +2818,7 @@ function netMetrics(){
 /* ===== Quarterly billing =====
    Contracts run 1, 2 or 3 years, but the school is billed every financial-year quarter
    (Q1 Apr–Jun · Q2 Jul–Sep · Q3 Oct–Dec · Q4 Jan–Mar) on the students active that quarter:
-   active students × price per student (per month ×3, or per year ÷4) (+18% GST). A quarter the contract only partly
+   active students × price per student per quarter (+18% GST). A quarter the contract only partly
    covers is billed for its share of days. All of a school's bills live in one admin-only "pay_"
    document (kind:"qbill") whose installments are the bills, so Finance, collection reminders and
    reports pick them up like any other payment. */
@@ -2839,11 +2839,7 @@ function contractQs(s){const n=netOf(s),end=netEnd(s);if(!n.billStart||!end)retu
 const billDoc=s=>payments.find(p=>p.kind==="qbill"&&p.schoolId===s.id)||null;
 const billsOf=s=>((billDoc(s)||{}).installments)||[];
 const oldPlans=s=>payments.filter(p=>p.kind!=="qbill"&&p.schoolId===s.id);
-const qPer=bs=>bs==="year"?0.25:3; // quarter = 3 months = ¼ year
-const bLbl=bs=>bs==="year"?"year":"month";
-const priceTxt=(r,bs)=>inr(+r)+" / student / "+bLbl(bs);
-const bOf=n=>n.basis==="year"?"year":"month";
-const qbAmt=(st,rate,days,qd,bs)=>{const b=Math.round((+st||0)*(+rate||0)*qPer(bs)*(days||1)/(qd||1))*100,g=Math.round(b*QB_GST/100)*100;return{b,g,t:b+g}}; // whole rupees
+const qbAmt=(st,rate,days,qd)=>{const b=Math.round((+st||0)*(+rate||0)*(days||1)/(qd||1))*100,g=Math.round(b*QB_GST/100)*100;return{b,g,t:b+g}}; // whole rupees
 const qbNo=(s,x)=>(sidOf(s)||"ECWD")+"/"+x.label.replace(/\s+/g,"-");
 function qInfo(s){
   const n=netOf(s),qs=contractQs(s),bs=billsOf(s),td=todayISO(),byK=new Map(bs.map(b=>[b.qk,b]));
@@ -2893,7 +2889,7 @@ function networkView(f){
     <div class="r nhd"><b>${esc(s.name||"—")}</b><span class="nrt">${sidOf(s)?`<span class="sidp">${esc(sidOf(s))}</span>`:""}<span class="pill ${scl}">${sl}</span></span></div>
     <div class="nsub">${esc([s.city,s.board,salesOf(s)].filter(Boolean).join(" · "))||"&nbsp;"}</div>
     <div class="ncon"><span><small>Contract starts</small><b>${n.billStart?fmtDate(n.billStart):"—"}</b></span><span><small>Contract ends</small><b>${netEnd(s)?fmtDate(netEnd(s)):"—"}</b></span><span><small>Term</small><b>${n.term?esc(termLabel(n.term)):"—"}</b></span></div>
-    <div class="ngrid"><div><small>Price / student</small><b>${+n.rate?inr(+n.rate)+" / "+(bOf(n)==="year"?"yr":"mo"):"—"}</b></div>
+    <div class="ngrid"><div><small>Price / student / qtr</small><b>${+n.rate?inr(+n.rate):"—"}</b></div>
       <div><small>Billed</small><b>${inr(fromP(q.billed))}</b></div>
       <div><small>Collected</small><b>${inr(fromP(q.paid))}</b></div>
       <div><small>Outstanding</small><b class="${q.oc?"od":""}">${inr(fromP(q.due))}</b></div></div>
@@ -2919,9 +2915,9 @@ function planBlock(p){const m=planSum(p),ins=p.installments||[];
 function billsTab(s){
   const n=netOf(s),q=qInfo(s),td=todayISO(),doc=billDoc(s),old=oldPlans(s);
   const pc=q.billed?Math.min(100,Math.round(q.paid*100/q.billed)):0;
-  const head=q.setup?`<div class="note qset">Add the <b>billing start date</b>, <b>contract period</b> and <b>price per student</b> (per month or per year) in the contract details to start quarterly billing.<div class="row" style="margin-top:10px"><button data-net="edit">${sv(P.pencil,15)} Add contract details</button></div></div>`
-    :`<div class="hero qhero"><small>Billed quarterly · ${priceTxt(n.rate,bOf(n))} · +18% GST</small><div class="big">${inr(fromP(q.billed))}</div><div class="sub">billed · ${inr(fromP(q.paid))} collected · ${inr(fromP(q.due))} outstanding${q.oc?` · <b>${q.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${pc}%"></i></div></div>`;
-  const billRow=(x,b)=>{const st=b.paidOn?"paid":b.due&&b.due<td?"over":"pend",[l,c]=PST[st],sub=[b.students+" students × "+inr(b.rate)+"/"+bLbl(b.basis)+(b.basis==="year"?" ÷ 4":" × 3 months")+(b.days&&b.qd&&b.days<b.qd?" × "+b.days+"/"+b.qd+" days":""),"GST "+inr(b.gst)].join(" · ");
+  const head=q.setup?`<div class="note qset">Add the <b>billing start date</b>, <b>contract period</b> and <b>price per student per quarter</b> in the contract details to start quarterly billing.<div class="row" style="margin-top:10px"><button data-net="edit">${sv(P.pencil,15)} Add contract details</button></div></div>`
+    :`<div class="hero qhero"><small>Quarterly billing · ${inr(+n.rate)} per student per quarter · +18% GST</small><div class="big">${inr(fromP(q.billed))}</div><div class="sub">billed · ${inr(fromP(q.paid))} collected · ${inr(fromP(q.due))} outstanding${q.oc?` · <b>${q.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${pc}%"></i></div></div>`;
+  const billRow=(x,b)=>{const st=b.paidOn?"paid":b.due&&b.due<td?"over":"pend",[l,c]=PST[st],sub=[b.students+" students × "+inr(b.rate)+(b.days&&b.qd&&b.days<b.qd?" × "+b.days+"/"+b.qd+" days":""),"GST "+inr(b.gst)].join(" · ");
     return `<div class="inst qrow st-${st}"><div class="inum">Q${(x||fyQ(b.from)).q}</div><div class="ibody"><div class="r"><b>${esc(b.qlabel)} <small class="qm">${esc(b.months||"")}</small></b><span class="pill ${c}">${l}</span></div>
       <div class="qamt">${inr(b.amount)}</div><small>${esc(sub)}</small><small>Bill ${esc(b.no||"")} · ${fmtDate(b.billedOn)} · due ${b.due===td&&!b.paidOn?"today":fmtDate(b.due)}</small>
       ${b.paidOn?`<small class="pd">Received ${inr(paidAmt(b))} on ${fmtDate(b.paidOn)}${b.mode?" · "+esc(b.mode):""}${b.ref?" · Ref "+esc(b.ref):""}</small>`:""}${b.notes?`<small>${esc(b.notes)}</small>`:""}</div>
@@ -2953,7 +2949,7 @@ function netDetail(s){
   ${row("Contract period",n.term?esc(termLabel(n.term)):"")}
   ${row("Contract ends",end?fmtDate(end):"")}
   ${row("Billing","Quarterly · Apr–Jun, Jul–Sep, Oct–Dec, Jan–Mar")}
-  ${row("Price per student",+n.rate?`<b>${inr(+n.rate)} / ${bLbl(bOf(n))}</b> + 18% GST`:"")}
+  ${row("Price per student / quarter",+n.rate?`<b>${inr(+n.rate)}</b> + 18% GST`:"")}
   ${row("Sales person",esc(salesOf(s)))}</table>
   <h4>Authorised person</h4><table class="dtl">
   ${row("Name",esc(n.person||""))}
@@ -2987,9 +2983,9 @@ function qbForm(s,key,bid,pick){
   const bd=b?b.billedOn:todayISO();
   qbf={sid:s.id,bid:bid||null};
   modal(`<h3>${b?"Edit bill":"Generate quarterly bill"}</h3>
-  ${pick&&ready.length>1?`<label>School</label><select id="qb_school" onchange="qbForm(schools.find(x=>x.id===this.value),null,null,true)">${ready.map(x=>`<option value="${x.id}" ${x.id===s.id?"selected":""}>${esc(x.name||"—")}${qInfo(x).toBill.length?" · "+qInfo(x).toBill.length+" to bill":""}</option>`).join("")}</select>`:`<p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">${esc(sidOf(s))} · ${esc(termLabel(n.term))} contract · ${priceTxt(n.rate,bOf(n))}</small></p>`}
+  ${pick&&ready.length>1?`<label>School</label><select id="qb_school" onchange="qbForm(schools.find(x=>x.id===this.value),null,null,true)">${ready.map(x=>`<option value="${x.id}" ${x.id===s.id?"selected":""}>${esc(x.name||"—")}${qInfo(x).toBill.length?" · "+qInfo(x).toBill.length+" to bill":""}</option>`).join("")}</select>`:`<p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">${esc(sidOf(s))} · ${esc(termLabel(n.term))} contract · ${inr(+n.rate)} per student per quarter</small></p>`}
   <label>Quarter</label><select id="qb_q" onchange="qbCalc()">${(b&&!opts.some(x=>x.key===b.qk)?[{key:b.qk,label:b.qlabel,months:b.months}]:[]).concat(opts).map(x=>`<option value="${x.key}" ${x.key===sel?"selected":""}>${esc(x.label)} · ${esc(x.months)}${x.part?" (part)":""}${x.pf>todayISO()?" · upcoming":""}</option>`).join("")}</select>
-  <div class="grid">${fld("qb_st","Active students",stu,"number")}${fld("qb_rate","Price per student (₹)",b?b.rate:(+n.rate||""),"number")}<div><label>Price is</label><select id="qb_basis" onchange="qbCalc()">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(b?bOf(b):bOf(n))===v?"selected":""}>${l}</option>`).join("")}</select></div>${fld("qb_date","Bill date",bd,"date")}${fld("qb_due","Payment due date",b?b.due:addDays(bd,QB_DUE_DAYS),"date")}</div>
+  <div class="grid">${fld("qb_st","Active students",stu,"number")}${fld("qb_rate","Price per student / quarter (₹)",b?b.rate:(+n.rate||""),"number")}${fld("qb_date","Bill date",bd,"date")}${fld("qb_due","Payment due date",b?b.due:addDays(bd,QB_DUE_DAYS),"date")}</div>
   <div class="qbsum" id="qb_sum"></div>
   <label>Notes (optional)</label><textarea id="qb_notes" placeholder="e.g. invoice sent on WhatsApp">${esc(b&&b.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-qb="save">${b?"Save bill":"Generate bill"}</button><button class="alt" data-m="close">Cancel</button>${b&&!b.paidOn?`<button class="ghost sp" style="color:var(--red)" data-qb="del" data-b="${b.id}">Delete bill</button>`:""}</div>`,"side");
@@ -3001,27 +2997,27 @@ function qbQuarter(s,key){const x=contractQs(s).find(y=>y.key===key);if(x)return
   if(b)return{key,label:b.qlabel,months:b.months,pf:b.from,pt:b.to,days:b.days,qd:b.qd,part:b.days<b.qd,q:fyQ(b.from).q};
   const[fy,qq]=key.split("Q").map(Number),y=qOf(fy,qq);return{...y,pf:y.from,pt:y.to,days:dSpan(y.from,y.to),qd:dSpan(y.from,y.to),part:false}}
 function qbCalc(){const box=document.getElementById("qb_sum");if(!box||!qbf)return;const s=schools.find(x=>x.id===qbf.sid);if(!s)return;
-  const x=qbQuarter(s,val("qb_q")),st=+val("qb_st")||0,rate=+val("qb_rate")||0,bs=val("qb_basis"),a=qbAmt(st,rate,x.days,x.qd,bs);
+  const x=qbQuarter(s,val("qb_q")),st=+val("qb_st")||0,rate=+val("qb_rate")||0,a=qbAmt(st,rate,x.days,x.qd);
   box.innerHTML=`<div class="qbl"><span>Period</span><b>${fmtDate(x.pf)} – ${fmtDate(x.pt)}</b></div>
   ${x.part?`<div class="qbl"><span>Part quarter</span><b>${x.days} of ${x.qd} days</b></div>`:""}
-  <div class="qbl"><span>Amount <small>${st} × ${inr(rate)}/${bLbl(bs)}${bs==="year"?" ÷ 4":" × 3 months"}${x.part?" × "+x.days+"/"+x.qd+" days":""}</small></span><b>${inr(fromP(a.b))}</b></div>
+  <div class="qbl"><span>Amount <small>${st} × ${inr(rate)}${x.part?" × "+x.days+"/"+x.qd:""}</small></span><b>${inr(fromP(a.b))}</b></div>
   <div class="qbl"><span>GST @ 18%</span><b>${inr(fromP(a.g))}</b></div>
   <div class="qbl qbt"><span>Total bill</span><b>${inr(fromP(a.t))}</b></div>`}
 function qbSave(){
   if(!qbf)return;const s=schools.find(x=>x.id===qbf.sid);if(!s)return;
-  const x=qbQuarter(s,val("qb_q")),st=Math.round(+val("qb_st")||0),rate=+val("qb_rate")||0,bs=val("qb_basis"),bd=val("qb_date"),due=val("qb_due");
+  const x=qbQuarter(s,val("qb_q")),st=Math.round(+val("qb_st")||0),rate=+val("qb_rate")||0,bd=val("qb_date"),due=val("qb_due");
   if(!(st>0))return err("Enter the number of active students");
-  if(!(rate>0))return err("Enter the price per student");
+  if(!(rate>0))return err("Enter the price per student per quarter");
   if(!bd)return err("Pick the bill date");if(!due)return err("Pick the payment due date");if(due<bd)return err("The due date can't be before the bill date");
   const was=billDoc(s),p=was?structuredClone(was):{id:"pay_"+uid(),_kind:"payment",kind:"qbill",schoolId:s.id,schoolName:s.name||"",total:0,installments:[],log:[]};
   if(p.installments.some(b=>b.qk===x.key&&b.id!==qbf.bid))return err(x.label+" is already billed");
-  const a=qbAmt(st,rate,x.days,x.qd,bs),old=qbf.bid?p.installments.find(b=>b.id===qbf.bid):null;
-  const bill=Object.assign(old||{id:uid()},{qk:x.key,qlabel:x.label,months:x.months,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,basis:bs,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes"),no:qbNo(s,x)});
+  const a=qbAmt(st,rate,x.days,x.qd),old=qbf.bid?p.installments.find(b=>b.id===qbf.bid):null;
+  const bill=Object.assign(old||{id:uid()},{qk:x.key,qlabel:x.label,months:x.months,from:x.pf,to:x.pt,days:x.days,qd:x.qd,students:st,rate,base:fromP(a.b),gst:fromP(a.g),amount:fromP(a.t),billedOn:bd,due,notes:val("qb_notes"),no:qbNo(s,x)});
   if(old&&old.alerted&&old.alerted!==due)delete old.alerted;
   if(!old)p.installments.push(bill);
   p.installments.sort((u,v)=>(u.from||"").localeCompare(v.from||""));
   p.total=fromP(p.installments.reduce((t,b)=>t+toP(b.amount),0));p.schoolName=s.name||"";
-  payLog(p,`${old?"Bill updated":"Bill generated"} · ${x.label} · ${st} students × ${inr(rate)}/${bLbl(bs)} · ${inr(bill.amount)} due ${fmtDate(due)}`);
+  payLog(p,`${old?"Bill updated":"Bill generated"} · ${x.label} · ${st} students × ${inr(rate)} · ${inr(bill.amount)} due ${fmtDate(due)}`);
   nsel=s.id;psel=null;ndt="pay";qbf=null;close();toast("🧾",(old?"Bill updated · ":"Bill generated · ")+x.label+" · "+inr(bill.amount));savePay(p);
 }
 function qbAct(el){
@@ -3056,7 +3052,7 @@ function netForm(s){
   <p style="margin:0 0 6px"><b>${esc(s.name||"")}</b><br><small style="color:var(--mute)">Sales person: ${esc(salesOf(s))} · deal ${insVal(s)?inr(insVal(s))+" / yr":"not set"}</small></p>
   <div class="grid">${fld("n_sid","School ID",n.sid||nextSid())}${fld("n_sign","Signing date",sg,"date")}${fld("n_bill","Billing starts from",n.billStart||sg||"","date")}
   <div><label>Contract period</label><select id="n_term"><option value="">Select period</option>${NET_TERMS.concat(n.term&&!NET_TERMS.some(x=>x[0]===+n.term)?[[+n.term,termLabel(n.term)]]:[]).map(([v,l])=>`<option value="${v}" ${+n.term===v?"selected":""}>${l}</option>`).join("")}</select></div>
-  ${fld("n_rate","Price per student (₹)",n.rate||(s.deal&&+s.deal.price?+s.deal.price:""),"number")}<div><label>Price is</label><select id="n_basis">${[["month","Per month"],["year","Per year"]].map(([v,l])=>`<option value="${v}" ${(n.basis||(s.deal&&s.deal.basis==="year"?"year":"month"))===v?"selected":""}>${l}</option>`).join("")}</select></div><div class="dst" style="align-self:end;margin:0">Billed every quarter (Apr–Jun, Jul–Sep, Oct–Dec, Jan–Mar) on active students — monthly price ×3 or yearly price ÷4, +18% GST</div>
+  ${fld("n_rate","Price per student / quarter (₹)",n.rate||(s.deal&&+s.deal.price?Math.round(+s.deal.price*(s.deal.basis==="year"?0.25:3)*100)/100:""),"number")}<div class="dst" style="align-self:end;margin:0">Billed every quarter (Apr–Jun, Jul–Sep, Oct–Dec, Jan–Mar) on active students, +18% GST</div>
   ${fld("n_person","Authorised person",n.person)}${fld("n_desig","Designation",n.pdesig)}${fld("n_phone","Phone",n.pphone,"tel")}${fld("n_email","Email",n.pemail)}</div>
   <label>Notes (optional)</label><textarea id="n_notes" placeholder="e.g. renewal terms, invoicing contact">${esc(n.notes||"")}</textarea>
   <div class="row" style="margin-top:12px"><button data-net="save" data-id="${s.id}">Save details</button><button class="alt" data-m="close">Cancel</button></div>`);
@@ -3070,12 +3066,12 @@ function netSave(id){
   if(bill&&sg&&bill<sg)return err("Billing can't start before the signing date");
   const o=structuredClone(s),was=netOf(s);
   if(sg)o.deal=Object.assign({},o.deal||{},{signing:sg});
-  const rate=+val("n_rate")||"";if(val("n_rate")&&!(rate>0))return err("Enter a valid price per student");
-  o.net={...was,sid:was.sid||nextSid(),billStart:bill,term:term?+term:"",rate,basis:val("n_basis")==="year"?"year":"month",person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
+  const rate=+val("n_rate")||"";if(val("n_rate")&&!(rate>0))return err("Enter a valid price per quarter");
+  o.net={...was,sid:was.sid||nextSid(),billStart:bill,term:term?+term:"",rate,person:val("n_person"),pdesig:val("n_desig"),pphone:ph,pemail:val("n_email"),notes:val("n_notes")};
   const ch=[];
   if((was.billStart||"")!==o.net.billStart)ch.push("billing start");
   if(String(was.term||"")!==String(o.net.term||""))ch.push("contract period");
-  if(String(was.rate||"")!==String(o.net.rate||"")||(was.basis||"month")!==o.net.basis)ch.push("price per student");
+  if(String(was.rate||"")!==String(o.net.rate||""))ch.push("price per quarter");
   if((was.person||"")!==o.net.person)ch.push("authorised person");
   if(((s.deal&&s.deal.signing)||"")!==sg&&sg)ch.push("signing date");
   if(ch.length)log(o,"Update","Contract details updated: "+ch.join(", "));
