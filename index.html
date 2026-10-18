@@ -1962,7 +1962,7 @@ function render(){
   const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
   render0();
   const k=viewKey(),same=k===lastKey;lastKey=k;
-  if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{if(lastKey===k&&Math.abs(a.scrollTop-want)>2)a.scrollTop=want})}
+  if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{const w2=same?want:(scrMap[k]||0);if(lastKey===k&&Math.abs(a.scrollTop-w2)>2)a.scrollTop=w2})}
 }
 function restorePos(){ // after a fresh start, reopen the page you were on (within 30 min)
   let p=null;try{p=JSON.parse(localStorage.getItem(POSK)||"null")}catch(e){}
@@ -2951,7 +2951,7 @@ function schoolInfo(s){
   return `<div class="sx"><div class="sxc sxn"><span class="cic">${sv(P.home,16)}</span><div><small>School</small><b>${esc(s.name)}</b></div><button class="sxe" data-act="edit" title="Edit school details" aria-label="Edit school">${sv(P.pencil,16)}</button></div>
   ${s.phone?`<a class="sxc" href="${esc(callHref(s.phone))}" target="_top"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b>${esc(s.phone)}</b></div><span class="sxgo">Call</span></a>`:`<div class="sxc off"><span class="cic">${sv(P.phone,16)}</span><div><small>Phone</small><b><em class="na">Not added</em></b></div></div>`}
   <div class="sxg">${facts.map(([i,l,x])=>`<div class="sxf"><span class="cic">${sv(P[i],16)}</span><div><small>${l}</small><b>${x}</b></div></div>`).join("")}</div>
-  ${isAdmin()?`<div class="sxc off"><span class="cic">${sv(P.userp,16)}</span><div><small>Assigned to</small><b>${esc(s._owner?((team.find(u=>u.id===s._owner)||{}).name||"Unknown"):"Unassigned")}</b></div></div>`:""}<div class="sxc off"><span class="cic">${sv(P.home,16)}</span><div><small>Address</small><b>${v(s.address)}</b></div></div></div>`;
+  ${isAdmin()?`<div class="sxc off"><span class="cic">${sv(P.userp,16)}</span><div><small>Assigned to</small><b>${esc(s._owner?((team.find(u=>u.id===s._owner)||{}).name||"Unknown"):"Unassigned")}</b></div></div>`:""}${s.address||s.geo?`<a class="sxc" href="${esc(mapUrl(s))}" target="_blank" rel="noopener"><span class="cic">${sv(P.home,16)}</span><div><small>Address</small><b>${v(s.address||"Pinned location")}</b></div><span class="sxgo">Map</span></a>`:`<div class="sxc off"><span class="cic">${sv(P.home,16)}</span><div><small>Address</small><b>${v(s.address)}</b></div></div>`}</div>`;
 }
 function contacts(s){
   const c=s.contacts||[],seg=[["school","School information",P.home],["contacts","Contacts ("+c.length+")",P.userp]];
@@ -3030,12 +3030,14 @@ function getCity(){
 }
 const BOARDS=["CBSE","ICSE / CISCE","State Board","IB","CAIE / IGCSE"];
 const GEO_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>`;
+/* Google Maps link for a school: exact pin when the location was fetched, otherwise search the address */
+const mapUrl=s=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.geo||[s.address,s.city,s.state].filter(Boolean).join(", "));
 function geoFill(btn){
   const hint=document.getElementById("geohint"),say=t=>{if(hint)hint.textContent=t};
   if(!navigator.geolocation)return say("Location isn't available on this device.");
   if(btn.classList.contains("busy"))return;btn.classList.add("busy");say("Getting your location…");
   navigator.geolocation.getCurrentPosition(async pos=>{
-    const {latitude:la,longitude:lo}=pos.coords,ta=document.getElementById("f_address");
+    const {latitude:la,longitude:lo}=pos.coords,ta=document.getElementById("f_address"),gi=document.getElementById("f_geo");if(gi)gi.value=la.toFixed(6)+","+lo.toFixed(6);
     try{
       const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&accept-language=en&lat=${la}&lon=${lo}`);
       if(!r.ok)throw 0;const j=await r.json();
@@ -3080,21 +3082,27 @@ function geoFill(btn){
   },{passive:false});
   const finish=()=>{
     if(!s||!s.lock){s=null;return}
-    const {dx,els,bs,i,box,t}=s;s=null;const W=innerWidth,dir=dx<0?1:-1,j=i+dir,fast=Math.abs(dx)>40&&Date.now()-t<260;
+    const s0=s,{dx,els,bs,i,box,t}=s;s=null;const W=innerWidth,dir=dx<0?1:-1,j=i+dir,fast=Math.abs(dx)>40&&Date.now()-t<260;
     if(j<0||j>=bs.length||(Math.abs(dx)<W*.25&&!fast)){ // not far enough → spring back
       els.forEach(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`},{transform:"none"}],{duration:220,easing:EASE}));setX(els,0);els.forEach(x=>x.style.willChange="");return}
     const out=-dir*W*.45;
     Promise.all(els.map(x=>x.animate([{transform:`translate3d(${dx}px,0,0)`,opacity:x.style.opacity||1},{transform:`translate3d(${out}px,0,0)`,opacity:0}],{duration:130,easing:"ease-in",fill:"forwards"}).finished.catch(()=>{}))).then(()=>{
+      const app=document.querySelector(".app"),bt=s0.b.isConnected?s0.b.getBoundingClientRect().top:0,keep=app?Math.max(0,Math.min(app.scrollTop,app.scrollTop+bt-app.getBoundingClientRect().top-8)):0;
       bs[j].click();
+      if(app){app.scrollTop=keep;scrMap[viewKey()]=keep} // stay where you are (tab bar in view) instead of jumping
       const nb=document.getElementById(box.id),b2=nb&&bar(nb);if(!b2)return;
-      const n2=dataEls(b2);n2.forEach(x=>x.animate([{transform:`translate3d(${dir*W*.4}px,0,0)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:EASE}));
-      const on=b2.querySelector("button.on");if(on&&on.scrollIntoView)on.scrollIntoView({block:"nearest",inline:"center"});
+      const n2=dataEls(b2),from=`translate3d(${dir*W*.4}px,0,0)`;
+      n2.forEach(x=>{x.style.transition="none";x.style.transform=from;x.style.opacity="0"});
+      void b2.offsetWidth; // new data starts off to the side before the first paint — no flash
+      requestAnimationFrame(()=>{n2.forEach(x=>{x.style.transition=`transform .28s ${EASE},opacity .22s ease-out`;x.style.transform="";x.style.opacity=""});
+        setTimeout(()=>n2.forEach(x=>{x.style.transition="";x.style.willChange=""}),320)});
+      if(b2.scrollWidth>b2.clientWidth+2){const on=b2.querySelector("button.on");if(on)b2.scrollLeft=on.offsetLeft-(b2.clientWidth-on.offsetWidth)/2}
     });
   };
   document.addEventListener("touchend",finish,{passive:true});
   document.addEventListener("touchcancel",finish,{passive:true});
 })();
-function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address">${esc(s.address||"")}</textarea><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
+function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address" oninput="if(!this.value.trim())document.getElementById('f_geo').value=''">${esc(s.address||"")}</textarea><input type="hidden" id="f_geo" value="${esc(s.geo||"")}"><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
   if(t)t.value=ok?inr(c.yt)+" / year":"";
   e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
@@ -3184,7 +3192,7 @@ function onClick(e){
     if(m==="saveSchool"){const n=val("f_name");if(!n)return err("School name is required");if(val("f_phone")&&!/^\d{10}$/.test(val("f_phone")))return err("Phone number must be exactly 10 digits");
       const old=schools.find(x=>x.id===el.dataset.id),o=old?structuredClone(old):{id:uid(),stage:"Lead",created:new Date().toISOString(),createdBy:me?me.name:undefined,createdById:me?me.id:undefined};
       const nw={name:n,phone:val("f_phone"),strength:val("f_strength"),board:val("f_board"),city:getCity(),state:val("f_state"),address:val("f_address")};
-      const ch=Object.keys(nw).filter(k=>String(o[k]||"")!==nw[k]);Object.assign(o,nw);
+      const ch=Object.keys(nw).filter(k=>String(o[k]||"")!==nw[k]);Object.assign(o,nw);{const g=val("f_geo");if(g)o.geo=g;else delete o.geo}
       const ns=val("f_stage")||"Lead",stCh=old&&(o.stage||"Lead")!==ns;o.stage=ns;
       const ds=+val("f_strength")||+((o.deal||{}).students)||0,dp=+val("e_dp")||0,db=val("e_db"),sd=document.getElementById("e_sd").value;let dealCh=false;
       if(ds>0&&dp>0){const od=o.deal||{};if(od.students!==ds||od.price!==dp||od.basis!==db||(od.signing||"")!==sd){o.deal={students:ds,price:dp,basis:db,signing:sd};dealCh=true}}
