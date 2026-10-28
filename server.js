@@ -352,7 +352,7 @@ async function pushTick() {
       if (s._kind) continue;
       for (const t of s.tasks || []) {
         const due = Date.parse(t.due);
-        if (!t.id || isNaN(due)) continue;
+        if (!t.id || isNaN(due) || t.notify === false) continue; // switched off for this task
         for (const [kind, at] of [["soon", due - REMIND_MIN * 60000], ["due", due]]) {
           if (at > now || now - at > LATE_MS) continue;
           if (kind === "soon" && now >= due) continue; // already due — the "due now" alert covers it
