@@ -48,3 +48,29 @@ CREATE TABLE IF NOT EXISTS crm_docs (
 -- (install once with: npm i bcryptjs)
 -- INSERT INTO crm_users (id, username, name, role, active, password_hash, created_by)
 -- VALUES ('u-admin', 'educlawdcrm', 'Auqib Bhat', 'admin', 1, 'PASTE_BCRYPT_HASH_HERE', 'setup');
+
+-- Small key/value store (e.g. the push-notification VAPID keys, created on first start)
+CREATE TABLE IF NOT EXISTS crm_kv (
+  k              VARCHAR(40) NOT NULL,
+  v              TEXT        NOT NULL,
+  PRIMARY KEY (k)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Phone / browser push subscriptions (one row per device that turned notifications on)
+CREATE TABLE IF NOT EXISTS crm_push (
+  id             CHAR(64)    NOT NULL,           -- sha256 of the subscription endpoint
+  user_id        VARCHAR(40) NOT NULL,
+  sub            TEXT        NOT NULL,           -- the PushSubscription JSON
+  created_at     DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_crm_push_user (user_id),
+  CONSTRAINT fk_crm_push_user
+    FOREIGN KEY (user_id) REFERENCES crm_users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Task reminders already sent, so each one goes out only once
+CREATE TABLE IF NOT EXISTS crm_push_sent (
+  k              VARCHAR(190) NOT NULL,
+  sent_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (k)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
