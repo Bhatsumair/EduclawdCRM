@@ -10,6 +10,7 @@ const crypto = require("crypto");
 const express = require("express");
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
+const webpush = require("web-push");
 
 const PORT = process.env.PORT || 3000;
 const DB_URL = process.env.MYSQL_URL || process.env.DATABASE_URL;
@@ -118,11 +119,43 @@ const fns = {
     return { token, user: pub(u) };
   },
 
+  /* ---- phone notifications for task due times ---- */
+  async crm_push_key(a) {
+    await auth(a.p_token);
+    if (!VAPID) throw new ApiError("push_unavailable", 503);
+    return { key: VAPID.pub };
+  },
+
+  async crm_push_sub(a) {
+    const u = await auth(a.p_token);
+    const sub = a.p_sub || {};
+    const ep = String(sub.endpoint || "");
+    if (!/^https:\/\//.test(ep) || ep.length > 1000 || !sub.keys || !sub.keys.p256dh || !sub.keys.auth) throw new ApiError("bad_request");
+    const clean = JSON.stringify({ endpoint: ep, keys: { p256dh: String(sub.keys.p256dh), auth: String(sub.keys.auth) } });
+    await pool.query("REPLACE INTO crm_push (id, user_id, sub, created_at) VALUES (?, ?, ?, ?)", [subId(ep), u.id, clean, new Date()]);
+    return true;
+  },
+
+  async crm_push_unsub(a) {
+    const u = await auth(a.p_token);
+    if (a.p_endpoint) await pool.query("DELETE FROM crm_push WHERE id = ? AND user_id = ?", [subId(a.p_endpoint), u.id]);
+    return true;
+  },
+
+  async crm_push_test(a) {
+    const u = await auth(a.p_token);
+    const [rows] = await pool.query("SELECT id, sub FROM crm_push WHERE user_id = ?", [u.id]);
+    let n = 0;
+    for (const r of rows) if (await pushTo(r, { title: "🔔 Notifications are on", body: "You'll get an alert 15 minutes before a task is due and again at the due time.", tag: "push-test", url: "/?go=tasks" })) n++;
+    return { sent: n };
+  },
+
   async crm_me(a) {
     return pub(await auth(a.p_token));
   },
 
   async crm_logout(a) {
+    if (a.p_endpoint) await pool.query("DELETE FROM crm_push WHERE id = ?", [subId(a.p_endpoint)]); // this phone stops getting this user's reminders
     if (a.p_token) await pool.query("DELETE FROM crm_sessions WHERE token = ?", [String(a.p_token)]);
     return true;
   },
@@ -263,6 +296,89 @@ const fns = {
   },
 };
 
+/* ---------- task reminders (web push) ----------
+   Every minute: for each user with notifications on, look at the tasks in the schools they own and
+   send "due in 15 minutes" and "due now" alerts. Each alert is recorded in crm_push_sent so it goes
+   out once. VAPID keys come from VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY, or are created once and kept
+   in crm_kv so nothing has to be set up in Railway. */
+let VAPID = null;
+const REMIND_MIN = 15;
+const LATE_MS = 10 * 60 * 1000; // after a restart, still send alerts that fell due in the last 10 minutes
+const subId = (ep) => crypto.createHash("sha256").update(String(ep)).digest("hex");
+const NON_SCHOOL = /^(pay_|exp_|exc_|clm_)/;
+
+async function ensureVapid() {
+  let pubK = process.env.VAPID_PUBLIC_KEY, privK = process.env.VAPID_PRIVATE_KEY;
+  if (!pubK || !privK) {
+    const [r] = await pool.query("SELECT v FROM crm_kv WHERE k = 'vapid'");
+    if (!r.length) {
+      const k = webpush.generateVAPIDKeys();
+      await pool.query("INSERT IGNORE INTO crm_kv (k, v) VALUES ('vapid', ?)", [JSON.stringify({ pub: k.publicKey, priv: k.privateKey })]);
+    }
+    const [r2] = await pool.query("SELECT v FROM crm_kv WHERE k = 'vapid'");
+    ({ pub: pubK, priv: privK } = JSON.parse(r2[0].v));
+  }
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:admin@educlawd.com", pubK, privK);
+  VAPID = { pub: pubK };
+}
+
+async function pushTo(row, payload) {
+  try {
+    await webpush.sendNotification(JSON.parse(row.sub), JSON.stringify(payload), { TTL: 3600, urgency: "high" });
+    return true;
+  } catch (e) {
+    if (e && (e.statusCode === 404 || e.statusCode === 410)) await pool.query("DELETE FROM crm_push WHERE id = ?", [row.id]); // phone unsubscribed
+    else console.warn("push failed:", e && (e.statusCode || e.message));
+    return false;
+  }
+}
+
+const tz = (d) => new Date(d).toLocaleString("en-IN", { timeZone: process.env.APP_TZ || "Asia/Kolkata", hour: "numeric", minute: "2-digit", day: "numeric", month: "short" });
+
+let ticking = false;
+async function pushTick() {
+  if (!VAPID || ticking) return;
+  ticking = true;
+  try {
+    const [subs] = await pool.query("SELECT id, user_id, sub FROM crm_push");
+    if (!subs.length) return;
+    const byUser = new Map();
+    subs.forEach((r) => byUser.set(r.user_id, (byUser.get(r.user_id) || []).concat(r)));
+    const [docs] = await pool.query("SELECT id, owner_id, data FROM crm_docs WHERE owner_id IN (?)", [[...byUser.keys()]]);
+    const now = Date.now();
+    for (const d of docs) {
+      if (NON_SCHOOL.test(d.id)) continue;
+      const s = typeof d.data === "string" ? JSON.parse(d.data) : d.data || {};
+      if (s._kind) continue;
+      for (const t of s.tasks || []) {
+        const due = Date.parse(t.due);
+        if (!t.id || isNaN(due)) continue;
+        for (const [kind, at] of [["soon", due - REMIND_MIN * 60000], ["due", due]]) {
+          if (at > now || now - at > LATE_MS) continue;
+          if (kind === "soon" && now >= due) continue; // already due — the "due now" alert covers it
+          const key = (d.id + ":" + t.id + ":" + t.due + ":" + kind).slice(0, 190);
+          const [ins] = await pool.query("INSERT IGNORE INTO crm_push_sent (k, sent_at) VALUES (?, ?)", [key, new Date()]);
+          if (!ins.affectedRows) continue;
+          const what = (t.type ? t.type + ": " : "") + (t.title || "Task");
+          const payload = {
+            title: (kind === "soon" ? "⏰ In " + REMIND_MIN + " min · " : "🔔 Due now · ") + (s.name || "Task"),
+            body: what + " — " + tz(due),
+            tag: "task-" + t.id,
+            url: "/?go=tasks",
+          };
+          for (const row of byUser.get(d.owner_id) || []) await pushTo(row, payload);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn("pushTick:", e.message);
+  } finally {
+    ticking = false;
+  }
+}
+setInterval(pushTick, 60 * 1000).unref();
+setInterval(() => pool.query("DELETE FROM crm_push_sent WHERE sent_at < (UTC_TIMESTAMP() - INTERVAL 7 DAY)").catch(() => {}), 6 * 3600 * 1000).unref();
+
 /* ---------- web server ---------- */
 const app = express();
 app.set("trust proxy", 1); // Railway sits behind a proxy
@@ -370,6 +486,7 @@ async function ensureAdmin() {
       await ensureSchema();
       await ensureAdmin();
       await renameAdmin();
+      await ensureVapid().catch((e) => console.warn("Push notifications off: " + e.message));
       break;
     } catch (e) {
       console.error("Database not ready (" + i + "/10): " + e.message);

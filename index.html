@@ -1154,6 +1154,13 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 @keyframes swr{from{transform:translateX(-38px);opacity:.35}to{transform:none;opacity:1}}
 }
 @media(prefers-reduced-motion:reduce){#items.swl,#items.swr,#detail.swl,#detail.swr{animation:none}}
+
+/* Task notifications */
+.sxc.pushc{gap:10px}.sxc.pushc>div{flex:1;min-width:0}.sxc.pushc button{flex:none;min-height:36px;padding:6px 14px;font-size:13px}
+.sxc.pushc.on .cic{background:#d1fae5;color:#065f46}
+.pushb{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:0 0 12px;border-radius:14px;background:linear-gradient(90deg,rgba(13,127,122,.10),rgba(13,127,122,.03));border:1px solid color-mix(in srgb,var(--teal) 25%,var(--line))}
+.pushb>div{flex:1;min-width:0}.pushb b{display:block;font-size:13.5px}.pushb small{display:block;font-size:12px;color:var(--mute)}
+.pushb button{flex:none;min-height:34px;padding:6px 14px;font-size:13px}.pushb button.ghost{padding:6px 8px;color:var(--mute);background:none}
 </style>
 </head>
 <body>
@@ -1342,7 +1349,9 @@ async function syncNow(first){
     else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
   }finally{syncing=false}
 }
-async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);restorePos();startSync()}
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);restorePos();
+  {const q=new URLSearchParams(location.search);if(q.get("go")==="tasks"){gtab="tasks";sel=null;render();history.replaceState(history.state,"",location.pathname)}}
+  startSync();pushSync()}
 const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
 
 /* Educlawd CRM · Login screen, sign out, profile card, change password */
@@ -1374,7 +1383,7 @@ async function doLogin(){
 }
 function signOut(){
   const t=TOKEN,k=cacheKey(),pk=payKey(),xk=expKey(),ck=clmKey(),keep=dirty.size>0;
-  rpc("crm_logout",{p_token:t}).catch(()=>{});
+  rpc("crm_logout",{p_token:t,p_endpoint:pushEP||undefined}).catch(()=>{});pushOn=false;pushEP="";
   if(!keep){try{localStorage.removeItem(k);localStorage.removeItem(pk);localStorage.removeItem(xk);localStorage.removeItem(ck)}catch(e){}}
   stopSync();TOKEN="";me=null;dbc=null;team=[];schools=[];payments=[];psel=null;nsel=null;expenses=[];excats=[];claims=[];lastSig={s:"",t:""};dirty.clear();
   try{localStorage.removeItem(SLS)}catch(e){}
@@ -1911,7 +1920,7 @@ function tasksView(){
     up.forEach(r=>{const d=new Date(r.t.due),k=d.toDateString(),lab=k===tm_?"Tomorrow":d.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});let g=gs[gs.length-1];if(!g||g.k!==k)gs.push(g={k,lab,items:[]});g.items.push(r)});
     body=gs.map(g=>hd(g.lab+" · "+g.items.length)+taskList(g.items)).join("")||noMatch("No upcoming tasks");
   }
-  return seg+body;
+  return pushBanner()+seg+body;
 }
 
 /* Educlawd CRM · Contacts tab and Deals tab */
@@ -2012,12 +2021,61 @@ addEventListener("popstate",()=>{
   gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
 });
 
+/* ---- phone notifications: the server sends an alert 15 min before a task is due and at the due time ---- */
+const PUSH_HIDE="ecw_push_hide";
+let pushOn=false,pushEP="",pushBusy=false;
+const pushOK=()=>!LOCAL&&"serviceWorker"in navigator&&"PushManager"in window&&"Notification"in window;
+const isIOS=()=>/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const b64u=s=>{const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))};
+async function pushSync(){ // on sign-in: link this phone's existing subscription to whoever is signed in now
+  if(!pushOK()||!me)return;
+  try{const r=await navigator.serviceWorker.ready,s=await r.pushManager.getSubscription();pushEP=s?s.endpoint:"";
+    pushOn=!!s&&Notification.permission==="granted";if(pushOn)await rpc("crm_push_sub",{p_token:TOKEN,p_sub:s.toJSON()})}catch(e){pushOn=false}
+  render()}
+async function pushEnable(){
+  if(pushBusy)return;
+  if(isIOS()&&!isStandalone())return modal(`<h3>Turn on notifications</h3><p>On iPhone, alerts only work from the app on your Home Screen:</p><ol style="padding-left:20px;line-height:1.7"><li>Open this page in <b>Safari</b></li><li>Tap <b>Share</b> → <b>Add to Home Screen</b></li><li>Open Educlawd CRM from the Home Screen</li><li>Go to Profile → <b>Turn on notifications</b></li></ol><div class="row" style="margin-top:12px"><button data-m="close">Got it</button></div>`);
+  if(!pushOK())return toast("⚠️","This browser can't show notifications");
+  pushBusy=true;render();
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=="granted"){toast("🔕","Notifications are blocked — allow them for Educlawd CRM in your phone settings");return}
+    const {key}=await rpc("crm_push_key",{p_token:TOKEN}),r=await navigator.serviceWorker.ready;
+    let s=await r.pushManager.getSubscription();if(!s)s=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(key)});
+    await rpc("crm_push_sub",{p_token:TOKEN,p_sub:s.toJSON()});pushEP=s.endpoint;pushOn=true;
+    rpc("crm_push_test",{p_token:TOKEN}).catch(()=>{});
+    toast("🔔","Notifications on — you'll get an alert 15 min before each task and when it's due");
+  }catch(e){toast("⚠️","Couldn't turn on notifications: "+((e&&e.message)||"try again"))}
+  finally{pushBusy=false;render()}
+}
+async function pushDisable(){
+  if(pushBusy)return;pushBusy=true;render();
+  try{const r=await navigator.serviceWorker.ready,s=await r.pushManager.getSubscription();
+    if(s){await rpc("crm_push_unsub",{p_token:TOKEN,p_endpoint:s.endpoint}).catch(()=>{});await s.unsubscribe().catch(()=>{})}
+    pushOn=false;pushEP="";toast("🔕","Notifications turned off on this phone")}
+  finally{pushBusy=false;render()}
+}
+const BELL='<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>';
+function pushCard(){
+  if(LOCAL)return"";
+  const sub=pushOn?"On — alerts 15 min before a task and at its due time":isIOS()&&!isStandalone()?"Add the app to your Home Screen to get alerts":"Get an alert on this phone when a task is due";
+  return `<div class="sxc pushc ${pushOn?"on":""}"><span class="cic">${sv(BELL,16)}</span><div><small>Task notifications</small><b>${esc(sub)}</b></div>
+  <button class="${pushOn?"alt":""}" data-push="${pushOn?"off":"on"}" ${pushBusy?"disabled":""}>${pushBusy?"…":pushOn?"Turn off":"Turn on"}</button></div>`}
+function pushBanner(){
+  if(LOCAL||pushOn)return"";let hid=false;try{hid=!!localStorage.getItem(PUSH_HIDE)}catch(e){}
+  if(hid)return"";
+  return `<div class="pushb"><span class="cic">${sv(BELL,16)}</span><div><b>Get task alerts on your phone</b><small>15 min before and when a task is due</small></div><button data-push="on" ${pushBusy?"disabled":""}>Turn on</button><button class="ghost" data-push="hide" aria-label="Dismiss" title="Dismiss">✕</button></div>`}
+function pushAct(el){const a=el.dataset.push;
+  if(a==="on")return pushEnable();if(a==="off")return pushDisable();
+  if(a==="hide"){try{localStorage.setItem(PUSH_HIDE,"1")}catch(e){}return render()}}
+if("serviceWorker"in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.go==="tasks"&&me){gtab="tasks";sel=null;close();render()}});
 /* ---- Profile module ---- */
 function profileView(){
   const adm=isAdmin(),ini=esc((me.name||"?")[0].toUpperCase());
   return `<div class="sx"><div class="sxh"><div class="sxa">${ini}</div><div class="sxt"><b>${esc(me.name||"")}</b><small>@${esc(me.username||"")}</small><span class="pill ${adm?"s-Won":""}">${adm?"Admin":"Sales"}</span></div></div>
   <div class="sxc off"><span class="cic">${sv(P.users,16)}</span><div><small>Access</small><b>${adm?"You can see every member's schools and the payments module.":"You can only see the schools you added."}</b></div></div>
-  <button class="ib big" data-m="chpw" style="margin-top:4px">${sv('<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',18)} Change password</button>
+  ${pushCard()}<button class="ib big" data-m="chpw" style="margin-top:4px">${sv('<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',18)} Change password</button>
   <button class="alt ib big" data-m="signout" style="margin-top:8px">${sv('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',18)} Sign out</button></div>`;
 }
 /* ---- PC sidebar ---- */
@@ -3137,6 +3195,7 @@ function onClick(e){
   if(el=g("data-ct")){clmT=el.dataset.ct;return render()}
   if(el=g("data-cv")){clmV=el.dataset.cv;return render()}
   if(el=g("data-cc")){const h=document.getElementById("cf_cat");if(h){h.value=el.dataset.cc;document.querySelectorAll("#cf_cats [data-cc]").forEach(b2=>b2.classList.toggle("on",b2.dataset.cc===el.dataset.cc))}return}
+  if(el=g("data-push"))return pushAct(el);
   if(el=g("data-npft")){npf=el.dataset.npft;return render()}
   if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;ndt="contract";return render()}
   if(el=g("data-ndt")){ndt=el.dataset.ndt;return render()}
