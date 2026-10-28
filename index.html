@@ -1914,7 +1914,7 @@ function taskCard({t,s},inS){
   sub=[c&&c.name,inS?"":s.name].filter(Boolean).map(esc).join(", ");
   return `<div class="trow ${TC(t.type)} ${od?"od":""}"><button class="tchk" data-done="${t.id}" data-sid="${s.id}" title="Mark as done" aria-label="Mark as done">${sv(P.check,18)}</button>
   <div class="tmain"><div class="tgo"${inS?"":` data-sel="${s.id}" data-tabto="activity"`}><div class="ttl">${esc(t.title)}</div>${sub?`<div class="tsub">${sub}</div>`:""}</div>
-  <div class="tpills"><button class="dpill ${od?"od":""}" data-resch="${t.id}" data-sid="${s.id}" title="Tap to reschedule">${sv(P.cal,12)}<span>${esc(pill)}</span></button><span class="kpill">${ICON[t.type]||""}<span>${esc(t.type||"Task")}</span></span><button class="npill ${t.notify===false?"off":""}" data-ntask="${t.id}" data-sid="${s.id}" title="${t.notify===false?"No phone alert — tap to turn on":"Phone alert on — tap to turn off"}" aria-label="${t.notify===false?"Turn on notification":"Turn off notification"}">${sv(t.notify===false?BELL_OFF:BELL,13)}</button></div></div>
+  <div class="tpills"><button class="dpill ${od?"od":""}" data-resch="${t.id}" data-sid="${s.id}" title="Tap to reschedule">${sv(P.cal,12)}<span>${esc(pill)}</span></button><span class="kpill">${ICON[t.type]||""}<span>${esc(t.type||"Task")}</span></span><button class="npill ${t.notify===true?"":"off"}" data-ntask="${t.id}" data-sid="${s.id}" title="${t.notify===true?"Phone alert on — tap to turn off":"No phone alert — tap to turn on"}" aria-label="${t.notify===true?"Turn off notification":"Turn on notification"}">${sv(t.notify===true?BELL:BELL_OFF,13)}</button></div></div>
   ${actBtn(t,phone,c&&c.name)}</div>`}
 const taskList=(a,inS)=>`<div class="tlist">${a.map(r=>taskCard(r,inS)).join("")}</div>`;
 let ttab="today";
@@ -2057,7 +2057,7 @@ async function pushEnable(){
     let s=await r.pushManager.getSubscription();if(!s)s=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(key)});
     await rpc("crm_push_sub",{p_token:TOKEN,p_sub:s.toJSON()});pushEP=s.endpoint;pushOn=true;
     rpc("crm_push_test",{p_token:TOKEN}).catch(()=>{});
-    toast("🔔","Notifications on — you'll get an alert 15 min before each task and when it's due");
+    toast("🔔","Notifications on — turn on the bell on a task to get its alerts");
   }catch(e){toast("⚠️","Couldn't turn on notifications: "+((e&&e.message)||"try again"))}
   finally{pushBusy=false;render()}
 }
@@ -2071,13 +2071,13 @@ async function pushDisable(){
 const BELL='<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>';
 function pushCard(){
   if(LOCAL)return"";
-  const sub=pushOn?"On — alerts 15 min before a task and at its due time":isIOS()&&!isStandalone()?"Add the app to your Home Screen to get alerts":"Get an alert on this phone when a task is due";
+  const sub=pushOn?"On — alerts for tasks with the bell turned on":isIOS()&&!isStandalone()?"Add the app to your Home Screen to get alerts":"Get an alert on this phone when a task is due";
   return `<div class="sxc pushc ${pushOn?"on":""}"><span class="cic">${sv(BELL,16)}</span><div><small>Task notifications</small><b>${esc(sub)}</b></div>
   <button class="${pushOn?"alt":""}" data-push="${pushOn?"off":"on"}" ${pushBusy?"disabled":""}>${pushBusy?"…":pushOn?"Turn off":"Turn on"}</button></div>`}
 function pushBanner(){
   if(LOCAL||pushOn)return"";let hid=false;try{hid=!!localStorage.getItem(PUSH_HIDE)}catch(e){}
   if(hid)return"";
-  return `<div class="pushb"><span class="cic">${sv(BELL,16)}</span><div><b>Get task alerts on your phone</b><small>15 min before and when a task is due</small></div><button data-push="on" ${pushBusy?"disabled":""}>Turn on</button><button class="ghost" data-push="hide" aria-label="Dismiss" title="Dismiss">✕</button></div>`}
+  return `<div class="pushb"><span class="cic">${sv(BELL,16)}</span><div><b>Get task alerts on your phone</b><small>For tasks you turn the bell on for</small></div><button data-push="on" ${pushBusy?"disabled":""}>Turn on</button><button class="ghost" data-push="hide" aria-label="Dismiss" title="Dismiss">✕</button></div>`}
 function pushAct(el){const a=el.dataset.push;
   if(a==="on")return pushEnable();if(a==="off")return pushDisable();
   if(a==="hide"){try{localStorage.setItem(PUSH_HIDE,"1")}catch(e){}return render()}}
@@ -3184,7 +3184,7 @@ function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const
 const DESIGS=["Principal","Chairman","IT Head","Accountant","PRO","Director","Other"];
 const desVal=()=>{const v=val("c_dsel");return v==="Other"?(val("c_des")||"Other"):v};
 function contactForm(p={}){modal(`<h3>${p.id?"Edit":"Add"} contact</h3>${fld("c_name","Full name",p.name)}${fld("c_phone","Phone",p.phone,"tel")}${fld("c_email","Email",p.email,"email")}${(()=>{const d=p.designation||"",cus=d&&!DESIGS.includes(d);return `<div><label>Designation</label><select id="c_dsel"><option value="">Select designation</option>${DESIGS.map(x=>`<option ${x===d||(cus&&x==="Other")?"selected":""}>${esc(x)}</option>`).join("")}</select><input id="c_des" placeholder="Enter designation" value="${esc(cus?d:"")}" style="margin-top:6px;${cus?"":"display:none"}"></div>`})()}${btns("saveContact","Save",p.id||"")}${p.id?`<button class="ghost" style="margin-top:6px;color:var(--red)" data-m="delContact" data-id="${p.id}">Delete contact</button>`:""}`)}
-function taskForm(){const s0=cur(),cs=(s0&&s0.contacts)||[];const d=new Date(Date.now()+864e5);d.setHours(9,0,0,0);const iso=new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);modal(`<h3>Add task</h3><label>Task type</label><select id="t_type">${opts(ACT)}</select>${cs.length>=2?`<label>Contact</label><select id="t_contact">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}${c.designation?" ("+esc(c.designation)+")":""}</option>`).join("")}</select>`:""}${fld("t_title","What needs to be done")}<label>Date & time</label>${dueFields("t_due",d)}${ntogField(true)}${btns("saveTask","Add task")}`)}
+function taskForm(){const s0=cur(),cs=(s0&&s0.contacts)||[];const d=new Date(Date.now()+864e5);d.setHours(9,0,0,0);const iso=new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);modal(`<h3>Add task</h3><label>Task type</label><select id="t_type">${opts(ACT)}</select>${cs.length>=2?`<label>Contact</label><select id="t_contact">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}${c.designation?" ("+esc(c.designation)+")":""}</option>`).join("")}</select>`:""}${fld("t_title","What needs to be done")}<label>Date & time</label>${dueFields("t_due",d)}${ntogField(false)}${btns("saveTask","Add task")}`)}
 const localISO=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);
 /* 12-hour date & time picker (date + hour : minute + AM/PM) */
 function dueFields(id,d){
@@ -3193,7 +3193,7 @@ function dueFields(id,d){
   return `<div class="dtp"><input id="${id}_d" type="date" value="${localISO(d).slice(0,10)}" aria-label="Date"><div class="tm"><select id="${id}_h" aria-label="Hour">${[...Array(12)].map((_,i)=>`<option ${i+1===h?"selected":""}>${i+1}</option>`).join("")}</select><b>:</b><select id="${id}_m" aria-label="Minute">${mins.map(x=>{const v=String(x).padStart(2,"0");return `<option ${x===m?"selected":""}>${v}</option>`}).join("")}</select><select id="${id}_p" aria-label="AM or PM"><option ${pm?"":"selected"}>AM</option><option ${pm?"selected":""}>PM</option></select></div></div>`;
 }
 const dueVal=id=>{const g=k=>document.getElementById(id+"_"+k),d=g("d").value;if(!d)return"";let h=(+g("h").value)%12;if(g("p").value==="PM")h+=12;return `${d}T${String(h).padStart(2,"0")}:${g("m").value}`};
-function reschedForm(t){modal(`<h3>Reschedule task</h3><p style="margin:0 0 4px"><b>${esc(t.title)}</b><br><small style="color:var(--mute)">Currently ${fmt(t.due)}</small></p><label>New date & time</label>${dueFields("r_due",new Date(t.due))}${ntogField(t.notify!==false)}${btns("saveResched","Reschedule",t.id)}`)}
+function reschedForm(t){modal(`<h3>Reschedule task</h3><p style="margin:0 0 4px"><b>${esc(t.title)}</b><br><small style="color:var(--mute)">Currently ${fmt(t.due)}</small></p><label>New date & time</label>${dueFields("r_due",new Date(t.due))}${ntogField(t.notify===true)}${btns("saveResched","Reschedule",t.id)}`)}
 function actForm(){modal(`<h3>Log activity</h3><label>Type</label><select id="a_type">${opts([...ACT,"Note"])}</select><label>What happened?</label><textarea id="a_text"></textarea>${btns("saveAct","Save to timeline")}`)}
 
 /* Educlawd CRM · Click, keyboard and input handlers; boot */
@@ -3278,7 +3278,7 @@ function onClick(e){
       if(isAdmin()){const ow=val("f_owner");if(ow&&ow!==(old?(old._owner||""):me.id))o._assign=ow}
       sel=o.id;if(!old)tab="activity";close();toast(old?"✏️":"🏫",old?(dealCh?"School & deal details updated successfully":"School details updated successfully"):"School added successfully");return save(o)}
     if(m==="saveResched"){const ss=schools.find(x=>x.id===reschSid),tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.id),du=dueVal("r_due");if(!tk)return close();if(!du)return err("Pick a date and time");
-      const dt=new Date(du);tk.due=dt.toISOString();if(ntogVal())delete tk.notify;else tk.notify=false;log(ss,"Task",`Rescheduled: ${tk.title} → ${fmt(dt)}`);close();toast("🗓️","Task rescheduled successfully");return save(ss)}
+      const dt=new Date(du);tk.due=dt.toISOString();if(ntogVal())tk.notify=true;else delete tk.notify;log(ss,"Task",`Rescheduled: ${tk.title} → ${fmt(dt)}`);close();toast("🗓️","Task rescheduled successfully");return save(ss)}
     if(!s)return;
     if(m==="saveContact"){if(!val("c_name"))return err("Name is required");if(val("c_phone")&&!/^\d{10}$/.test(val("c_phone")))return err("Phone number must be exactly 10 digits");
       s.contacts=s.contacts||[];const id=el.dataset.id,p=s.contacts.find(x=>x.id===id)||{id:uid()};
@@ -3287,12 +3287,12 @@ function onClick(e){
     if(m==="delContact"){if(!armed(el,"Click again to confirm delete"))return;s.contacts=s.contacts.filter(x=>x.id!==el.dataset.id);close();toast("🗑️","Contact deleted");return save(s)}
     if(m==="saveTask"){const ti=val("t_title"),du=dueVal("t_due");if(!ti)return err("Enter what needs to be done");if(!du)return err("Pick a date and time");
       const dt=new Date(du),val_t=val("t_type"),cs=s.contacts||[],ce=document.getElementById("t_contact"),cid=ce?ce.value:(cs.length===1?cs[0].id:""),cn=(cs.find(x=>x.id===cid)||{}).name;
-      (s.tasks=s.tasks||[]).push({id:uid(),type:val("t_type"),title:ti,due:dt.toISOString(),contactId:cid,by:me?me.name:undefined,byId:me?me.id:undefined,...(ntogVal()?{}:{notify:false})});
+      (s.tasks=s.tasks||[]).push({id:uid(),type:val("t_type"),title:ti,due:dt.toISOString(),contactId:cid,by:me?me.name:undefined,byId:me?me.id:undefined,...(ntogVal()?{notify:true}:{})});
       log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""} (due ${fmt(dt)})`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
     if(m==="saveAct"){if(!val("a_text"))return err("Describe the activity");const ty=val("a_type");log(s,ty,val("a_text"),ty==="Note"?"note":"activity");close();toast(ICON[ty]||"✅",`${ty} logged successfully`);return save(s)}
   }
   if(el=g("data-done")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.done);if(tk){ss.tasks=ss.tasks.filter(x=>x!==tk);log(ss,tk.type,`Completed: ${tk.title}`,"task_done");toast("✅","Task completed");save(ss)}return}
-  if(el=g("data-ntask")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.ntask);if(tk){if(tk.notify===false){delete tk.notify;toast("🔔","Notification on for this task")}else{tk.notify=false;toast("🔕","No notification for this task")}save(ss)}return}
+  if(el=g("data-ntask")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.ntask);if(tk){if(tk.notify===true){delete tk.notify;toast("🔕","No notification for this task")}else{tk.notify=true;toast("🔔","Notification on for this task")}save(ss)}return}
   if(el=g("data-resch")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.resch);if(tk){reschSid=ss.id;reschedForm(tk)}return}
   if(!s)return;
   if(el=g("data-act")){const a=el.dataset.act;

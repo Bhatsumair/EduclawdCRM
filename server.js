@@ -146,7 +146,7 @@ const fns = {
     const u = await auth(a.p_token);
     const [rows] = await pool.query("SELECT id, sub FROM crm_push WHERE user_id = ?", [u.id]);
     let n = 0;
-    for (const r of rows) if (await pushTo(r, { title: "🔔 Notifications are on", body: "You'll get an alert 15 minutes before a task is due and again at the due time.", tag: "push-test", url: "/?go=tasks" })) n++;
+    for (const r of rows) if (await pushTo(r, { title: "🔔 Notifications are on", body: "Tasks with the bell on will alert you 15 minutes before and at the due time.", tag: "push-test", url: "/?go=tasks" })) n++;
     return { sent: n };
   },
 
@@ -298,7 +298,7 @@ const fns = {
 
 /* ---------- task reminders (web push) ----------
    Every minute: for each user with notifications on, look at the tasks in the schools they own and
-   send "due in 15 minutes" and "due now" alerts. Each alert is recorded in crm_push_sent so it goes
+   send "due in 15 minutes" and "due now" alerts (only tasks with notify:true). Each alert is recorded in crm_push_sent so it goes
    out once. VAPID keys come from VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY, or are created once and kept
    in crm_kv so nothing has to be set up in Railway. */
 let VAPID = null;
@@ -352,7 +352,7 @@ async function pushTick() {
       if (s._kind) continue;
       for (const t of s.tasks || []) {
         const due = Date.parse(t.due);
-        if (!t.id || isNaN(due) || t.notify === false) continue; // switched off for this task
+        if (!t.id || isNaN(due) || t.notify !== true) continue; // only tasks with the bell switched on
         for (const [kind, at] of [["soon", due - REMIND_MIN * 60000], ["due", due]]) {
           if (at > now || now - at > LATE_MS) continue;
           if (kind === "soon" && now >= due) continue; // already due — the "due now" alert covers it
