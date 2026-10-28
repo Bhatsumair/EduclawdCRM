@@ -1173,6 +1173,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .ntog.on .nsw{background:var(--teal)}.ntog.on .nsw i{left:21px}
 .npill{display:inline-flex;align-items:center;justify-content:center;width:28px;height:26px;border-radius:99px;border:1.5px solid var(--line);background:none;color:var(--teal);padding:0;min-height:0}
 .npill.off{color:var(--mute);border-style:dashed}
+
+.pbal{color:#b45309;font-weight:700}
 </style>
 </head>
 <body>
@@ -2220,7 +2222,7 @@ function payDetail(p){
   <div class="hero2 slim"><div class="hav">${esc(nm.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><h2>${esc(nm)}</h2><small>${m.n} installment${m.n===1?"":"s"} · ${esc(freqLabel(p.freq))} · ${PST[m.status][0]}</small></div><button class="edit" data-pay="edit" title="Edit payment plan" aria-label="Edit payment plan">${sv(P.pencil,17)}</button></div>
   <div class="hero"><small>Total payment</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   <h4>Installments</h4>${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
-    return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Payment date ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
+    return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>${i.bal?"<b class=\"pbal\">Pending balance</b> · ":""}Payment date ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
     ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
   ${p.notes?`<h4>Notes</h4><div class="note">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<h4>History</h4>${p.log.slice(0,15).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
@@ -2347,7 +2349,7 @@ function savePlan(){
 function paidForm(p,i){const k=p.installments.indexOf(i);
   modal(`<h3>${i.paidOn?"Edit payment":"Record payment"}</h3><p style="margin:0 0 4px"><b>${esc(payName(p))}</b><br><small style="color:var(--mute)">Installment ${k+1} of ${p.installments.length} · ${inr(i.amount)} due ${fmtDate(i.due)}</small></p>
   <div class="grid">${fld("pp_amt","Amount received (₹)",i.paidOn?paidAmt(i):i.amount,"number")}${fld("pp_date","Payment date",i.paidOn||todayISO(),"date")}<div><label>Payment mode</label><select id="pp_mode">${optsSel(PAY_MODES,i.mode)}</select></div>${fld("pp_ref","Reference / UTR / cheque no.",i.ref||"")}</div>
-  <div class="dst">If the amount differs from ${inr(i.amount)}, the remaining unpaid installments are re-balanced so the plan still adds up to ${inr(p.total)}.</div>
+  <div class="dst">If the amount differs from ${inr(i.amount)}, the remaining unpaid installments are re-balanced so the plan still adds up to ${inr(p.total)}. If nothing is left unpaid, the difference is added as a pending balance.</div>
   <div class="row" style="margin-top:12px"><button data-pay="savepaid" data-i="${i.id}">Save payment</button><button class="alt" data-m="close">Cancel</button>${i.paidOn?`<button class="ghost sp" style="color:var(--red)" data-pay="unpaid" data-i="${i.id}">Mark unpaid</button>`:""}</div>`)}
 function payAct(el){
   const a=el.dataset.pay;
@@ -2368,9 +2370,14 @@ function payAct(el){
     const wasPaid=!!i.paidOn,diff=amt!==toP(i.amount);Object.assign(i,{paidOn:dt,paidAmt:fromP(amt),amount:fromP(amt),mode:val("pp_mode"),ref:val("pp_ref")});
     const un=p.installments.filter(x=>!x.paidOn);
     if(diff&&un.length){const rest=Math.max(0,toP(p.total)-p.installments.filter(x=>x.paidOn).reduce((s,x)=>s+toP(paidAmt(x)),0)),sp=splitP(rest,un.length);un.forEach((x,j)=>x.amount=fromP(sp[j]))}
+    /* paid less than the plan total and nothing left to absorb it → the shortfall becomes a pending balance */
+    let bal=0;{const left=toP(p.total)-p.installments.filter(x=>x.paidOn).reduce((s,x)=>s+toP(paidAmt(x)),0);
+      if(!un.length&&left>0){bal=left;p.installments.push({id:uid(),amount:fromP(left),due:dt>(i.due||"")?dt:i.due,bal:true})}
+      p.installments=p.installments.filter(x=>x.paidOn||!x.bal||toP(x.amount)>0);p.count=p.installments.length}
     {const sc=schools.find(x=>x.id===p.schoolId),key=p.id+":"+i.id;if(sc&&(sc.tasks||[]).some(t=>t.payKey===key)){const o=structuredClone(sc);o.tasks=o.tasks.filter(t=>t.payKey!==key);save(o)}}
     payLog(p,`Installment ${k+1} ${wasPaid?"payment edited":"paid"} · ${inr(fromP(amt))}${i.mode?" via "+i.mode:""}`);close();
-    toast("✅",diff&&un.length?"Payment saved · remaining installments re-balanced":"Payment recorded");return savePay(p)}
+    if(bal)payLog(p,`Pending balance ${inr(fromP(bal))} added`);
+    toast("✅",bal?"Payment saved · "+inr(fromP(bal))+" pending balance":diff&&un.length?"Payment saved · remaining installments re-balanced":"Payment recorded");return savePay(p)}
 }
 
 /* Educlawd CRM · Expenses (admin only): income and expense records, categories, monthly totals
@@ -2911,7 +2918,7 @@ function payCard(p){const m=planSum(p),td=todayISO(),[sl,scl]=PST[m.status],nx=m
 function planBlock(p){const m=planSum(p),ins=p.installments||[];
   return `<div class="pblk" data-plan="${p.id}"><div class="hero"><small>Total payment · ${m.n} installment${m.n===1?"":"s"} · ${esc(freqLabel(p.freq))} · ${PST[m.status][0]}</small><div class="big">${inr(p.total)}</div><div class="sub">${inr(fromP(m.paid))} collected · ${inr(fromP(m.due))} outstanding${m.oc?` · <b>${m.oc} overdue</b>`:""}</div><div class="pbar"><i style="width:${m.pc}%"></i></div></div>
   ${ins.map((i,k)=>{const st=instSt(i),[l,c]=PST[st];
-    return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>Payment date ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
+    return `<div class="inst st-${st}"><div class="inum">${k+1}</div><div class="ibody"><div class="r"><b>${inr(i.amount)}</b><span class="pill ${c}">${l}</span></div><small>${i.bal?"<b class=\"pbal\">Pending balance</b> · ":""}Payment date ${fmtDate(i.due)}</small>${i.paidOn?`<small class="pd">Received ${inr(paidAmt(i))} on ${fmtDate(i.paidOn)}${i.mode?" · "+esc(i.mode):""}${i.ref?" · Ref "+esc(i.ref):""}</small>`:""}</div>
     ${i.paidOn?``:`<button data-pay="paid" data-i="${i.id}">Mark paid</button>`}</div>`}).join("")}
   ${p.notes?`<div class="note" style="margin-top:8px">${esc(p.notes)}</div>`:""}
   ${(p.log||[]).length?`<div class="phl">History</div>${p.log.slice(0,8).map(x=>`<div class="phist"><b>${esc(x.text)}</b><br>${fmt(x.at)}${x.by?" · "+esc(x.by):""}</div>`).join("")}`:""}
