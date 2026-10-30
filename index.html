@@ -1175,6 +1175,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .npill.off{color:var(--mute);border-style:dashed}
 
 .pbal{color:#b45309;font-weight:700}
+
+.pdiag{margin:-2px 0 10px;padding:8px 12px;border:1px dashed var(--line);border-radius:12px;font-size:12.5px}
+.pdiag summary{cursor:pointer;font-weight:700;color:var(--teal2)}
+.pdiag>div:not(.row){display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.pdiag>div span{color:var(--mute)}.pdiag>div b{text-align:right;font-weight:600}
+.pdiag .row button{min-height:34px;padding:6px 12px;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -2046,7 +2052,7 @@ async function pushSync(){ // on sign-in: link this phone's existing subscriptio
   if(!pushOK()||!me)return;
   try{const r=await navigator.serviceWorker.ready,s=await r.pushManager.getSubscription();pushEP=s?s.endpoint:"";
     pushOn=!!s&&Notification.permission==="granted";if(pushOn)await rpc("crm_push_sub",{p_token:TOKEN,p_sub:s.toJSON()})}catch(e){pushOn=false}
-  render()}
+  render();pushDiag()}
 async function pushEnable(){
   if(pushBusy)return;
   if(isIOS()&&!isStandalone())return modal(`<h3>Turn on notifications</h3><p>On iPhone, alerts only work from the app on your Home Screen:</p><ol style="padding-left:20px;line-height:1.7"><li>Open this page in <b>Safari</b></li><li>Tap <b>Share</b> → <b>Add to Home Screen</b></li><li>Open Educlawd CRM from the Home Screen</li><li>Go to Profile → <b>Turn on notifications</b></li></ol><div class="row" style="margin-top:12px"><button data-m="close">Got it</button></div>`);
@@ -2058,10 +2064,10 @@ async function pushEnable(){
     const {key}=await rpc("crm_push_key",{p_token:TOKEN}),r=await navigator.serviceWorker.ready;
     let s=await r.pushManager.getSubscription();if(!s)s=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(key)});
     await rpc("crm_push_sub",{p_token:TOKEN,p_sub:s.toJSON()});pushEP=s.endpoint;pushOn=true;
-    rpc("crm_push_test",{p_token:TOKEN}).catch(()=>{});
+    pushTest();
     toast("🔔","Notifications on — turn on the bell on a task to get its alerts");
   }catch(e){toast("⚠️","Couldn't turn on notifications: "+((e&&e.message)||"try again"))}
-  finally{pushBusy=false;render()}
+  finally{pushBusy=false;render();pushDiag()}
 }
 async function pushDisable(){
   if(pushBusy)return;pushBusy=true;render();
@@ -2070,18 +2076,37 @@ async function pushDisable(){
     pushOn=false;pushEP="";toast("🔕","Notifications turned off on this phone")}
   finally{pushBusy=false;render()}
 }
+let pushInfo=null;
+async function pushDiag(){if(LOCAL||!me)return;try{pushInfo=await rpc("crm_push_status",{p_token:TOKEN})}catch(e){pushInfo={err:(e&&(e.code||e.message))||"error"}}render()}
+async function pushTest(){
+  try{const r=await rpc("crm_push_test",{p_token:TOKEN});
+    toast(r.sent?"🔔":"⚠️",r.sent?"Test sent — it should pop up in a few seconds":r.devices?"Couldn't deliver to this phone: "+(r.error||"unknown error"):"No phone is linked yet — tap Turn on first")}
+  catch(e){toast("⚠️","Test failed: "+((e&&e.message)||"error"))}
+  pushDiag()}
+const agoTxt=iso=>{if(!iso)return"never";const m=Math.round((Date.now()-new Date(iso))/6e4);return m<1?"just now":m<60?m+" min ago":Math.round(m/60)+" h ago"};
+function pushDiagHtml(){
+  const perm="Notification"in window?Notification.permission:"not supported",i=pushInfo||{};
+  const rows=[["Permission on this phone",perm==="granted"?"Allowed":perm==="denied"?"Blocked — allow it in phone settings":perm==="default"?"Not asked yet":"Not supported"],
+    ["This phone",pushOn?"Linked":"Not linked"],
+    ["Home Screen app",isStandalone()?"Yes":isIOS()?"No — needed on iPhone":"No (fine on Android)"],
+    ["Server",i.err?(i.err==="not_found"?"Not updated yet — redeploy on Railway":i.err):i.ready?"Ready":"Not ready"],
+    ["Phones linked to you",i.err?"—":String(i.devices??"—")],
+    ["Server last checked tasks",i.err?"—":agoTxt(i.lastTick)+(i.lastTick&&Date.now()-new Date(i.lastTick)>3*6e4?" — server may be sleeping":"")],
+    ["Last alert sent",i.err?"—":agoTxt(i.lastSent)]].concat(i.lastErr?[["Last error",i.lastErr]]:[]);
+  return `<details class="pdiag"><summary>Not getting alerts? Check here</summary>${rows.map(([k,v])=>`<div><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}
+  <div class="row" style="margin-top:8px"><button class="alt" data-push="test">Send test notification</button><button class="ghost" data-push="diag">Refresh</button></div></details>`}
 const BELL='<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>';
 function pushCard(){
   if(LOCAL)return"";
   const sub=pushOn?"On — alerts for tasks with the bell turned on":isIOS()&&!isStandalone()?"Add the app to your Home Screen to get alerts":"Get an alert on this phone when a task is due";
   return `<div class="sxc pushc ${pushOn?"on":""}"><span class="cic">${sv(BELL,16)}</span><div><small>Task notifications</small><b>${esc(sub)}</b></div>
-  <button class="${pushOn?"alt":""}" data-push="${pushOn?"off":"on"}" ${pushBusy?"disabled":""}>${pushBusy?"…":pushOn?"Turn off":"Turn on"}</button></div>`}
+  <button class="${pushOn?"alt":""}" data-push="${pushOn?"off":"on"}" ${pushBusy?"disabled":""}>${pushBusy?"…":pushOn?"Turn off":"Turn on"}</button></div>${pushDiagHtml()}`}
 function pushBanner(){
   if(LOCAL||pushOn)return"";let hid=false;try{hid=!!localStorage.getItem(PUSH_HIDE)}catch(e){}
   if(hid)return"";
   return `<div class="pushb"><span class="cic">${sv(BELL,16)}</span><div><b>Get task alerts on your phone</b><small>For tasks you turn the bell on for</small></div><button data-push="on" ${pushBusy?"disabled":""}>Turn on</button><button class="ghost" data-push="hide" aria-label="Dismiss" title="Dismiss">✕</button></div>`}
 function pushAct(el){const a=el.dataset.push;
-  if(a==="on")return pushEnable();if(a==="off")return pushDisable();
+  if(a==="on")return pushEnable();if(a==="off")return pushDisable();if(a==="test")return pushTest();if(a==="diag")return pushDiag();
   if(a==="hide"){try{localStorage.setItem(PUSH_HIDE,"1")}catch(e){}return render()}}
 if("serviceWorker"in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.go==="tasks"&&me){gtab="tasks";sel=null;close();render()}});
 /* per-task notification switch (on by default) */
