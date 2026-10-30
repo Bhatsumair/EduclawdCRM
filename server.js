@@ -146,8 +146,14 @@ const fns = {
     const u = await auth(a.p_token);
     const [rows] = await pool.query("SELECT id, sub FROM crm_push WHERE user_id = ?", [u.id]);
     let n = 0;
-    for (const r of rows) if (await pushTo(r, { title: "🔔 Notifications are on", body: "Tasks with the bell on will alert you 15 minutes before and at the due time.", tag: "push-test", url: "/?go=tasks" })) n++;
-    return { sent: n };
+    for (const r of rows) if (await pushTo(r, { title: "🔔 Test notification", body: "Notifications work on this phone. Tasks with the bell on will alert you 15 minutes before and at the due time.", tag: "push-test", url: "/?go=tasks" })) n++;
+    return { sent: n, devices: rows.length, error: n < rows.length ? pushStat.lastErr : null };
+  },
+
+  async crm_push_status(a) {
+    const u = await auth(a.p_token);
+    const [[c]] = await pool.query("SELECT COUNT(*) AS n FROM crm_push WHERE user_id = ?", [u.id]);
+    return { ready: !!VAPID, devices: Number(c.n), lastTick: pushStat.lastTick, lastSent: pushStat.lastSent, lastErr: pushStat.lastErr, serverStart: pushStat.start };
   },
 
   async crm_me(a) {
@@ -322,13 +328,16 @@ async function ensureVapid() {
   VAPID = { pub: pubK };
 }
 
+const pushStat = { start: new Date().toISOString(), lastTick: null, lastSent: null, lastErr: null };
 async function pushTo(row, payload) {
   try {
     await webpush.sendNotification(JSON.parse(row.sub), JSON.stringify(payload), { TTL: 3600, urgency: "high" });
+    pushStat.lastSent = new Date().toISOString();
     return true;
   } catch (e) {
+    pushStat.lastErr = (e && e.statusCode ? "HTTP " + e.statusCode + " " : "") + ((e && (e.body || e.message)) || "send failed").toString().slice(0, 200);
     if (e && (e.statusCode === 404 || e.statusCode === 410)) await pool.query("DELETE FROM crm_push WHERE id = ?", [row.id]); // phone unsubscribed
-    else console.warn("push failed:", e && (e.statusCode || e.message));
+    console.warn("push failed:", pushStat.lastErr);
     return false;
   }
 }
@@ -341,10 +350,11 @@ async function pushTick() {
   ticking = true;
   try {
     const [subs] = await pool.query("SELECT id, user_id, sub FROM crm_push");
+    pushStat.lastTick = new Date().toISOString();
     if (!subs.length) return;
     const byUser = new Map();
     subs.forEach((r) => byUser.set(r.user_id, (byUser.get(r.user_id) || []).concat(r)));
-    const [docs] = await pool.query("SELECT id, owner_id, data FROM crm_docs WHERE owner_id IN (?)", [[...byUser.keys()]]);
+    const [docs] = await pool.query("SELECT id, owner_id, data FROM crm_docs"); // owner or task creator may be the one with notifications on
     const now = Date.now();
     for (const d of docs) {
       if (NON_SCHOOL.test(d.id)) continue;
@@ -366,7 +376,7 @@ async function pushTick() {
             tag: "task-" + t.id,
             url: "/?go=tasks",
           };
-          for (const row of byUser.get(d.owner_id) || []) await pushTo(row, payload);
+          for (const uid of new Set([d.owner_id, t.byId].filter(Boolean))) for (const row of byUser.get(uid) || []) await pushTo(row, payload); // school owner + whoever created the task
         }
       }
     }
