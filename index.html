@@ -1369,7 +1369,7 @@ async function syncNow(first){
     else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
   }finally{syncing=false}
 }
-async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);restorePos();
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);gtab="home";sel=null;nsel=null;psel=null;render(); // always open on the dashboard
   {const q=new URLSearchParams(location.search);if(q.get("go")==="tasks"){gtab="tasks";sel=null;render();history.replaceState(history.state,"",location.pathname)}}
   startSync();pushSync()}
 const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
