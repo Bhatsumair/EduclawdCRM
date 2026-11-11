@@ -2023,7 +2023,7 @@ function render0(){
   renderSide();
   navGuard();
 }
-/* phone back button: from anywhere in the app it closes an open sheet/menu or returns to Home; on Home it leaves the app */
+/* phone back button: closes an open sheet/menu, then an open school (back to the module you opened it from), then returns to Home; on Home it leaves the app */
 let navArmed=false,navSkip=false;
 const onPhone=()=>matchMedia("(max-width:800px)").matches;
 const atHome=()=>gtab==="home"&&!sel&&!$("#modalRoot").innerHTML&&!$("#drawerRoot .dwr.open");
@@ -2038,6 +2038,7 @@ addEventListener("popstate",()=>{
   navArmed=false;
   if($("#modalRoot").innerHTML){close();return navGuard()}
   if($("#drawerRoot .dwr.open")){closeDrawer();return setTimeout(navGuard,260)}
+  if(sel||nsel||psel){sel=null;nsel=null;psel=null;render();return navGuard()} // back to the list you came from (Tasks, Deals, …)
   gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
 });
 
