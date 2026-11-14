@@ -1184,13 +1184,16 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 
 /* stage bar */
 .sbar{margin:4px 0 14px;padding:6px;border-radius:16px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.04)}
-.sbrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px} /* every stage visible at once — no scrolling */
-.sbc{display:flex;align-items:center;gap:10px;min-width:0;padding:9px 14px 9px 9px;border-radius:12px;background:none;border:1px solid transparent;color:var(--ink);text-align:left;box-shadow:none;min-height:0;font-weight:400;scroll-snap-align:start;position:relative}
+.sbrow{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none}.sbrow::-webkit-scrollbar{display:none} /* one row */
+.sbtrk{position:relative;height:4px;margin:7px 10px 2px;border-radius:4px;background:color-mix(in srgb,var(--teal) 13%,transparent)} /* the scroll line: shows where you are in the row */
+.sbtrk i{position:absolute;top:0;bottom:0;left:0;width:30%;border-radius:4px;background:var(--teal);transition:left .08s linear}
+.sbtrk.full{display:none}
+.sbc{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-width:150px;padding:9px 14px 9px 9px;border-radius:12px;background:none;border:1px solid transparent;color:var(--ink);text-align:left;box-shadow:none;min-height:0;font-weight:400;scroll-snap-align:start;position:relative}
 .sbc:hover{background:color-mix(in srgb,var(--c) 7%,transparent)}
 .sbc .sbi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
 .sbc .sbt{min-width:0}.sbc .sbt b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sbc .sbt small{display:block;font-size:12px;color:var(--mute);white-space:nowrap}
 .sbc.z{opacity:.6}
-@media(max-width:800px){.sbar{padding:5px}.sbrow{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.sbc{padding:6px 8px 6px 6px;gap:7px;border-radius:10px}.sbc .sbi{width:28px;height:28px;border-radius:8px}.sbc .sbi svg{width:15px;height:15px}.sbc .sbt b{font-size:12.5px}.sbc .sbt small{font-size:11px}.sph{padding:10px 12px}.sph b{font-size:15px}}
+@media(max-width:800px){.sbar{padding:5px}.sbrow{gap:4px}.sbc{min-width:0;padding:6px 10px 6px 6px;gap:7px;border-radius:10px}.sbc .sbi{width:28px;height:28px;border-radius:8px}.sbc .sbi svg{width:15px;height:15px}.sbc .sbt b{font-size:12.5px}.sbc .sbt small{font-size:11px}.sph{padding:10px 12px}.sph b{font-size:15px}}
 .sbc.on{background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 78%,#000));color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 35%,transparent);opacity:1}
 .sbc.on .sbi{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35)}.sbc.on .sbt small{color:rgba(255,255,255,.85)}
 /* schools in a stage */
@@ -2028,7 +2031,10 @@ function stageBar(cnt,cur,attr,unit){
   const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b";
     return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c}" ${attr}="${esc(k)}"><span class="sbi">${sv(STG_IC[k]||STG_IC.Lead,17)}</span><span class="sbt"><b>${esc(l)}</b><small>${n} ${unit}${n===1?"":"s"}</small></span></button>`};
   const tot=STAGES.reduce((a,g)=>a+(cnt[g]||0),0);
-  return `<div class="sbar"><div class="sbrow">${card("all","All stages",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div></div>`}
+  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All stages",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
+function sbSync(r){const t=r.parentElement&&r.parentElement.querySelector(".sbtrk"),i=t&&t.querySelector("i");if(!i)return;const w=r.clientWidth,sw=r.scrollWidth;if(sw<=w+2){t.classList.add("full");return}t.classList.remove("full");const tw=t.clientWidth,th=Math.max(24,tw*w/sw);i.style.width=th+"px";i.style.left=((tw-th)*r.scrollLeft/(sw-w))+"px"}
+document.addEventListener("scroll",e=>{const r=e.target;if(r&&r.classList&&r.classList.contains("sbrow"))sbSync(r)},true);
+addEventListener("resize",()=>document.querySelectorAll(".sbrow").forEach(sbSync));
 /* Educlawd CRM · Navigation list and main render() */
 const GN=[["home","Home"],["tasks","Tasks"],["contacts","Contacts"],["deals","Deals"]];
 const gnList=()=>[...GN,["claims","Expenses"],...(isAdmin()?[["expenses","Finance"],["network","School Network"],["reports","Team Insights"],["team","Team"]]:[]),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
@@ -2042,6 +2048,7 @@ function savePos(){const a=scrEl();if(!a||!me)return;scrMap[viewKey()]=a.scrollT
 function render(){
   const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
   render0();
+  document.querySelectorAll(".sbrow").forEach(r=>{const o=r.querySelector(".sbc.on");if(o)r.scrollLeft=Math.max(0,o.offsetLeft-r.offsetLeft-(r.clientWidth-o.offsetWidth)/2);sbSync(r)}); // keep the chosen stage in view
   const k=viewKey(),same=k===lastKey;lastKey=k;
   if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{const w2=same?want:(scrMap[k]||0);if(lastKey===k&&Math.abs(a.scrollTop-w2)>2)a.scrollTop=w2})}
 }
