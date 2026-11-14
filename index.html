@@ -2042,6 +2042,13 @@ addEventListener("popstate",()=>{
   gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
 });
 
+/* reopening the app after it was in the background for a while (phones often keep a "closed" app paused
+   instead of restarting it) → start again on the dashboard, like a fresh open */
+const HOME_AFTER_MS=10*60*1000;let hiddenAt=0;
+function backToHome(){if(!me)return;try{close();closeDrawer()}catch(e){}gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();const a=document.querySelector(".app");if(a)a.scrollTop=0}
+document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS)backToHome();hiddenAt=0});
+addEventListener("pageshow",e=>{if(e.persisted&&hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS){backToHome();hiddenAt=0}});
+
 /* ---- phone notifications: the server sends an alert 15 min before a task is due and at the due time ---- */
 const PUSH_HIDE="ecw_push_hide";
 let pushOn=false,pushEP="",pushBusy=false;
