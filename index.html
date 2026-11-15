@@ -1266,6 +1266,33 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
   .fexp span{display:none}
   .sph{padding:9px 12px}.sph b{font-size:15px}
 }
+
+/* Educlawd CRM · school timeline: line icons, clean cards, soft rail */
+.tlh{display:flex;align-items:center;gap:8px}
+.tlh span{font-size:11px;font-weight:700;padding:1px 9px;border-radius:99px;background:var(--soft);border:1px solid var(--line);color:var(--teal2)}
+.dg .dl2{display:inline-flex;align-items:center;margin:14px 0 10px;padding:3px 11px;border-radius:99px;background:var(--soft);border:1px solid var(--line);color:var(--teal2);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.dg:first-of-type .dl2{margin-top:2px}
+.tl{position:relative;border-left:0;margin-left:0;padding-left:38px}
+.tl::before{content:"";position:absolute;left:14px;top:8px;bottom:8px;width:2px;border-radius:2px;background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 26%,transparent),color-mix(in srgb,var(--teal) 7%,transparent))}
+.ev{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:9px;box-shadow:0 1px 3px rgba(120,80,30,.07);transition:box-shadow .15s,transform .15s}
+.ev:hover{transform:translateX(1px);box-shadow:0 6px 16px rgba(120,80,30,.12)}
+.ev .ic{position:absolute;left:-38px;top:10px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:0;background:color-mix(in srgb,var(--c) 13%,var(--card));color:var(--c);border:3px solid var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 28%,transparent)}
+.ev .ic svg{width:15px;height:15px;stroke-width:2.1}
+.evh{align-items:center;gap:8px;justify-content:flex-start}
+.evh b{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c);padding:2px 9px;border-radius:99px;background:color-mix(in srgb,var(--c) 12%,transparent)}
+.evh small{margin-left:auto;font-size:11.5px;white-space:nowrap}
+.evt{margin-top:7px;font-size:13.5px;line-height:1.5}
+.evby{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--mute)}
+.evby i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:800;color:#fff;flex:none}
+.evn{margin-top:8px;border-radius:10px}
+@media(max-width:800px){
+  .tl{padding-left:32px}
+  .tl::before{left:11px}
+  .ev{padding:10px 12px;border-radius:13px}
+  .ev .ic{left:-32px;top:9px;width:26px;height:26px;border-width:2px}
+  .ev .ic svg{width:13px;height:13px}
+  .evt{font-size:13px}
+}
 </style>
 </head>
 <body>
@@ -3234,6 +3261,18 @@ function contacts(s){
   return head+`<div class="row" style="margin-top:12px"><button class="ib" data-act="addContact">${sv(P.userp)} Add contact</button></div><div style="margin-top:12px">${c.length?c.map(p=>`<div class="ct"><button class="alt ed" data-editc="${p.id}" aria-label="Edit contact" title="Edit contact">${sv(P.pencil,13)}</button><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<small>${esc(p.phone||"—")}${p.email?" · "+esc(p.email):""}</small></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):`<div class="empty">No contacts yet</div>`}</div>`;
 }
 const TC=t=>"t-"+(ICON[t]?t:"Update");
+/* Educlawd CRM · line icons for the school timeline (ICON keeps the emoji for toasts) */
+const EV_IC={Call:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  Meeting:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  Visit:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  Message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  Email:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  Demo:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m10 7 5 3-5 3z"/>',
+  Task:'<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10"/><path d="m9 11 3 3 9-9"/>',
+  Note:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/>',
+  Deal:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  Update:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>'};
+const EV_SHOW=new Set([...ACT,"Note","Task"]); // the timeline holds what people log, plus tasks
 const tm=d=>new Date(d).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});
 function dayLabel(d){const x=new Date(d),n=new Date(),k=a=>a.toDateString();return k(x)===k(n)?"Today":k(x)===k(new Date(n-864e5))?"Yesterday":x.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
 function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
@@ -3243,11 +3282,11 @@ function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
   return{c:"",t:fmt(due)}}
 function activity(s){
   const now=Date.now(),tasks=(s.tasks||[]).slice().sort((a,b)=>a.due.localeCompare(b.due)),od=tasks.filter(t=>new Date(t.due)<now).length;
-  const tl=s.timeline||[],list=tl,groups=[];
+  const tl=(s.timeline||[]).filter(e=>EV_SHOW.has(e.type)),list=tl,groups=[];
   list.forEach(e=>{const k=dayLabel(e.at);let g=groups[groups.length-1];if(!g||g.k!==k)groups.push(g={k,items:[]});g.items.push(e)});
   return `<div class="abar"><button class="ib" data-act="addTask">${sv(P.calp)} Add task</button><button class="alt ib" data-act="logAct">${sv(P.list)} Log activity</button></div>
   <h4>Upcoming tasks</h4>${tasks.length?taskList(tasks.map(t=>({t,s})),true):`<div class="empty emp">🎉 No open tasks<br><small>Use “Add task” to schedule a call, meeting or visit</small></div>`}
-  <h4>Timeline</h4>  ${groups.length?groups.map(g=>`<div class="dg"><div class="dl2">${g.k}</div><div class="tl">${g.items.map(e=>`<div class="ev ${TC(e.type)}"><div class="ic">${ICON[e.type]||"•"}</div><div class="evh"><b>${esc(e.type)}</b><small>${tm(e.at)}${e.by?" · "+esc(e.by):""}</small></div><div class="evt">${esc(e.text)}</div>${e.note?`<div class="evn">${sv(P.note,14)}<span>${esc(e.note)}</span></div>`:""}</div>`).join("")}</div></div>`).join(""):`<div class="empty emp">Nothing logged yet</div>`}`;
+  <h4 class="tlh">Timeline${tl.length?`<span>${tl.length}</span>`:""}</h4>  ${groups.length?groups.map(g=>`<div class="dg"><div class="dl2">${g.k}</div><div class="tl">${g.items.map(e=>`<div class="ev ${TC(e.type)}"><div class="ic">${sv(EV_IC[e.type]||EV_IC.Note,15)}</div><div class="evh"><b>${esc(e.type)}</b><small>${tm(e.at)}</small></div><div class="evt">${esc(e.text)}</div>${e.note?`<div class="evn">${sv(P.note,14)}<span>${esc(e.note)}</span></div>`:""}${e.by?`<div class="evby"><i style="background:${mcol(e.byId||e.by)}">${esc(e.by[0].toUpperCase())}</i>${esc(e.by)}</div>`:""}</div>`).join("")}</div></div>`).join(""):`<div class="empty emp">Nothing logged yet<br><small>Use “Log activity” to record a call, meeting or demo</small></div>`}`;
 }
 const dealTable=(c,v)=>`<div class="hero"><small>Total incl. 18% GST</small><div class="big">${inr(c.yt)}<span> / year</span></div><div class="sub">${inr(c.mt)} per month</div></div>
 <div class="brk"><div class="br"><span>Amount</span><b>${inr(c.y)}<i>/yr</i></b></div><div class="br"><span>GST @ 18%</span><b>${inr(c.yg)}<i>/yr</i></b></div></div>
