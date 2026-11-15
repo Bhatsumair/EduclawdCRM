@@ -1651,7 +1651,7 @@ function insSchoolsTab(ss){
   const st=an.stg||"all",list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
     .sort((a,b)=>STAGES.indexOf(a.stage||"Lead")-STAGES.indexOf(b.stage||"Lead")||insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
   const tot=list.reduce((a,s)=>a+insVal(s),0),c=st==="all"?"#0d7f7a":STC[st]||"#64748b";
-  const head=`<div class="sph" style="--c:${c}"><div><small>Stage</small><b>${st==="all"?"All stages":esc(st)}</b></div><div><small>Schools</small><b>${list.length}</b></div><div><small>Deal value / yr</small><b>${tot?inrS(tot):"—"}</b></div></div>`;
+  const head=`<div class="sph" style="--c:${c}"><div><small>Stage</small><b>${st==="all"?"All stages":esc(st)}</b></div><div><small>Schools · ${esc(PL[an.p]||"")}</small><b>${list.length}</b></div><div><small>Deal value / yr</small><b>${tot?inrS(tot):"—"}</b></div></div>`;
   if(!list.length)return head+noMatch("No schools here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet");
   return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b";
     return `<div class="spc" style="--c:${cc}"><div class="spgo" data-tgo="${s.id}" title="Open this school">
@@ -1667,7 +1667,7 @@ function insDealsTab(ss){
   if(st!=="all")list=list.filter(s=>(s.stage||"Lead")===st);
   list.sort((a,b)=>insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
   const tot=list.reduce((a,s)=>a+insVal(s),0),c=st==="all"?"#0d7f7a":STC[st]||"#64748b";
-  const head=`<div class="sph" style="--c:${c}"><div><small>${st==="all"?"Deals · all stages":esc(st)+" deals"}</small><b>${list.length}</b></div><div><small>Value / yr incl. GST</small><b>${tot?inr(tot):"—"}</b></div><div><small>Avg deal</small><b>${list.length&&tot?inrS(tot/list.length):"—"}</b></div></div>`;
+  const head=`<div class="sph" style="--c:${c}"><div><small>${st==="all"?"Deals":esc(st)+" deals"} · ${esc(PL[an.p]||"")}</small><b>${list.length}</b></div><div><small>Value / yr incl. GST</small><b>${tot?inr(tot):"—"}</b></div><div><small>Avg deal</small><b>${list.length&&tot?inrS(tot/list.length):"—"}</b></div></div>`;
   if(!list.length)return head+noMatch("No deals here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet — add Students and Price on a school to create one");
   return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b",d=s.deal,cal=calc(d);
     return `<div class="spc" style="--c:${cc}"><div class="spgo" data-sel="${s.id}" data-tabto="deal" title="Open this deal">
@@ -1748,7 +1748,10 @@ function analyticsView(){
   if(!DF.some(([v])=>v===an.d))an.d="all"; // exact stages now live in the stage bar
   const view=["overview","schools","deals"].includes(an.view)?an.view:"overview"; // tabs sit on top, filters follow
   const[from,to]=anRange(),every=allEvents(),df=(an.d||"all")!=="all";
-  const pl=PL[an.p],ss=schools.filter(s=>mOK(owner(s))&&dOK(s)),ids=new Set(ss.map(s=>s.id));
+  /* a school counts for the chosen period if it was added then, or was touched then */
+  const addedT=s=>new Date(s.created||((s.timeline&&s.timeline.length)?s.timeline[s.timeline.length-1].at:0)||0).getTime()||0;
+  const pOK=s=>an.p==="all"||(addedT(s)>=from&&addedT(s)<=to)||(s.timeline||[]).some(e=>{const t=new Date(e.at).getTime();return t>=from&&t<=to});
+  const pl=PL[an.p],ss=schools.filter(s=>mOK(owner(s))&&dOK(s)&&pOK(s)),ids=new Set(ss.map(s=>s.id));
   const all=df?every.filter(x=>ids.has(x.s.id)):every;
   const ev=all.filter(x=>x.t>=from&&x.t<=to),evm=ev.filter(x=>mOK(x.u)),cnt=k=>evm.filter(x=>x.k===k).length;
   const open=ss.filter(OPEN_ST),openV=open.reduce((a,s)=>a+insVal(s),0);
@@ -1763,7 +1766,7 @@ function analyticsView(){
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
   const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="overview"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
-  <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
+  <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Schools "+pl,won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
   ${insKc("#2563eb",P.receipt,inrS(col.t),"Collected "+pl,col.n+" payment"+(col.n===1?"":"s")+" received")}
