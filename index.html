@@ -1283,8 +1283,8 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 
 /* Educlawd CRM · Activity tab: three cards above a full-width feed */
 .ins.actw{grid-template-columns:1fr}
-@media(min-width:801px){.items .kgrid.k6.act3{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:1180px){.items .kgrid.k6.act3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:801px){.items .kgrid.k6.actg{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1180px){.items .kgrid.k6.actg{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1772,12 +1772,15 @@ function analyticsView(){
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(aAll.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=aAll.slice((pg-1)*PS,pg*PS);an.pg=pg;
   /* the Activity cards always read today and this week, whatever the period filter says */
-  const sodT=new Date().setHours(0,0,0,0),wkT=sodT-((new Date(sodT).getDay()+6)%7)*864e5; // week starts Monday
-  const base=every.filter(x=>mOK(x.u)&&dOK(x.s)),tdE=base.filter(x=>x.t>=sodT),wkE=base.filter(x=>x.t>=wkT);
-  const ty=(l,a)=>a.filter(x=>x.e.type===l).length,pz=(n,w)=>n+" "+w+(n===1?"":"s"),mtT=ty("Meeting",tdE),mtW=ty("Meeting",wkE);
-  const actCards=`<div class="kgrid k6 lbl act3">${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" \u00b7 "+pz(mtT,"meeting")+" \u00b7 "+pz(ty("Email",tdE),"email"):"nothing logged yet")}
-  ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" \u00b7 since Monday")}
-  ${insKc("#16a34a",EV_IC.Meeting,String(mtT),"Meetings today",mtW+" so far this week")}</div>`;
+  const nw_=new Date(),sodT=new Date().setHours(0,0,0,0),wkT=sodT-((new Date(sodT).getDay()+6)%7)*864e5; // week starts Monday
+  const moT=new Date(nw_.getFullYear(),nw_.getMonth(),1).getTime();
+  const base=every.filter(x=>mOK(x.u)&&dOK(x.s)),tdE=base.filter(x=>x.t>=sodT),wkE=base.filter(x=>x.t>=wkT),moE=base.filter(x=>x.t>=moT);
+  const ty=(l,a)=>a.filter(x=>x.e.type===l).length,pz=(n,w)=>n+" "+w+(n===1?"":"s"),mtT=ty("Meeting",tdE),mtW=ty("Meeting",wkE),mtM=ty("Meeting",moE);
+  const MO_IC='<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>';
+  const actCards=`<div class="kgrid k6 lbl actg">${insKc("#16a34a",EV_IC.Meeting,String(mtT),"Meetings today",pz(mtW,"meeting")+" so far this week")}
+  ${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" · "+pz(mtT,"meeting")+" · "+pz(ty("Email",tdE),"email"):"nothing logged yet")}
+  ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" · since Monday")}
+  ${insKc("#7c3aed",MO_IC,String(moE.length),"Activity this month",pz(mtM,"meeting")+" · since the 1st")}</div>`;
   const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Schools "+pl,won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
