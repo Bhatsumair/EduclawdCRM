@@ -1306,6 +1306,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 /* Educlawd CRM · Constants: activity types, icons, states, stages */
 const ACT=["Call","Meeting","Visit","Message","Email","Demo"]; // task types
 const ACT_LOG=["Call","Message","Meeting","Email","Note"]; // what you can log as an activity
+const FEED_TYPES=new Set(["Call","Meeting","Email","Message"]); // what the Activity tab counts and lists
 const ICON={Call:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',Meeting:"🤝",Visit:"📍",Message:"💬",Email:"✉️",Demo:"🖥️",Task:"✅",Note:"📝",Deal:"💰",Update:"🔄"};
 const IN_STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 const STAGES=["Lead","Contacted","Meeting done","Demo done","Proposal sent","Negotiation","Contract Signed","Won","Lost"];
@@ -1768,17 +1769,17 @@ function analyticsView(){
   const avg=wonP.length?wonV/wonP.length:0;
   const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt" title="${l}">${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
   const keys=[...new Set([...team.map(u=>u.id),...every.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||every.some(x=>x.u===k));
-  const aAll=every.slice().sort((a,b)=>b.t-a.t); // the Activity tab is unfiltered: everything, newest first
+  const aAll=every.filter(x=>FEED_TYPES.has(x.e.type)).sort((a,b)=>b.t-a.t); // only logged calls, meetings, emails and messages
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(aAll.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=aAll.slice((pg-1)*PS,pg*PS);an.pg=pg;
   /* the Activity cards always read today and this week, whatever the period filter says */
   const nw_=new Date(),sodT=new Date().setHours(0,0,0,0),wkT=sodT-((new Date(sodT).getDay()+6)%7)*864e5; // week starts Monday
   const moT=new Date(nw_.getFullYear(),nw_.getMonth(),1).getTime();
-  const base=every.filter(x=>mOK(x.u)&&dOK(x.s)),tdE=base.filter(x=>x.t>=sodT),wkE=base.filter(x=>x.t>=wkT),moE=base.filter(x=>x.t>=moT);
+  const base=every.filter(x=>FEED_TYPES.has(x.e.type)&&mOK(x.u)&&dOK(x.s)),tdE=base.filter(x=>x.t>=sodT),wkE=base.filter(x=>x.t>=wkT),moE=base.filter(x=>x.t>=moT);
   const ty=(l,a)=>a.filter(x=>x.e.type===l).length,pz=(n,w)=>n+" "+w+(n===1?"":"s"),mtT=ty("Meeting",tdE),mtW=ty("Meeting",wkE),mtM=ty("Meeting",moE);
   const MO_IC='<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>';
   const actCards=`<div class="kgrid k6 lbl actg">${insKc("#16a34a",EV_IC.Meeting,String(mtT),"Meetings today",pz(mtW,"meeting")+" so far this week")}
-  ${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" · "+pz(mtT,"meeting")+" · "+pz(ty("Email",tdE),"email"):"nothing logged yet")}
+  ${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" \u00b7 "+pz(ty("Email",tdE),"email")+" \u00b7 "+pz(ty("Message",tdE),"message"):"nothing logged yet")}
   ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" · since Monday")}
   ${insKc("#7c3aed",MO_IC,String(moE.length),"Activity this month",pz(mtM,"meeting")+" · since the 1st")}</div>`;
   const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
@@ -1789,7 +1790,7 @@ function analyticsView(){
   ${insKc("#7c3aed",P.flag,cl>=WR_MIN?Math.round(won*100/cl)+"%":"—","Win rate",cl>=WR_MIN?won+" won of "+cl+" closed":"needs "+WR_MIN+" closed deals")}
   ${insKc("#db2777",P.net||P.home,(ss.length?Math.round(won*100/ss.length):0)+"%","Conversion",won+" won of "+ss.length+" school"+(ss.length===1?"":"s"))}</div>
   <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss)}${insRisk(ss)}</div>`;
-  const feed=`<div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${aAll.length}<small>everything logged</small></div></div>
+  const feed=`<div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${aAll.length}<small>calls, meetings, emails and messages</small></div></div>
   <div class="feedw">${aAll.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,aAll.length):noMatch("Nothing logged yet")}</div></div>`;
   {const i=out.indexOf('<div class="kgrid k6 lbl">');if(i<0)return out;
    const v=view,nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
