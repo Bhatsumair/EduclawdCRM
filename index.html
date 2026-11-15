@@ -1234,6 +1234,75 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .fnw .ftk{height:9px;border-radius:99px;overflow:hidden}.fnw .ftk i{border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 65%,#fff),var(--c))}
 .fnw .fct b{text-decoration:none;background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:8px;padding:1px 7px}
 .tkg .tk{border-radius:14px;transition:transform .15s,box-shadow .15s}.tkg .tk:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.07)}
+
+/* Educlawd CRM · stage bar v3: one plain row of chips, pick a stage to filter */
+.sbar{margin:0 0 12px;padding:0;border:0;background:none;box-shadow:none;border-radius:0}
+.sbrow{gap:6px;padding:1px}
+.sbc{min-width:0;display:inline-flex;align-items:center;gap:7px;height:34px;min-height:34px;padding:0 11px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 1px 2px rgba(120,80,30,.06);transition:background .14s,border-color .14s,color .14s}
+.sbc i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+.sbc em{font-style:normal;font-weight:700;font-size:11.5px;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--c) 13%,transparent);color:var(--c)}
+.sbc:not(.on):hover{background:color-mix(in srgb,var(--c) 7%,var(--card));border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.sbc.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--c) 32%,transparent)}
+.sbc.on i{background:rgba(255,255,255,.9)}
+.sbc.on em{background:rgba(255,255,255,.22);color:#fff}
+.sbc.z{opacity:.5}
+.sbtrk{height:3px;margin:7px 2px 0;background:color-mix(in srgb,var(--teal) 9%,transparent)}
+/* filter bar: one compact row */
+.fbar{gap:7px;align-items:center;padding:7px 8px;border-radius:14px;margin-bottom:10px}
+.fgrid{display:flex;flex-wrap:wrap;gap:7px}
+.flt{flex-direction:row;align-items:center;gap:6px;flex:0 1 auto}
+.flt small{font-size:11px;letter-spacing:0;text-transform:none;padding:0}
+.flt select,.flt input{width:auto;min-height:34px;padding:6px 28px 6px 11px;border-radius:10px;font-size:13px;background-position:right 9px center}
+.flt input{padding:6px 11px}
+.fexp{min-height:34px;padding:6px 13px;border-radius:10px;font-size:13px;gap:6px;box-shadow:0 2px 7px color-mix(in srgb,var(--teal) 28%,transparent)}
+.sph{padding:9px 13px;margin:0 0 10px}
+.sph small{font-size:10px}.sph b{font-size:15.5px}
+@media(max-width:800px){
+  .sbc{height:32px;min-height:32px;padding:0 10px;gap:6px;font-size:12.5px;border-radius:99px}
+  .sbc em{font-size:11px;padding:1px 6px}
+  .fbar{padding:6px;gap:6px}
+  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px)}.flt select,.flt input{flex:1;width:100%}
+  .fexp{flex:none;width:38px;padding:0;justify-content:center;align-self:stretch;border-radius:11px} /* icon only, keeps the row short */
+  .fexp span{display:none}
+  .sph{padding:9px 12px}.sph b{font-size:15px}
+}
+
+/* Educlawd CRM · school timeline: line icons, clean cards, soft rail */
+.tlh{display:flex;align-items:center;gap:8px}
+.tlh span{font-size:11px;font-weight:700;padding:1px 9px;border-radius:99px;background:var(--soft);border:1px solid var(--line);color:var(--teal2)}
+.dg .dl2{display:inline-flex;align-items:center;margin:14px 0 10px;padding:3px 11px;border-radius:99px;background:var(--soft);border:1px solid var(--line);color:var(--teal2);font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.dg:first-of-type .dl2{margin-top:2px}
+.tl{position:relative;border-left:0;margin-left:0;padding-left:38px}
+.tl::before{content:"";position:absolute;left:14px;top:8px;bottom:8px;width:2px;border-radius:2px;background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 26%,transparent),color-mix(in srgb,var(--teal) 7%,transparent))}
+.ev{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:9px;box-shadow:0 1px 3px rgba(120,80,30,.07);transition:box-shadow .15s,transform .15s}
+.ev:hover{transform:translateX(1px);box-shadow:0 6px 16px rgba(120,80,30,.12)}
+.ev .ic{position:absolute;left:-38px;top:10px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:0;background:color-mix(in srgb,var(--c) 13%,var(--card));color:var(--c);border:3px solid var(--bg);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 28%,transparent)}
+.ev .ic svg{width:15px;height:15px;stroke-width:2.1}
+.evh{align-items:center;gap:8px;justify-content:flex-start}
+.evh b{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c);padding:2px 9px;border-radius:99px;background:color-mix(in srgb,var(--c) 12%,transparent)}
+.evh small{margin-left:auto;font-size:11.5px;white-space:nowrap}
+.evt{margin-top:7px;font-size:13.5px;line-height:1.5}
+.evby{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--mute)}
+.evby i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:800;color:#fff;flex:none}
+.evn{margin-top:8px;border-radius:10px}
+@media(max-width:800px){
+  .tl{padding-left:32px}
+  .tl::before{left:11px}
+  .ev{padding:10px 12px;border-radius:13px}
+  .ev .ic{left:-32px;top:9px;width:26px;height:26px;border-width:2px}
+  .ev .ic svg{width:13px;height:13px}
+  .evt{font-size:13px}
+}
+
+/* Educlawd CRM · school priority badge and the Priority group on Home */
+.prb{display:inline-flex;align-items:center;gap:3px;flex:none;padding:1px 7px 1px 6px;border-radius:99px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.prb svg{flex:none;stroke-width:2.4}
+.snm{display:flex;align-items:center;gap:7px;min-width:0}
+.snm small{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hnm{display:flex;align-items:center;gap:8px;min-width:0}
+.hnm h2{min-width:0}
+.hti .prb{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.45);color:#fff}
+.dl2.hl .prh{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:color-mix(in srgb,#dc2626 14%,transparent);color:#dc2626;flex:none}
 </style>
 </head>
 <body>
@@ -1700,6 +1769,7 @@ function insTeam(ss,ev,all,pl){
 }
 function analyticsView(){
   if(!DF.some(([v])=>v===an.d))an.d="all"; // exact stages now live in the stage bar
+  const view=["overview","schools","deals"].includes(an.view)?an.view:"overview"; // tabs sit on top, filters follow
   const[from,to]=anRange(),every=allEvents(),df=(an.d||"all")!=="all";
   const pl=PL[an.p],ss=schools.filter(s=>mOK(owner(s))&&dOK(s)),ids=new Set(ss.map(s=>s.id));
   const all=df?every.filter(x=>ids.has(x.s.id)):every;
@@ -1710,12 +1780,12 @@ function analyticsView(){
   const col=collectedIn(from,to,df?ids:null);
   const won=ss.filter(s=>s.stage==="Won").length,lost=ss.filter(s=>s.stage==="Lost").length,cl=won+lost;
   const avg=wonP.length?wonV/wonP.length:0;
-  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt"><small>${l}</small>${x}</label>`;
+  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt" title="${l}">${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
   const keys=[...new Set([...team.map(u=>u.id),...every.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||every.some(x=>x.u===k));
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
-  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`)}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
+  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="overview"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
@@ -1726,9 +1796,9 @@ function analyticsView(){
   <div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
   <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div></div>`;
   {const i=out.indexOf('<div class="kgrid k6 lbl">');if(i<0)return out;
-   const v=["overview","schools","deals"].includes(an.view)?an.view:"overview",nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
+   const v=view,nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
    const tabs=`<div class="dtabs ivt">${[["overview","Overview",null,"#4f46e5"],["schools","Schools",ss.length,"#0d7f7a"],["deals","Deals",nD,"#16a34a"]].map(([k,l,n,c])=>`<button class="${v===k?"on":""}" style="--c:${c}" data-iview="${k}"><span>${l}</span>${n===null?"":`<em>${n}</em>`}</button>`).join("")}</div>`;
-   const head=out.slice(0,i)+insStageBar(ss)+tabs;
+   const head=tabs+out.slice(0,i)+insStageBar(ss); // Overview/Schools/Deals on top, then filters, then stages
    return v==="schools"?head+insSchoolsTab(ss):v==="deals"?head+insDealsTab(ss):head+out.slice(i)}
 }
 
@@ -1986,12 +2056,15 @@ function homeList(f){
   const rows=schools.slice().sort((a,b)=>ord(b).localeCompare(ord(a))).filter(s=>[s.name,s.city,s.board,s.state].join(" ").toLowerCase().includes(f));
   if(!rows.length)return noMatch(schools.length?"No schools match your search":"<div style='font-size:34px'>🏫</div>No schools yet.<br><small>Tap the yellow + button to add your first school</small>");
   const now=Date.now();
-  return `<div class="dl2 hl">All schools <span class="cnt">${rows.length}</span></div>`+rows.map(s=>{
+  const hi=rows.filter(s=>s.priority==="High"),rest=rows.filter(s=>s.priority!=="High"); // high priority sits on top for every member
+  const card=s=>{
     const st=s.stage||"Lead",loc=[s.city,s.state].filter(Boolean).join(", ");
     const stu=s.strength||(s.deal&&s.deal.students);
     return `<div class="it sc ${s.id===sel?"on":""}" data-sel="${s.id}" style="--sc:${STC[st]||"#64748b"}"><div class="ha">${esc((s.name||"?")[0].toUpperCase())}</div>
-    <div class="sb"><b>${esc(s.name)}</b><small>${esc(loc||"No location")}</small></div>
-    <div class="rt"><span class="pill ${sc(st)}">${esc(st)}</span>${stu?`<span class="stu" title="${esc(stu)} students">${sv(P.cap,13)}${esc(stu)}</span>`:""}</div>${sv('<path d="m9 18 6-6-6-6"/>',16)}</div>`}).join("");
+    <div class="sb"><b>${esc(s.name)}</b><div class="snm"><small>${esc(loc||"No location")}</small>${prTag(s.priority)}</div></div>
+    <div class="rt"><span class="pill ${sc(st)}">${esc(st)}</span>${stu?`<span class="stu" title="${esc(stu)} students">${sv(P.cap,13)}${esc(stu)}</span>`:""}</div>${sv('<path d="m9 18 6-6-6-6"/>',16)}</div>`};
+  return (hi.length?`<div class="dl2 hl"><span class="prh">${sv(P.flag,13)}</span>Priority <span class="cnt">${hi.length}</span></div>`+hi.map(card).join(""):"")
+    +(rest.length?`<div class="dl2 hl">${hi.length?"Other schools":"All schools"} <span class="cnt">${rest.length}</span></div>`+rest.map(card).join(""):"");
 }
 
 /* Educlawd CRM · Tasks: cards, Today / Upcoming tabs */
@@ -2078,10 +2151,10 @@ const STG_IC={all:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14"
   Won:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>',
   Lost:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>'};
 function stageBar(cnt,cur,attr,unit){
-  const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b";
-    return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c}" ${attr}="${esc(k)}"><span class="sbi">${sv(STG_IC[k]||STG_IC.Lead,17)}</span><span class="sbt"><b>${esc(l)}</b><small>${n} ${unit}${n===1?"":"s"}</small></span></button>`};
   const tot=STAGES.reduce((a,g)=>a+(cnt[g]||0),0);
-  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All stages",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
+  const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b"; // one small chip per stage: dot, name, count
+    return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c}" ${attr}="${esc(k)}" title="${esc(l)} · ${n} ${unit}${n===1?"":"s"}"><i></i>${esc(l)}<em>${n}</em></button>`};
+  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
 function sbSync(r){const t=r.parentElement&&r.parentElement.querySelector(".sbtrk"),i=t&&t.querySelector("i");if(!i)return;const w=r.clientWidth,sw=r.scrollWidth;if(sw<=w+2){t.classList.add("full");return}t.classList.remove("full");const tw=t.clientWidth,th=Math.max(24,tw*w/sw);i.style.width=th+"px";i.style.left=((tw-th)*r.scrollLeft/(sw-w))+"px"}
 document.addEventListener("scroll",e=>{const r=e.target;if(r&&r.classList&&r.classList.contains("sbrow"))sbSync(r)},true);
 addEventListener("resize",()=>document.querySelectorAll(".sbrow").forEach(sbSync));
@@ -3181,7 +3254,7 @@ function netAct(el){
 /* Educlawd CRM · School detail: info, contacts, activity, deal */
 function detail(s){
   const tabs=[["activity","Activity"],["deal","Deal"],["contacts","Info"]];
-  return `<div class="dbrow"><button class="dback" data-act="back" aria-label="Back" title="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button></div><div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><h2>${esc(s.name)}</h2><small>${[s.city,s.state].filter(Boolean).map(esc).join(", ")||"Location not added"}</small></div><label class="hst"><small>Stage</small><select data-act="stage" class="pill ${sc(s.stage)}" aria-label="Deal stage" title="Deal stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></label></div>
+  return `<div class="dbrow"><button class="dback" data-act="back" aria-label="Back" title="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button></div><div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><div class="hnm"><h2>${esc(s.name)}</h2>${prTag(s.priority)}</div><small>${[s.city,s.state].filter(Boolean).map(esc).join(", ")||"Location not added"}</small></div><label class="hst"><small>Stage</small><select data-act="stage" class="pill ${sc(s.stage)}" aria-label="Deal stage" title="Deal stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></label></div>
   <div class="tabs">${tabs.map(([k,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}">${k==="contacts"?sv(P.info,22):TI[k]}<span>${l}</span></button>`).join("")}</div>`+({contacts,activity,deal}[tab]||activity)(s);
 }
 function schoolInfo(s){
@@ -3201,6 +3274,21 @@ function contacts(s){
   return head+`<div class="row" style="margin-top:12px"><button class="ib" data-act="addContact">${sv(P.userp)} Add contact</button></div><div style="margin-top:12px">${c.length?c.map(p=>`<div class="ct"><button class="alt ed" data-editc="${p.id}" aria-label="Edit contact" title="Edit contact">${sv(P.pencil,13)}</button><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<small>${esc(p.phone||"—")}${p.email?" · "+esc(p.email):""}</small></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):`<div class="empty">No contacts yet</div>`}</div>`;
 }
 const TC=t=>"t-"+(ICON[t]?t:"Update");
+/* Educlawd CRM · school priority: High pins the school to the top of Home for everyone */
+const PRIOS=["High","Medium","Low"],PRC={High:"#dc2626",Medium:"#ea580c",Low:"#64748b"};
+const prTag=p=>PRC[p]?`<span class="prb" style="--c:${PRC[p]}">${sv(P.flag,10)}${p}</span>`:"";
+/* Educlawd CRM · line icons for the school timeline (ICON keeps the emoji for toasts) */
+const EV_IC={Call:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  Meeting:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  Visit:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  Message:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  Email:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  Demo:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="m10 7 5 3-5 3z"/>',
+  Task:'<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10"/><path d="m9 11 3 3 9-9"/>',
+  Note:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/>',
+  Deal:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  Update:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>'};
+const EV_SHOW=new Set([...ACT,"Note","Task"]); // the timeline holds what people log, plus tasks
 const tm=d=>new Date(d).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});
 function dayLabel(d){const x=new Date(d),n=new Date(),k=a=>a.toDateString();return k(x)===k(n)?"Today":k(x)===k(new Date(n-864e5))?"Yesterday":x.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
 function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
@@ -3210,11 +3298,11 @@ function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
   return{c:"",t:fmt(due)}}
 function activity(s){
   const now=Date.now(),tasks=(s.tasks||[]).slice().sort((a,b)=>a.due.localeCompare(b.due)),od=tasks.filter(t=>new Date(t.due)<now).length;
-  const tl=s.timeline||[],list=tl,groups=[];
+  const tl=(s.timeline||[]).filter(e=>EV_SHOW.has(e.type)),list=tl,groups=[];
   list.forEach(e=>{const k=dayLabel(e.at);let g=groups[groups.length-1];if(!g||g.k!==k)groups.push(g={k,items:[]});g.items.push(e)});
   return `<div class="abar"><button class="ib" data-act="addTask">${sv(P.calp)} Add task</button><button class="alt ib" data-act="logAct">${sv(P.list)} Log activity</button></div>
   <h4>Upcoming tasks</h4>${tasks.length?taskList(tasks.map(t=>({t,s})),true):`<div class="empty emp">🎉 No open tasks<br><small>Use “Add task” to schedule a call, meeting or visit</small></div>`}
-  <h4>Timeline</h4>  ${groups.length?groups.map(g=>`<div class="dg"><div class="dl2">${g.k}</div><div class="tl">${g.items.map(e=>`<div class="ev ${TC(e.type)}"><div class="ic">${ICON[e.type]||"•"}</div><div class="evh"><b>${esc(e.type)}</b><small>${tm(e.at)}${e.by?" · "+esc(e.by):""}</small></div><div class="evt">${esc(e.text)}</div>${e.note?`<div class="evn">${sv(P.note,14)}<span>${esc(e.note)}</span></div>`:""}</div>`).join("")}</div></div>`).join(""):`<div class="empty emp">Nothing logged yet</div>`}`;
+  <h4 class="tlh">Timeline${tl.length?`<span>${tl.length}</span>`:""}</h4>  ${groups.length?groups.map(g=>`<div class="dg"><div class="dl2">${g.k}</div><div class="tl">${g.items.map(e=>`<div class="ev ${TC(e.type)}"><div class="ic">${sv(EV_IC[e.type]||EV_IC.Note,15)}</div><div class="evh"><b>${esc(e.type)}</b><small>${tm(e.at)}</small></div><div class="evt">${esc(e.text)}</div>${e.note?`<div class="evn">${sv(P.note,14)}<span>${esc(e.note)}</span></div>`:""}${e.by?`<div class="evby"><i style="background:${mcol(e.byId||e.by)}">${esc(e.by[0].toUpperCase())}</i>${esc(e.by)}</div>`:""}</div>`).join("")}</div></div>`).join(""):`<div class="empty emp">Nothing logged yet<br><small>Use “Log activity” to record a call, meeting or demo</small></div>`}`;
 }
 const dealTable=(c,v)=>`<div class="hero"><small>Total incl. 18% GST</small><div class="big">${inr(c.yt)}<span> / year</span></div><div class="sub">${inr(c.mt)} per month</div></div>
 <div class="brk"><div class="br"><span>Amount</span><b>${inr(c.y)}<i>/yr</i></b></div><div class="br"><span>GST @ 18%</span><b>${inr(c.yg)}<i>/yr</i></b></div></div>
@@ -3343,7 +3431,7 @@ function geoFill(btn){
   document.addEventListener("touchend",finish,{passive:true});
   document.addEventListener("touchcancel",finish,{passive:true});
 })();
-function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address" oninput="if(!this.value.trim())document.getElementById('f_geo').value=''">${esc(s.address||"")}</textarea><input type="hidden" id="f_geo" value="${esc(s.geo||"")}"><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
+function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address" oninput="if(!this.value.trim())document.getElementById('f_geo').value=''">${esc(s.address||"")}</textarea><input type="hidden" id="f_geo" value="${esc(s.geo||"")}"><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<div class="grid"><div><label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></div><div><label>Priority</label><select id="f_prio"><option value="">No priority</option>${PRIOS.map(x=>`<option ${x===(s.priority||"")?"selected":""}>${x}</option>`).join("")}</select></div></div><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
   if(t)t.value=ok?inr(c.yt)+" / year":"";
   e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
@@ -3433,15 +3521,17 @@ function onClick(e){
     if(m==="chpw")return pwForm();
     if(m==="savePw")return savePw();
     if(m==="signout")return signOut();
-    if(m==="saveSchool"){const n=val("f_name");if(!n)return err("School name is required");if(val("f_phone")&&!/^\d{10}$/.test(val("f_phone")))return err("Phone number must be exactly 10 digits");
+    if(m==="saveSchool"){const n=val("f_name");if(!n)return err("School name is required");
       const old=schools.find(x=>x.id===el.dataset.id),o=old?structuredClone(old):{id:uid(),stage:"Lead",created:new Date().toISOString(),createdBy:me?me.name:undefined,createdById:me?me.id:undefined};
-      const nw={name:n,phone:val("f_phone"),strength:val("f_strength"),board:val("f_board"),city:getCity(),state:val("f_state"),address:val("f_address")};
+      const nw={name:n,strength:val("f_strength"),board:val("f_board"),city:getCity(),state:val("f_state"),address:val("f_address")};
       const ch=Object.keys(nw).filter(k=>String(o[k]||"")!==nw[k]);Object.assign(o,nw);{const g=val("f_geo");if(g)o.geo=g;else delete o.geo}
       const ns=val("f_stage")||"Lead",stCh=old&&(o.stage||"Lead")!==ns;o.stage=ns;
+      const np=val("f_prio")||"",prCh=(o.priority||"")!==np;if(np)o.priority=np;else delete o.priority;
       const ds=+val("f_strength")||+((o.deal||{}).students)||0,dp=+val("e_dp")||0,db=val("e_db"),sd=document.getElementById("e_sd").value;let dealCh=false;
       if(ds>0&&dp>0){const od=o.deal||{};if(od.students!==ds||od.price!==dp||od.basis!==db||(od.signing||"")!==sd){o.deal={students:ds,price:dp,basis:db,signing:sd};dealCh=true}}
       if(ch.length||!old)log(o,"Update",old?"Details updated: "+ch.join(", "):"School added to CRM");
       if(stCh)log(o,"Update","Stage changed to "+ns);
+      if(prCh&&old)log(o,"Update",np?"Priority set to "+np:"Priority cleared");
       if(dealCh){const c=calc(o.deal);log(o,"Deal",`${ds} students × ${inr(dp)} per ${db==="year"?"year":"month"} = ${inr(c.m)}/month + 18% GST = ${inr(c.mt)}/month (${inr(c.yt)}/year)${sd?" · signing date "+fmtDate(sd):""}`)}
       if(isAdmin()){const ow=val("f_owner");if(ow&&ow!==(old?(old._owner||""):me.id))o._assign=ow}
       sel=o.id;if(!old)tab="activity";close();toast(old?"✏️":"🏫",old?(dealCh?"School & deal details updated successfully":"School details updated successfully"):"School added successfully");return save(o)}
