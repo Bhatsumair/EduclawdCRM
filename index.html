@@ -1206,7 +1206,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .fexp{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:8px 16px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;font-weight:700;border:0;box-shadow:0 4px 12px color-mix(in srgb,var(--teal) 30%,transparent)}
 .fexp:hover{filter:brightness(1.05)}
 @media(max-width:800px){.fbar{padding:10px}.fgrid{grid-template-columns:1fr 1fr}.fexp{width:100%;justify-content:center}}
-.dtabs.ivt{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 12px}
+.dtabs.ivt{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 12px}
 .spgo{cursor:pointer}
 .stgch{position:relative;margin-left:auto;display:inline-flex;align-items:center;border:1.5px solid color-mix(in srgb,var(--c) 45%,var(--line));border-radius:99px;background:color-mix(in srgb,var(--c) 9%,var(--card))}
 .stgch i{position:absolute;left:10px;width:8px;height:8px;border-radius:50%;background:var(--c);pointer-events:none}
@@ -1280,6 +1280,11 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .hnm h2{min-width:0}
 .hti .prb{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.45);color:#fff}
 .dl2.hl .prh{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:color-mix(in srgb,#dc2626 14%,transparent);color:#dc2626;flex:none}
+
+/* Educlawd CRM · Activity tab: three cards above a full-width feed */
+.ins.actw{grid-template-columns:1fr}
+@media(min-width:801px){.items .kgrid.k6.act3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:1180px){.items .kgrid.k6.act3{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -1746,7 +1751,7 @@ function insTeam(ss,ev,all,pl){
 }
 function analyticsView(){
   if(!DF.some(([v])=>v===an.d))an.d="all"; // exact stages now live in the stage bar
-  const view=["overview","schools","deals"].includes(an.view)?an.view:"overview"; // tabs sit on top, filters follow
+  const view=["overview","activity","schools","deals"].includes(an.view)?an.view:"overview"; // tabs sit on top, filters follow
   const[from,to]=anRange(),every=allEvents(),df=(an.d||"all")!=="all";
   /* a school counts for the chosen period if it was added then, or was touched then */
   const addedT=s=>new Date(s.created||((s.timeline&&s.timeline.length)?s.timeline[s.timeline.length-1].at:0)||0).getTime()||0;
@@ -1765,21 +1770,28 @@ function analyticsView(){
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
-  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="overview"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
+  /* the Activity cards always read today and this week, whatever the period filter says */
+  const sodT=new Date().setHours(0,0,0,0),wkT=sodT-((new Date(sodT).getDay()+6)%7)*864e5; // week starts Monday
+  const base=every.filter(x=>mOK(x.u)&&dOK(x.s)),tdE=base.filter(x=>x.t>=sodT),wkE=base.filter(x=>x.t>=wkT);
+  const ty=(l,a)=>a.filter(x=>x.e.type===l).length,pz=(n,w)=>n+" "+w+(n===1?"":"s"),mtT=ty("Meeting",tdE),mtW=ty("Meeting",wkE);
+  const actCards=`<div class="kgrid k6 lbl act3">${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" \u00b7 "+pz(mtT,"meeting")+" \u00b7 "+pz(ty("Demo",tdE),"demo"):"nothing logged yet")}
+  ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" \u00b7 since Monday")}
+  ${insKc("#16a34a",EV_IC.Meeting,String(mtT),"Meetings today",mtW+" so far this week")}</div>`;
+  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="activity"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Schools "+pl,won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
   ${insKc("#2563eb",P.receipt,inrS(col.t),"Collected "+pl,col.n+" payment"+(col.n===1?"":"s")+" received")}
   ${insKc("#7c3aed",P.flag,cl>=WR_MIN?Math.round(won*100/cl)+"%":"—","Win rate",cl>=WR_MIN?won+" won of "+cl+" closed":"needs "+WR_MIN+" closed deals")}
   ${insKc("#db2777",P.net||P.home,(ss.length?Math.round(won*100/ss.length):0)+"%","Conversion",won+" won of "+ss.length+" school"+(ss.length===1?"":"s"))}</div>
-  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss)}${insRisk(ss)}
-  <div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
-  <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div></div>`;
+  <div class="ins">${insFunnel(ss)}${insTeam(ss,ev,all,pl)}${insTrend(ss)}${insRisk(ss)}</div>`;
+  const feed=`<div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${evf.length}<small>${esc(pl)}</small></div></div>
+  <div class="feedw">${evf.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,evf.length):noMatch("No activity for these filters")}</div></div>`;
   {const i=out.indexOf('<div class="kgrid k6 lbl">');if(i<0)return out;
    const v=view,nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
-   const tabs=`<div class="dtabs ivt">${[["overview","Overview",null,"#4f46e5"],["schools","Schools",ss.length,"#0d7f7a"],["deals","Deals",nD,"#16a34a"]].map(([k,l,n,c])=>`<button class="${v===k?"on":""}" style="--c:${c}" data-iview="${k}"><span>${l}</span>${n===null?"":`<em>${n}</em>`}</button>`).join("")}</div>`;
+   const tabs=`<div class="dtabs ivt">${[["overview","Overview",null,"#4f46e5"],["activity","Activity",evf.length,"#d97706"],["schools","Schools",ss.length,"#0d7f7a"],["deals","Deals",nD,"#16a34a"]].map(([k,l,n,c])=>`<button class="${v===k?"on":""}" style="--c:${c}" data-iview="${k}"><span>${l}</span>${n===null?"":`<em>${n}</em>`}</button>`).join("")}</div>`;
    const head=tabs+out.slice(0,i); // Overview/Schools/Deals on top, then the filters (stage included)
-   return v==="schools"?head+insSchoolsTab(ss):v==="deals"?head+insDealsTab(ss):head+out.slice(i)}
+   return v==="schools"?head+insSchoolsTab(ss):v==="deals"?head+insDealsTab(ss):v==="activity"?head+actCards+`<div class="ins actw">${feed}</div>`:head+out.slice(i)}
 }
 
 /* Educlawd CRM · Excel (.xlsx) export: writer + member / period filters */
