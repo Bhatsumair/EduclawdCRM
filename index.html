@@ -1235,19 +1235,37 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .fnw .fct b{text-decoration:none;background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:8px;padding:1px 7px}
 .tkg .tk{border-radius:14px;transition:transform .15s,box-shadow .15s}.tkg .tk:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.07)}
 
-/* Educlawd CRM · stage bar v2: tinted chips, share of the pipeline, count up front */
-.sbar{margin:0 0 14px;padding:7px;border-radius:18px;background:linear-gradient(180deg,var(--card),color-mix(in srgb,var(--teal) 4%,var(--card)))}
-.sbrow{gap:7px}
-.sbc{min-width:162px;padding:9px 14px 14px 9px;border-radius:13px;background:color-mix(in srgb,var(--c) 6%,var(--card));border:1px solid color-mix(in srgb,var(--c) 16%,transparent);transition:transform .15s,box-shadow .15s,background .15s}
-.sbc:not(.on):hover{background:color-mix(in srgb,var(--c) 11%,var(--card));transform:translateY(-1px);box-shadow:0 4px 12px color-mix(in srgb,var(--c) 18%,transparent)}
-.sbc:not(.on) .sbi{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 20%,transparent)}
-.sbc .sbt small em{font-style:normal;font-weight:800;font-size:12.5px;color:var(--c)}
-.sbc.on .sbt small em{color:#fff}
-.sbc .sbp{position:absolute;left:10px;right:14px;bottom:6px;height:3px;border-radius:3px;background:color-mix(in srgb,var(--c) 15%,transparent);overflow:hidden} /* how much of the pipeline sits here */
-.sbc .sbp::after{content:"";position:absolute;top:0;bottom:0;left:0;width:var(--p,0%);background:var(--c);border-radius:3px}
-.sbc.on .sbp{background:rgba(255,255,255,.28)}.sbc.on .sbp::after{background:#fff}
-.sbc.z{opacity:.55}
-@media(max-width:800px){.sbar{padding:5px}.sbc{min-width:0;padding:6px 11px 12px 6px}.sbc .sbp{left:7px;right:11px;bottom:5px;height:2.5px}.sbc .sbt small em{font-size:11.5px}}
+/* Educlawd CRM · stage bar v3: one plain row of chips, pick a stage to filter */
+.sbar{margin:0 0 12px;padding:0;border:0;background:none;box-shadow:none;border-radius:0}
+.sbrow{gap:6px;padding:1px}
+.sbc{min-width:0;display:inline-flex;align-items:center;gap:7px;height:34px;min-height:34px;padding:0 11px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 1px 2px rgba(120,80,30,.06);transition:background .14s,border-color .14s,color .14s}
+.sbc i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
+.sbc em{font-style:normal;font-weight:700;font-size:11.5px;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--c) 13%,transparent);color:var(--c)}
+.sbc:not(.on):hover{background:color-mix(in srgb,var(--c) 7%,var(--card));border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
+.sbc.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--c) 32%,transparent)}
+.sbc.on i{background:rgba(255,255,255,.9)}
+.sbc.on em{background:rgba(255,255,255,.22);color:#fff}
+.sbc.z{opacity:.5}
+.sbtrk{height:3px;margin:7px 2px 0;background:color-mix(in srgb,var(--teal) 9%,transparent)}
+/* filter bar: one compact row */
+.fbar{gap:7px;align-items:center;padding:7px 8px;border-radius:14px;margin-bottom:10px}
+.fgrid{display:flex;flex-wrap:wrap;gap:7px}
+.flt{flex-direction:row;align-items:center;gap:6px;flex:0 1 auto}
+.flt small{font-size:11px;letter-spacing:0;text-transform:none;padding:0}
+.flt select,.flt input{width:auto;min-height:34px;padding:6px 28px 6px 11px;border-radius:10px;font-size:13px;background-position:right 9px center}
+.flt input{padding:6px 11px}
+.fexp{min-height:34px;padding:6px 13px;border-radius:10px;font-size:13px;gap:6px;box-shadow:0 2px 7px color-mix(in srgb,var(--teal) 28%,transparent)}
+.sph{padding:9px 13px;margin:0 0 10px}
+.sph small{font-size:10px}.sph b{font-size:15.5px}
+@media(max-width:800px){
+  .sbc{height:32px;min-height:32px;padding:0 10px;gap:6px;font-size:12.5px;border-radius:99px}
+  .sbc em{font-size:11px;padding:1px 6px}
+  .fbar{padding:6px;gap:6px}
+  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px)}.flt select,.flt input{flex:1;width:100%}
+  .fexp{flex:none;width:38px;padding:0;justify-content:center;align-self:stretch;border-radius:11px} /* icon only, keeps the row short */
+  .fexp span{display:none}
+  .sph{padding:9px 12px}.sph b{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -1725,7 +1743,7 @@ function analyticsView(){
   const col=collectedIn(from,to,df?ids:null);
   const won=ss.filter(s=>s.stage==="Won").length,lost=ss.filter(s=>s.stage==="Lost").length,cl=won+lost;
   const avg=wonP.length?wonV/wonP.length:0;
-  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt"><small>${l}</small>${x}</label>`;
+  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt" title="${l}">${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
   const keys=[...new Set([...team.map(u=>u.id),...every.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||every.some(x=>x.u===k));
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
@@ -2094,9 +2112,9 @@ const STG_IC={all:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14"
   Lost:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>'};
 function stageBar(cnt,cur,attr,unit){
   const tot=STAGES.reduce((a,g)=>a+(cnt[g]||0),0);
-  const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b",p=k==="all"?100:(tot?Math.round(n*100/tot):0); // share of the whole pipeline
-    return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c};--p:${p}%" ${attr}="${esc(k)}"><span class="sbi">${sv(STG_IC[k]||STG_IC.Lead,17)}</span><span class="sbt"><b>${esc(l)}</b><small><em>${n}</em> ${unit}${n===1?"":"s"}${k==="all"||!tot?"":" · "+p+"%"}</small></span><i class="sbp"></i></button>`};
-  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All stages",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
+  const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b"; // one small chip per stage: dot, name, count
+    return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c}" ${attr}="${esc(k)}" title="${esc(l)} · ${n} ${unit}${n===1?"":"s"}"><i></i>${esc(l)}<em>${n}</em></button>`};
+  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
 function sbSync(r){const t=r.parentElement&&r.parentElement.querySelector(".sbtrk"),i=t&&t.querySelector("i");if(!i)return;const w=r.clientWidth,sw=r.scrollWidth;if(sw<=w+2){t.classList.add("full");return}t.classList.remove("full");const tw=t.clientWidth,th=Math.max(24,tw*w/sw);i.style.width=th+"px";i.style.left=((tw-th)*r.scrollLeft/(sw-w))+"px"}
 document.addEventListener("scroll",e=>{const r=e.target;if(r&&r.classList&&r.classList.contains("sbrow"))sbSync(r)},true);
 addEventListener("resize",()=>document.querySelectorAll(".sbrow").forEach(sbSync));
