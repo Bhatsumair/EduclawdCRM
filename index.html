@@ -1183,20 +1183,7 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .pdiag .row button{min-height:34px;padding:6px 12px;font-size:12.5px}
 
 /* stage bar */
-.sbar{margin:4px 0 14px;padding:6px;border-radius:16px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 3px rgba(15,23,42,.04)}
-.sbrow{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none}.sbrow::-webkit-scrollbar{display:none} /* one row */
-.sbtrk{position:relative;height:6px;margin:6px 10px 1px;border-radius:6px;background:color-mix(in srgb,var(--teal) 13%,transparent);cursor:pointer;touch-action:none}
-.sbtrk::before{content:"";position:absolute;left:0;right:0;top:-8px;bottom:-8px} /* bigger grab area */ /* the scroll line: shows where you are in the row */
-.sbtrk i{position:absolute;top:0;bottom:0;left:0;width:30%;border-radius:6px;background:var(--teal);cursor:grab}.sbtrk:hover i{background:var(--teal2)}.sbtrk.drag i{cursor:grabbing;background:var(--teal2)}
-.sbtrk.full{display:none}
-.sbc{flex:0 0 auto;display:flex;align-items:center;gap:10px;min-width:150px;padding:9px 14px 9px 9px;border-radius:12px;background:none;border:1px solid transparent;color:var(--ink);text-align:left;box-shadow:none;min-height:0;font-weight:400;scroll-snap-align:start;position:relative}
-.sbc:hover{background:color-mix(in srgb,var(--c) 7%,transparent)}
-.sbc .sbi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
-.sbc .sbt{min-width:0}.sbc .sbt b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sbc .sbt small{display:block;font-size:12px;color:var(--mute);white-space:nowrap}
-.sbc.z{opacity:.6}
-@media(max-width:800px){.sbar{padding:5px}.sbrow{gap:4px}.sbc{min-width:0;padding:6px 10px 6px 6px;gap:7px;border-radius:10px}.sbc .sbi{width:28px;height:28px;border-radius:8px}.sbc .sbi svg{width:15px;height:15px}.sbc .sbt b{font-size:12.5px}.sbc .sbt small{font-size:11px}.sph{padding:10px 12px}.sph b{font-size:15px}}
-.sbc.on{background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 78%,#000));color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 35%,transparent);opacity:1}
-.sbc.on .sbi{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35)}.sbc.on .sbt small{color:rgba(255,255,255,.85)}
+@media(max-width:800px){.sph{padding:10px 12px}.sph b{font-size:15px}}
 /* schools in a stage */
 .sph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--c) 25%,var(--line));border-left:4px solid var(--c)}
 .sph small{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute)}.sph b{font-size:17px;color:var(--ink)}
@@ -1235,18 +1222,10 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .fnw .fct b{text-decoration:none;background:color-mix(in srgb,var(--c) 12%,transparent);border-radius:8px;padding:1px 7px}
 .tkg .tk{border-radius:14px;transition:transform .15s,box-shadow .15s}.tkg .tk:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.07)}
 
-/* Educlawd CRM · stage bar v3: one plain row of chips, pick a stage to filter */
-.sbar{margin:0 0 12px;padding:0;border:0;background:none;box-shadow:none;border-radius:0}
-.sbrow{gap:6px;padding:1px}
-.sbc{min-width:0;display:inline-flex;align-items:center;gap:7px;height:34px;min-height:34px;padding:0 11px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--ink);font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 1px 2px rgba(120,80,30,.06);transition:background .14s,border-color .14s,color .14s}
-.sbc i{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none}
-.sbc em{font-style:normal;font-weight:700;font-size:11.5px;padding:1px 7px;border-radius:99px;background:color-mix(in srgb,var(--c) 13%,transparent);color:var(--c)}
-.sbc:not(.on):hover{background:color-mix(in srgb,var(--c) 7%,var(--card));border-color:color-mix(in srgb,var(--c) 45%,var(--line))}
-.sbc.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--c) 32%,transparent)}
-.sbc.on i{background:rgba(255,255,255,.9)}
-.sbc.on em{background:rgba(255,255,255,.22);color:#fff}
-.sbc.z{opacity:.5}
-.sbtrk{height:3px;margin:7px 2px 0;background:color-mix(in srgb,var(--teal) 9%,transparent)}
+/* Educlawd CRM · the stage dropdown standing on its own (Deals) */
+.sgf{margin:0 0 10px}
+.sgf select{width:auto;max-width:100%;min-height:34px;margin:0;padding:6px 28px 6px 11px;border-radius:10px;border:1px solid var(--line);background:var(--card) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23738086' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>") no-repeat right 9px center/14px;appearance:none;-webkit-appearance:none;font-weight:600;font-size:13px;color:var(--ink);box-shadow:0 1px 2px rgba(120,80,30,.06)}
+.sgf select:focus{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 15%,transparent);outline:none}
 /* filter bar: one compact row */
 .fbar{gap:7px;align-items:center;padding:7px 8px;border-radius:14px;margin-bottom:10px}
 .fgrid{display:flex;flex-wrap:wrap;gap:7px}
@@ -1258,8 +1237,6 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .sph{padding:9px 13px;margin:0 0 10px}
 .sph small{font-size:10px}.sph b{font-size:15.5px}
 @media(max-width:800px){
-  .sbc{height:32px;min-height:32px;padding:0 10px;gap:6px;font-size:12.5px;border-radius:99px}
-  .sbc em{font-size:11px;padding:1px 6px}
   .fbar{padding:6px;gap:6px}
   .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px)}.flt select,.flt input{flex:1;width:100%}
   .fexp{flex:none;width:38px;padding:0;justify-content:center;align-self:stretch;border-radius:11px} /* icon only, keeps the row short */
@@ -1668,7 +1645,7 @@ function insRisk(ss){
 }
 const numCell=(k,f,n)=>n?`<button class="numb" data-tsl="${esc(k)}" data-f="${f}" title="Show these schools">${n}</button>`:`<span class="numz">0</span>`;
 /* side sheet listing schools — used by the team table and the 6-month chart */
-function insStageBar(ss){const cnt={};ss.forEach(s=>{const g=s.stage||"Lead";cnt[g]=(cnt[g]||0)+1});return stageBar(cnt,an.stg||"all","data-istg","school")}
+function insStageSel(ss){const cnt={};ss.forEach(s=>{const g=s.stage||"Lead";cnt[g]=(cnt[g]||0)+1});return stageSel(cnt,an.stg||"all","data-anstg")}
 /* Team Insights · Schools tab: every school in the chosen stage, with a quick stage switcher */
 function insSchoolsTab(ss){
   const st=an.stg||"all",list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
@@ -1785,7 +1762,7 @@ function analyticsView(){
   const evf=evm.filter(x=>an.t==="all"||KG[an.t].includes(x.k)).sort((a,b)=>b.t-a.t);
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
   const pages=Math.max(1,Math.ceil(evf.length/PS)),pg=Math.min(Math.max(1,an.pg||1),pages),pageRows=evf.slice((pg-1)*PS,pg*PS);an.pg=pg;
-  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="overview"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
+  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${view==="overview"?F("Activity",`<select data-an="t" aria-label="Type">${[["all","All activity"],["schools","Schools"],["contacts","Contacts"],["activities","Activities & notes"],["tasks","Tasks"],["deals","Deals & stages"]].map(([v,l])=>opt(v,l,an.t)).join("")}</select>`):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Total schools",won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
@@ -1798,7 +1775,7 @@ function analyticsView(){
   {const i=out.indexOf('<div class="kgrid k6 lbl">');if(i<0)return out;
    const v=view,nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
    const tabs=`<div class="dtabs ivt">${[["overview","Overview",null,"#4f46e5"],["schools","Schools",ss.length,"#0d7f7a"],["deals","Deals",nD,"#16a34a"]].map(([k,l,n,c])=>`<button class="${v===k?"on":""}" style="--c:${c}" data-iview="${k}"><span>${l}</span>${n===null?"":`<em>${n}</em>`}</button>`).join("")}</div>`;
-   const head=tabs+out.slice(0,i)+insStageBar(ss); // Overview/Schools/Deals on top, then filters, then stages
+   const head=tabs+out.slice(0,i); // Overview/Schools/Deals on top, then the filters (stage included)
    return v==="schools"?head+insSchoolsTab(ss):v==="deals"?head+insDealsTab(ss):head+out.slice(i)}
 }
 
@@ -2132,7 +2109,7 @@ function dealsView(f){
   const openTab=dstg==="all"?dtab==="month"||dtab==="upcoming":dstg!=="Won"&&dstg!=="Lost";
   const dist=OPEN_STAGES().map(g=>[g,openAll.filter(r=>(r.s.stage||"Lead")===g).length]).filter(x=>x[1]);
   const dcnt={};every.forEach(r=>{const g=r.s.stage||"Lead";dcnt[g]=(dcnt[g]||0)+1});
-  const seg=stageBar(dcnt,dstg,"data-dstg","deal")+(dstg==="all"?tabs:"");
+  const seg=`<div class="sgf">${stageSel(dcnt,dstg,"data-dstgf")}</div>`+(dstg==="all"?tabs:"");
   const rows=(dstg==="all"?sets[dtab]:every.filter(r=>(r.s.stage||"Lead")===dstg).sort(openTab?byDate:recent)).filter(r=>(r.s.name||"").toLowerCase().includes(f));
   if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":dtab==="won"?"No won deals yet":"No lost deals");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
@@ -2150,27 +2127,11 @@ const STG_IC={all:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14"
   "Contract Signed":'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   Won:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>',
   Lost:'<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>'};
-function stageBar(cnt,cur,attr,unit){
-  const tot=STAGES.reduce((a,g)=>a+(cnt[g]||0),0);
-  const card=(k,l,n)=>{const c=k==="all"?"#0d7f7a":STC[k]||"#64748b"; // one small chip per stage: dot, name, count
-    return `<button class="sbc ${cur===k?"on":""} ${n?"":"z"}" style="--c:${c}" ${attr}="${esc(k)}" title="${esc(l)} · ${n} ${unit}${n===1?"":"s"}"><i></i>${esc(l)}<em>${n}</em></button>`};
-  return `<div class="sbar" data-noswipe="1"><div class="sbrow">${card("all","All",tot)}${STAGES.map(g=>card(g,g,cnt[g]||0)).join("")}</div><div class="sbtrk"><i></i></div></div>`}
-function sbSync(r){const t=r.parentElement&&r.parentElement.querySelector(".sbtrk"),i=t&&t.querySelector("i");if(!i)return;const w=r.clientWidth,sw=r.scrollWidth;if(sw<=w+2){t.classList.add("full");return}t.classList.remove("full");const tw=t.clientWidth,th=Math.max(24,tw*w/sw);i.style.width=th+"px";i.style.left=((tw-th)*r.scrollLeft/(sw-w))+"px"}
-document.addEventListener("scroll",e=>{const r=e.target;if(r&&r.classList&&r.classList.contains("sbrow"))sbSync(r)},true);
-addEventListener("resize",()=>document.querySelectorAll(".sbrow").forEach(sbSync));
-/* drag the scroll line (mouse or finger) to move through the stages; click the line to jump there */
-(function(){let d=null;
-  const go=(e)=>{const{t,r,off}=d,i=t.querySelector("i"),tw=t.clientWidth,th=i.offsetWidth,x=e.clientX-t.getBoundingClientRect().left-off;
-    r.scrollLeft=Math.max(0,Math.min(1,x/Math.max(1,tw-th)))*(r.scrollWidth-r.clientWidth)};
-  document.addEventListener("pointerdown",e=>{const t=e.target.closest&&e.target.closest(".sbtrk");if(!t)return;const r=t.parentElement.querySelector(".sbrow"),i=t.querySelector("i");if(!r||!i)return;
-    const onThumb=e.target===i;d={t,r,off:onThumb?e.clientX-i.getBoundingClientRect().left:i.offsetWidth/2};r.style.scrollSnapType="none";t.classList.add("drag");go(e);
-    try{t.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()});
-  document.addEventListener("pointermove",e=>{if(d)go(e)});
-  const end=()=>{if(!d)return;d.r.style.scrollSnapType="";d.t.classList.remove("drag");d=null};
-  document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
-  /* mouse wheel over the stage row scrolls it sideways */
-  document.addEventListener("wheel",e=>{const r=e.target.closest&&e.target.closest(".sbrow");if(!r||Math.abs(e.deltaX)>Math.abs(e.deltaY)||r.scrollWidth<=r.clientWidth)return;r.scrollLeft+=e.deltaY;e.preventDefault()},{passive:false});
-})();
+/* Educlawd CRM · stage filter: a dropdown, like the member / period / deals ones */
+function stageSel(cnt,cur,attr){
+  const tot=STAGES.reduce((a,g)=>a+(cnt[g]||0),0),sel=cur||"all";
+  const o=(k,l,n)=>`<option value="${esc(k)}" ${k===sel?"selected":""}>${esc(l)} (${n})</option>`;
+  return `<select ${attr} aria-label="Stage" title="Filter by stage">${o("all","All stages",tot)}${STAGES.map(g=>o(g,g,cnt[g]||0)).join("")}</select>`}
 /* Educlawd CRM · Navigation list and main render() */
 const GN=[["home","Home"],["tasks","Tasks"],["contacts","Contacts"],["deals","Deals"]];
 const gnList=()=>[...GN,["claims","Expenses"],...(isAdmin()?[["expenses","Finance"],["network","School Network"],["reports","Team Insights"],["team","Team"]]:[]),["profile","Profile"]]; // Payments + Team: admin-only, shown in the side menu
@@ -2184,7 +2145,6 @@ function savePos(){const a=scrEl();if(!a||!me)return;scrMap[viewKey()]=a.scrollT
 function render(){
   const a=scrEl(),top=a?a.scrollTop:0;if(lastKey)scrMap[lastKey]=top;
   render0();
-  document.querySelectorAll(".sbrow").forEach(r=>{const o=r.querySelector(".sbc.on");if(o)r.scrollLeft=Math.max(0,o.offsetLeft-r.offsetLeft-(r.clientWidth-o.offsetWidth)/2);sbSync(r)}); // keep the chosen stage in view
   const k=viewKey(),same=k===lastKey;lastKey=k;
   if(a){const want=same?top:(scrMap[k]||0);if(a.scrollTop!==want)a.scrollTop=want;requestAnimationFrame(()=>{const w2=same?want:(scrMap[k]||0);if(lastKey===k&&Math.abs(a.scrollTop-w2)>2)a.scrollTop=w2})}
 }
@@ -3503,8 +3463,6 @@ function onClick(e){
   if(t.closest&&t.closest("#xexp"))return gtab==="claims"?exportClaims():gtab==="expenses"?exportFinance():gtab==="network"?exportNetwork():undefined;
   if(t.closest&&t.closest("#add"))return gtab==="network"?payForm(null,!psel&&schools.some(x=>x.id===nsel&&x.stage==="Won")&&!payments.some(p=>p.schoolId===nsel)?nsel:""):gtab==="expenses"?expForm():gtab==="claims"?clmForm():schoolForm();
   if(el=g("data-dt")){dtab=el.dataset.dt;return render()}
-  if(el=g("data-dstg")){dstg=el.dataset.dstg;return render()}
-  if(el=g("data-istg")){const k=el.dataset.istg;an.stg=k;if(k!=="all"&&(an.view||"overview")==="overview")an.view="schools";return render()}
   if(el=g("data-iview")){an.view=el.dataset.iview;return render()}
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
   if(el=g("data-dstgo"))return stageSheet();
@@ -3572,6 +3530,10 @@ document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.d
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
 document.addEventListener("change",payChange);
+/* the stage dropdowns */
+document.addEventListener("change",e=>{const d=e.target&&e.target.dataset;if(!d)return;
+  if("anstg" in d){const k=e.target.value;an.stg=k;if(k!=="all"&&(an.view||"overview")==="overview")an.view="schools";return render()}
+  if("dstgf" in d){dstg=e.target.value;return render()}});
 document.addEventListener("change",e=>{const id=e.target&&e.target.dataset&&e.target.dataset.chstg;if(!id)return;const old=schools.find(x=>x.id===id);if(!old)return;const o=structuredClone(old),ns=e.target.value;if((o.stage||"Lead")===ns)return;o.stage=ns;log(o,"Update","Stage changed to "+ns);toast("🔁",(o.name||"School")+" moved to "+ns);save(o)});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="c_dsel"){const i=document.getElementById("c_des");if(!i)return;const o=e.target.value==="Other";i.style.display=o?"":"none";if(o)i.focus();else i.value=""}});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="f_state")cityRefill()});
