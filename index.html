@@ -1293,6 +1293,16 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
   .ev .ic svg{width:13px;height:13px}
   .evt{font-size:13px}
 }
+
+/* Educlawd CRM · school priority badge and the Priority group on Home */
+.prb{display:inline-flex;align-items:center;gap:3px;flex:none;padding:1px 7px 1px 6px;border-radius:99px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.prb svg{flex:none;stroke-width:2.4}
+.snm{display:flex;align-items:center;gap:7px;min-width:0}
+.snm small{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hnm{display:flex;align-items:center;gap:8px;min-width:0}
+.hnm h2{min-width:0}
+.hti .prb{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.45);color:#fff}
+.dl2.hl .prh{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:color-mix(in srgb,#dc2626 14%,transparent);color:#dc2626;flex:none}
 </style>
 </head>
 <body>
@@ -2046,12 +2056,15 @@ function homeList(f){
   const rows=schools.slice().sort((a,b)=>ord(b).localeCompare(ord(a))).filter(s=>[s.name,s.city,s.board,s.state].join(" ").toLowerCase().includes(f));
   if(!rows.length)return noMatch(schools.length?"No schools match your search":"<div style='font-size:34px'>🏫</div>No schools yet.<br><small>Tap the yellow + button to add your first school</small>");
   const now=Date.now();
-  return `<div class="dl2 hl">All schools <span class="cnt">${rows.length}</span></div>`+rows.map(s=>{
+  const hi=rows.filter(s=>s.priority==="High"),rest=rows.filter(s=>s.priority!=="High"); // high priority sits on top for every member
+  const card=s=>{
     const st=s.stage||"Lead",loc=[s.city,s.state].filter(Boolean).join(", ");
     const stu=s.strength||(s.deal&&s.deal.students);
     return `<div class="it sc ${s.id===sel?"on":""}" data-sel="${s.id}" style="--sc:${STC[st]||"#64748b"}"><div class="ha">${esc((s.name||"?")[0].toUpperCase())}</div>
-    <div class="sb"><b>${esc(s.name)}</b><small>${esc(loc||"No location")}</small></div>
-    <div class="rt"><span class="pill ${sc(st)}">${esc(st)}</span>${stu?`<span class="stu" title="${esc(stu)} students">${sv(P.cap,13)}${esc(stu)}</span>`:""}</div>${sv('<path d="m9 18 6-6-6-6"/>',16)}</div>`}).join("");
+    <div class="sb"><b>${esc(s.name)}</b><div class="snm"><small>${esc(loc||"No location")}</small>${prTag(s.priority)}</div></div>
+    <div class="rt"><span class="pill ${sc(st)}">${esc(st)}</span>${stu?`<span class="stu" title="${esc(stu)} students">${sv(P.cap,13)}${esc(stu)}</span>`:""}</div>${sv('<path d="m9 18 6-6-6-6"/>',16)}</div>`};
+  return (hi.length?`<div class="dl2 hl"><span class="prh">${sv(P.flag,13)}</span>Priority <span class="cnt">${hi.length}</span></div>`+hi.map(card).join(""):"")
+    +(rest.length?`<div class="dl2 hl">${hi.length?"Other schools":"All schools"} <span class="cnt">${rest.length}</span></div>`+rest.map(card).join(""):"");
 }
 
 /* Educlawd CRM · Tasks: cards, Today / Upcoming tabs */
@@ -3241,7 +3254,7 @@ function netAct(el){
 /* Educlawd CRM · School detail: info, contacts, activity, deal */
 function detail(s){
   const tabs=[["activity","Activity"],["deal","Deal"],["contacts","Info"]];
-  return `<div class="dbrow"><button class="dback" data-act="back" aria-label="Back" title="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button></div><div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><h2>${esc(s.name)}</h2><small>${[s.city,s.state].filter(Boolean).map(esc).join(", ")||"Location not added"}</small></div><label class="hst"><small>Stage</small><select data-act="stage" class="pill ${sc(s.stage)}" aria-label="Deal stage" title="Deal stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></label></div>
+  return `<div class="dbrow"><button class="dback" data-act="back" aria-label="Back" title="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></button></div><div class="hero2 slim"><div class="hav">${esc((s.name||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</div><div class="hti"><div class="hnm"><h2>${esc(s.name)}</h2>${prTag(s.priority)}</div><small>${[s.city,s.state].filter(Boolean).map(esc).join(", ")||"Location not added"}</small></div><label class="hst"><small>Stage</small><select data-act="stage" class="pill ${sc(s.stage)}" aria-label="Deal stage" title="Deal stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></label></div>
   <div class="tabs">${tabs.map(([k,l])=>`<button class="${tab===k?"on":""}" data-tab="${k}">${k==="contacts"?sv(P.info,22):TI[k]}<span>${l}</span></button>`).join("")}</div>`+({contacts,activity,deal}[tab]||activity)(s);
 }
 function schoolInfo(s){
@@ -3261,6 +3274,9 @@ function contacts(s){
   return head+`<div class="row" style="margin-top:12px"><button class="ib" data-act="addContact">${sv(P.userp)} Add contact</button></div><div style="margin-top:12px">${c.length?c.map(p=>`<div class="ct"><button class="alt ed" data-editc="${p.id}" aria-label="Edit contact" title="Edit contact">${sv(P.pencil,13)}</button><div class="av">${esc((p.name||"?")[0].toUpperCase())}</div><div style="flex:1;min-width:0"><b>${esc(p.name)}</b> ${p.designation?`<span class="pill">${esc(p.designation)}</span>`:""}<small>${esc(p.phone||"—")}${p.email?" · "+esc(p.email):""}</small></div>${p.phone?callBtn(p.phone,p.name):""}</div>`).join(""):`<div class="empty">No contacts yet</div>`}</div>`;
 }
 const TC=t=>"t-"+(ICON[t]?t:"Update");
+/* Educlawd CRM · school priority: High pins the school to the top of Home for everyone */
+const PRIOS=["High","Medium","Low"],PRC={High:"#dc2626",Medium:"#ea580c",Low:"#64748b"};
+const prTag=p=>PRC[p]?`<span class="prb" style="--c:${PRC[p]}">${sv(P.flag,10)}${p}</span>`:"";
 /* Educlawd CRM · line icons for the school timeline (ICON keeps the emoji for toasts) */
 const EV_IC={Call:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
   Meeting:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -3415,7 +3431,7 @@ function geoFill(btn){
   document.addEventListener("touchend",finish,{passive:true});
   document.addEventListener("touchcancel",finish,{passive:true});
 })();
-function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address" oninput="if(!this.value.trim())document.getElementById('f_geo').value=''">${esc(s.address||"")}</textarea><input type="hidden" id="f_geo" value="${esc(s.geo||"")}"><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
+function schoolForm(s={}){const d=s.deal||{};modal(`<h3>${s.id?"Edit":"Add"} school</h3><div class="grid">${fld("f_name","School name",s.name)}${fld("f_strength","Strength (students)",s.strength,"number")}${fld("f_phone","Phone number",s.phone,"tel")}<div><label>Board</label><select id="f_board"><option value="">Select board</option>${(s.board&&!BOARDS.includes(s.board)?[s.board]:[]).concat(BOARDS).map(x=>`<option ${x===s.board?"selected":""}>${esc(x)}</option>`).join("")}</select></div><div><label>State / UT</label><select id="f_state"><option value="">Select state / UT</option>${(s.state&&!IN_STATES.includes(s.state)?[s.state]:[]).concat(IN_STATES).map(x=>`<option ${x===s.state?"selected":""}>${esc(x)}</option>`).join("")}</select></div>${cityField(s.city,s.state)}</div><label>Address</label><div class="addrw"><textarea id="f_address" oninput="if(!this.value.trim())document.getElementById('f_geo').value=''">${esc(s.address||"")}</textarea><input type="hidden" id="f_geo" value="${esc(s.geo||"")}"><button type="button" class="geo" onclick="geoFill(this)" title="Use my current location" aria-label="Use my current location">${GEO_SVG}</button></div><div class="geohint" id="geohint"></div>${isAdmin()?`<label>Assigned to</label><select id="f_owner">${s.id&&!s._owner?`<option value="" selected>Unassigned (admin only)</option>`:""}${team.filter(u=>u.active!==false).map(u=>`<option value="${u.id}" ${u.id===(s._owner||(s.id?"":me.id))?"selected":""}>${esc(u.name)}${u.role==="admin"?" (admin)":""}</option>`).join("")}</select>`:""}<div class="grid"><div><label>Stage</label><select id="f_stage">${STAGES.map(x=>`<option ${x===(s.stage||"Lead")?"selected":""}>${x}</option>`).join("")}</select></div><div><label>Priority</label><select id="f_prio"><option value="">No priority</option>${PRIOS.map(x=>`<option ${x===(s.priority||"")?"selected":""}>${x}</option>`).join("")}</select></div></div><h4 style="margin:16px 0 6px">Deal details</h4><div class="grid"><div><label>Pricing basis</label><select id="e_db"><option value="month" ${d.basis!=="year"?"selected":""}>Per student / month</option><option value="year" ${d.basis==="year"?"selected":""}>Per student / full year</option></select></div>${fld("e_dp","Price quoted per student (₹)",d.price??"","number")}${fld("e_sd","Signing date",d.signing||"","date")}<div><label>Total amount (incl. 18% GST)</label><input id="e_total" readonly tabindex="-1" placeholder="Auto-calculated" style="font-weight:700;color:var(--teal2);background:var(--soft)"></div></div><div class="dst" id="e_prev"></div>${btns("saveSchool","Save",s.id||"")}`);editPrev()}
 function editPrev(){const e=document.getElementById("e_prev");if(!e)return;const v={students:+val("f_strength")||0,price:+val("e_dp")||0,basis:val("e_db")},ok=v.students>0&&v.price>0,c=calc(v),t=document.getElementById("e_total");
   if(t)t.value=ok?inr(c.yt)+" / year":"";
   e.innerHTML=ok?`${v.students} students × ${inr(v.price)} per ${v.basis==="year"?"year":"month"} · Yearly ${inr(c.y)} + 18% GST ${inr(c.yg)} · Monthly (incl. GST) <b style="color:var(--teal)">${inr(c.mt)}</b>`:"Enter the school strength and price to calculate the total"}
@@ -3510,10 +3526,12 @@ function onClick(e){
       const nw={name:n,phone:val("f_phone"),strength:val("f_strength"),board:val("f_board"),city:getCity(),state:val("f_state"),address:val("f_address")};
       const ch=Object.keys(nw).filter(k=>String(o[k]||"")!==nw[k]);Object.assign(o,nw);{const g=val("f_geo");if(g)o.geo=g;else delete o.geo}
       const ns=val("f_stage")||"Lead",stCh=old&&(o.stage||"Lead")!==ns;o.stage=ns;
+      const np=val("f_prio")||"",prCh=(o.priority||"")!==np;if(np)o.priority=np;else delete o.priority;
       const ds=+val("f_strength")||+((o.deal||{}).students)||0,dp=+val("e_dp")||0,db=val("e_db"),sd=document.getElementById("e_sd").value;let dealCh=false;
       if(ds>0&&dp>0){const od=o.deal||{};if(od.students!==ds||od.price!==dp||od.basis!==db||(od.signing||"")!==sd){o.deal={students:ds,price:dp,basis:db,signing:sd};dealCh=true}}
       if(ch.length||!old)log(o,"Update",old?"Details updated: "+ch.join(", "):"School added to CRM");
       if(stCh)log(o,"Update","Stage changed to "+ns);
+      if(prCh&&old)log(o,"Update",np?"Priority set to "+np:"Priority cleared");
       if(dealCh){const c=calc(o.deal);log(o,"Deal",`${ds} students × ${inr(dp)} per ${db==="year"?"year":"month"} = ${inr(c.m)}/month + 18% GST = ${inr(c.mt)}/month (${inr(c.yt)}/year)${sd?" · signing date "+fmtDate(sd):""}`)}
       if(isAdmin()){const ow=val("f_owner");if(ow&&ow!==(old?(old._owner||""):me.id))o._assign=ow}
       sel=o.id;if(!old)tab="activity";close();toast(old?"✏️":"🏫",old?(dealCh?"School & deal details updated successfully":"School details updated successfully"):"School added successfully");return save(o)}
