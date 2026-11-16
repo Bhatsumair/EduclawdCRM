@@ -1074,24 +1074,24 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mtr .wv{color:#15803d;font-weight:700}
 
 /* CEO performance block */
-.tkg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.tkg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
 .tk{border-radius:12px;padding:8px 11px;min-width:0;background:color-mix(in srgb,var(--c) 7%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line))}
 .tk small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}
 .tk b{display:block;font-size:17px;font-weight:800;color:color-mix(in srgb,var(--c) 70%,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .tk span{display:block;font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tdl{display:inline;font-weight:800}.tdl.up{color:#15803d}.tdl.dn{color:#b91c1c}.tdl.nil{color:var(--mute)}
-@media(min-width:801px){.tkg{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(min-width:801px){.tkg{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .mleg .lc::before{background:#3b82f6!important}
 .tb.lc{background:linear-gradient(180deg,#60a5fa,#2563eb)}
 .mch.t2 .may{width:auto;min-width:34px}.mch.t2{grid-template-columns:auto minmax(0,1fr)}
-.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr .7fr}
+.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.3fr) .7fr 1fr 1fr .8fr}
 .mtb.t2 .mtr small{font-size:10.5px;color:var(--mute);font-weight:600}
 .mtr .cv{color:#1d4ed8;font-weight:700}
-@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:520px}}
+@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:0}}
 .mch.t2 .tb em{white-space:nowrap;font-size:10px}
-.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr}
+.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.3fr) .7fr 1fr 1fr}
 .mtb.t2 .mtr.one{display:block;color:var(--mute);font-size:12px;font-weight:600}
-@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:460px}.mtb.t2 .mtr.one{min-width:0}}
+@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:0}.mtb.t2 .mtr.one{min-width:0}.tkg{gap:6px}.tkg .tk{padding:8px 9px}}
 .nlist{display:grid;gap:10px;min-width:0}.nlist>.it{margin:0}
 @media(min-width:801px){.nlist{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.nlist .ngrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1280px){.nlist .ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -1631,21 +1631,18 @@ function insTrend(ss){
   const dl=(c,p)=>{if(!P)return"";if(!p)return c?`<span class="tdl up">New</span>`:`<span class="tdl nil">—</span>`;const g=Math.round((c-p)*100/p);return `<span class="tdl ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲":g<0?"▼":""} ${Math.abs(g)}%</span>`};
   const tile=(c,l,v,sub,d)=>`<div class="tk" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}${d||""}</span></div>`;
   const kp=`<div class="tkg">
-    ${tile("#16a34a","Revenue won",inr(tWV),tW+" deal"+(tW===1?"":"s")+" ",P&&dl(tWV,P.wv))}
-    ${tile("#2563eb","Cash collected",inr(tC),"",P&&dl(tC,P.c))}
     ${tile("#0d7f7a","Deals won",String(tW),"",P&&dl(tW,P.w))}
-    ${tile("#7c3aed","Schools added",String(tA),inrS(tAV)+" pipeline ",P&&dl(tA,P.a))}
-    ${tile("#d97706","Avg deal size",avg?inr(avg):"—","")}
-    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","")}</div>`;
+    ${tile("#16a34a","Revenue won",inr(tWV),avg?"avg "+inrS(avg)+" ":"",P&&dl(tWV,P.wv))}
+    ${tile("#2563eb","Cash collected",inr(tC),tC&&tWV?Math.round(tC*100/tWV)+"% of revenue ":"",P&&dl(tC,P.c))}</div>`;
   const mx=Math.max(1,...bks.map(b=>Math.max(b.w_v,b.c_v))),nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p},top=nice(mx),many=bks.length>12;
   const bar=(i,v,cls,lbl)=>v?`<button type="button" class="tb ${cls}" data-tbk="${i}" data-f="${cls==="lw"?"won":"all"}" style="height:${Math.max(2,Math.round(v*100/top))}%" title="${lbl}: ${inr(v)}">${many?"":`<em>${inrS(v)}</em>`}</button>`:`<span class="tb ${cls} z"></span>`;
   const chart=`<div class="mch t2"><div class="may">${[4,3,2,1,0].map(k=>`<span>${k?inrS(top*k/4):"0"}</span>`).join("")}</div>
     <div class="mpl" style="grid-template-columns:repeat(${bks.length},minmax(0,1fr))"><div class="mgr">${[0,1,2,3,4].map(()=>"<i></i>").join("")}</div>
     ${bks.map((b,i)=>`<div class="mcol ${b.b>=now&&b.a<=now?"now":""}"><div class="mbx">${bar(i,b.w_v,"lw","Revenue won")}${bar(i,b.c_v,"lc","Collected")}</div><div class="mlb">${many&&i%Math.ceil(bks.length/12)?"":esc(b.c&&bks.length>7?b.c:b.l)}</div></div>`).join("")}</div></div>`;
-  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.a_n||b.w_n||b.c_v),hid=bks.length-rows.length;
+  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.w_n||b.c_v),hid=bks.length-rows.length;
   const gr=(i)=>{const p=bks[i-1];if(!p)return `<span class="g nil">—</span>`;const c=bks[i].w_v,v=p.w_v;if(!v)return c?`<span class="g up">New</span>`:`<span class="g nil">—</span>`;const g=Math.round((c-v)*100/v);return `<span class="g ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲ ":g<0?"▼ ":""}${Math.abs(g)}%</span>`};
-  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Added</span><span>Won</span><span>Won value</span><span>Collected</span><span>Avg deal</span>${fine?"":"<span>Growth</span>"}</div>
-    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.a_n?`<button class="nmb la" data-tbk="${i}" data-f="all">${b.a_n}</button>`:"0"}</span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span><span>${b.w_n?inrS(b.w_v/b.w_n):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
+  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Deals won</span><span>Revenue</span><span>Collected</span>${fine?"":"<span>Growth</span>"}</div>
+    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
   return `<div class="brk wide mow">
     <div class="brkh"><div class="bh1">Performance · ${esc(PL[an.p]||"")}<small>${unit==="day"?"Day by day":unit==="week"?"Week by week":unit==="month"?"Month by month":"Quarter by quarter"}${P?" · change vs the previous period":""}</small></div>
       <div class="mleg" style="margin:0;flex:none"><span class="lw">Revenue won</span><span class="lc">Collected</span></div></div>
