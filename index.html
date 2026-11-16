@@ -1192,7 +1192,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .spc:hover{box-shadow:0 6px 18px rgba(15,23,42,.08);transform:translateY(-1px)}
 .spc .r{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.spc .r b{font-size:15px}
 .spv{font-weight:800;color:var(--teal2);white-space:nowrap}.spv small{font-weight:500;color:var(--mute)}
-.spm{display:block;color:var(--mute);margin:2px 0 8px}
+.spm{display:block;color:var(--mute);margin:2px 0 0}
+.spm.spd{margin:1px 0 8px;font-weight:600;color:color-mix(in srgb,var(--teal) 72%,var(--mute))}
+.spc .spgo>.spm:last-child{margin-bottom:8px}
 .spf{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)}.spf .fav.sm{width:22px;height:22px;font-size:11px}.spd{margin-left:auto;color:var(--mute)}
 
 /* Team Insights v2 */
@@ -1680,7 +1682,8 @@ function insSchoolsTab(ss){
   return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b";
     return `<div class="spc" style="--c:${cc}"><div class="spgo" data-tgo="${s.id}" title="Open this school">
       <div class="r"><b>${esc(s.name||"—")}</b><span class="spv">${insVal(s)?inrS(insVal(s))+"<small>/yr</small>":"No deal yet"}</span></div>
-      <small class="spm">${esc([s.city,s.board,s.strength?s.strength+" students":""].filter(Boolean).join(" · "))||"&nbsp;"}</small></div>
+      <small class="spm">${esc([[s.city,s.state].filter(Boolean).join(", "),s.board].filter(Boolean).join(" · "))||"Location not added"}</small>
+      ${(()=>{const d=s.deal||{},b=(d.basis||"year")==="month"?"mo":"yr",x=[s.strength?s.strength+" students":"",d.price?inr(d.price)+"/student/"+b:""].filter(Boolean).join(" · ");return x?`<small class="spm spd">${esc(x)}</small>`:""})()}</div>
       <div class="spf"><span class="fav sm" style="background:${mcol(owner(s))}">${esc((ulabel(owner(s))||"?")[0].toUpperCase())}</span><span>${esc(ulabel(owner(s)))}</span>
       <label class="stgch" style="--c:${cc}" title="Change stage"><i></i><select data-chstg="${s.id}" aria-label="Stage">${STAGES.map(g=>`<option ${g===(s.stage||"Lead")?"selected":""}>${g}</option>`).join("")}</select></label></div></div>`}).join("")+`</div>`;
 }
