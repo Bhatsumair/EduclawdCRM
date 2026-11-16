@@ -1074,24 +1074,24 @@ input.ro{background:var(--soft)!important;color:var(--mute);border-style:dashed;
 .mtr .wv{color:#15803d;font-weight:700}
 
 /* CEO performance block */
-.tkg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.tkg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
 .tk{border-radius:12px;padding:8px 11px;min-width:0;background:color-mix(in srgb,var(--c) 7%,var(--card));border:1px solid color-mix(in srgb,var(--c) 18%,var(--line))}
 .tk small{display:block;font-size:10.5px;font-weight:700;color:var(--mute)}
 .tk b{display:block;font-size:17px;font-weight:800;color:color-mix(in srgb,var(--c) 70%,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
 .tk span{display:block;font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tdl{display:inline;font-weight:800}.tdl.up{color:#15803d}.tdl.dn{color:#b91c1c}.tdl.nil{color:var(--mute)}
-@media(min-width:801px){.tkg{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(min-width:801px){.tkg{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .mleg .lc::before{background:#3b82f6!important}
 .tb.lc{background:linear-gradient(180deg,#60a5fa,#2563eb)}
 .mch.t2 .may{width:auto;min-width:34px}.mch.t2{grid-template-columns:auto minmax(0,1fr)}
-.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr .7fr}
+.mtb.t2 .mth,.mtb.t2 .mtr{grid-template-columns:minmax(0,1.3fr) .7fr 1fr 1fr .8fr}
 .mtb.t2 .mtr small{font-size:10.5px;color:var(--mute);font-weight:600}
 .mtr .cv{color:#1d4ed8;font-weight:700}
-@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:520px}}
+@media(max-width:800px){.mtb.t2{overflow-x:auto}.mtb.t2 .mth,.mtb.t2 .mtr{min-width:0}}
 .mch.t2 .tb em{white-space:nowrap;font-size:10px}
-.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.2fr) .55fr .55fr .9fr .9fr .8fr}
+.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{grid-template-columns:minmax(0,1.3fr) .7fr 1fr 1fr}
 .mtb.t2 .mtr.one{display:block;color:var(--mute);font-size:12px;font-weight:600}
-@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:460px}.mtb.t2 .mtr.one{min-width:0}}
+@media(max-width:800px){.mtb.t2.nogr .mth,.mtb.t2.nogr .mtr{min-width:0}.mtb.t2 .mtr.one{min-width:0}.tkg{gap:6px}.tkg .tk{padding:8px 9px}}
 .nlist{display:grid;gap:10px;min-width:0}.nlist>.it{margin:0}
 @media(min-width:801px){.nlist{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}.nlist .ngrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:1280px){.nlist .ngrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -1192,7 +1192,9 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 .spc:hover{box-shadow:0 6px 18px rgba(15,23,42,.08);transform:translateY(-1px)}
 .spc .r{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.spc .r b{font-size:15px}
 .spv{font-weight:800;color:var(--teal2);white-space:nowrap}.spv small{font-weight:500;color:var(--mute)}
-.spm{display:block;color:var(--mute);margin:2px 0 8px}
+.spm{display:block;color:var(--mute);margin:2px 0 0}
+.spm.spd{margin:1px 0 8px;font-weight:600;color:color-mix(in srgb,var(--teal) 72%,var(--mute))}
+.spc .spgo>.spm:last-child{margin-bottom:8px}
 .spf{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)}.spf .fav.sm{width:22px;height:22px;font-size:11px}.spd{margin-left:auto;color:var(--mute)}
 
 /* Team Insights v2 */
@@ -1229,16 +1231,21 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 /* filter bar: one compact row */
 .fbar{gap:7px;align-items:center;padding:7px 8px;border-radius:14px;margin-bottom:10px}
 .fgrid{display:flex;flex-wrap:wrap;gap:7px}
-.flt{flex-direction:row;align-items:center;gap:6px;flex:0 1 auto}
-.flt small{font-size:11px;letter-spacing:0;text-transform:none;padding:0}
-.flt select,.flt input{width:auto;min-height:34px;padding:6px 28px 6px 11px;border-radius:10px;font-size:13px;background-position:right 9px center}
-.flt input{padding:6px 11px}
+.flt{display:inline-flex;flex-direction:row;align-items:center;gap:7px;flex:0 1 auto;height:36px;padding:0 11px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 2px rgba(120,80,30,.06);transition:border-color .15s,box-shadow .15s}
+.flt:hover{border-color:color-mix(in srgb,var(--teal) 40%,var(--line))}
+.flt:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 16%,transparent)}
+.flt .fi{display:grid;place-items:center;flex:none;color:var(--teal)}
+.flt small{flex:none;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;padding:0;color:var(--mute)}
+.flt select,.flt input{width:auto;min-width:0;height:34px;min-height:0;padding:0 19px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none;background-repeat:no-repeat;background-position:right 0 center;background-size:13px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23738086' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>")}
+.flt input{padding-right:0;background-image:none;font-weight:500;cursor:text;min-width:132px}
+.flt select:focus,.flt input:focus{outline:0;box-shadow:none}
+.flt.fq{flex:1 1 190px;max-width:290px}
 .fexp{min-height:34px;padding:6px 13px;border-radius:10px;font-size:13px;gap:6px;box-shadow:0 2px 7px color-mix(in srgb,var(--teal) 28%,transparent)}
 .sph{padding:9px 13px;margin:0 0 10px}
 .sph small{font-size:10px}.sph b{font-size:15.5px}
 @media(max-width:800px){
   .fbar{padding:6px;gap:6px}
-  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px)}.flt select,.flt input{flex:1;width:100%}
+  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px);padding:0 9px}.flt select,.flt input{flex:1;width:100%;min-width:0;font-size:16px}.flt.fq{flex:1 1 100%;max-width:none}
   .fexp{flex:none;width:38px;padding:0;justify-content:center;align-self:stretch;border-radius:11px} /* icon only, keeps the row short */
   .fexp span{display:none}
   .sph{padding:9px 12px}.sph b{font-size:15px}
@@ -1307,6 +1314,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 const ACT=["Call","Meeting","Visit","Message","Email","Demo"]; // task types
 const ACT_LOG=["Call","Message","Meeting","Email","Note"]; // what you can log as an activity
 const FEED_TYPES=new Set(["Call","Meeting","Email","Message"]); // what the Activity tab counts and lists
+/* Educlawd CRM · small icons for the Team Insights filter pills */
+const FI={m:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  p:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  s:'<path d="M22 3H2l8 9.46V19l4 2v-8.54z"/>',
+  d:'<path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.2"/>',
+  q:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'};
 const ICON={Call:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',Meeting:"🤝",Visit:"📍",Message:"💬",Email:"✉️",Demo:"🖥️",Task:"✅",Note:"📝",Deal:"💰",Update:"🔄"};
 const IN_STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 const STAGES=["Lead","Contacted","Meeting done","Demo done","Proposal sent","Negotiation","Contract Signed","Won","Lost"];
@@ -1321,6 +1334,10 @@ const sc=s=>"s-"+(s||"Lead").split(" ")[0];
 
 /* Educlawd CRM · State, local cache, sync queue, save / merge */
 let schools=[],sel=null,tab="activity",dbc=null,filter="";
+let retTab=""; // the module to go back to when a school opened from elsewhere is closed
+/* open a school from anywhere; only School Network and Profile have to hand the detail panel over to Home */
+function openSchool(id,t){close();if(gtab==="network"||gtab==="profile"){retTab=gtab;gtab="home"}sel=id;tab=t||"activity";itab=t==="contacts"?"contacts":"school";filter="";const q=$("#q");if(q)q.value=""}
+function backFromSchool(){sel=null;if(retTab){gtab=retTab;retTab=""}}
 let expenses=[],excats=[];
 let payments=[],psel=null; // admin-only payment plans (stored as their own admin-owned docs)
 const LS="educlawd_crm_v2";
@@ -1475,7 +1492,7 @@ async function syncNow(first){
     else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
   }finally{syncing=false}
 }
-async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);gtab="home";sel=null;nsel=null;psel=null;render(); // always open on the dashboard
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);gtab="home";retTab="";sel=null;nsel=null;psel=null;render(); // always open on the dashboard
   {const q=new URLSearchParams(location.search);if(q.get("go")==="tasks"){gtab="tasks";sel=null;render();history.replaceState(history.state,"",location.pathname)}}
   startSync();pushSync()}
 const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
@@ -1525,7 +1542,7 @@ const savePw=safe(async()=>{
 });
 
 /* Educlawd CRM · Team analytics view, filters, feed pagination */
-let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1,stg:"all",view:"overview"};
+let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1,stg:"all",view:"overview",q:""};
 const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
 const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
 const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
@@ -1614,21 +1631,18 @@ function insTrend(ss){
   const dl=(c,p)=>{if(!P)return"";if(!p)return c?`<span class="tdl up">New</span>`:`<span class="tdl nil">—</span>`;const g=Math.round((c-p)*100/p);return `<span class="tdl ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲":g<0?"▼":""} ${Math.abs(g)}%</span>`};
   const tile=(c,l,v,sub,d)=>`<div class="tk" style="--c:${c}"><small>${l}</small><b>${v}</b><span>${sub}${d||""}</span></div>`;
   const kp=`<div class="tkg">
-    ${tile("#16a34a","Revenue won",inr(tWV),tW+" deal"+(tW===1?"":"s")+" ",P&&dl(tWV,P.wv))}
-    ${tile("#2563eb","Cash collected",inr(tC),"",P&&dl(tC,P.c))}
     ${tile("#0d7f7a","Deals won",String(tW),"",P&&dl(tW,P.w))}
-    ${tile("#7c3aed","Schools added",String(tA),inrS(tAV)+" pipeline ",P&&dl(tA,P.a))}
-    ${tile("#d97706","Avg deal size",avg?inr(avg):"—","")}
-    ${tile("#db2777","Conversion",tA?Math.round(tW*100/tA)+"%":"—","")}</div>`;
+    ${tile("#16a34a","Revenue won",inr(tWV),avg?"avg "+inrS(avg)+" ":"",P&&dl(tWV,P.wv))}
+    ${tile("#2563eb","Cash collected",inr(tC),tC&&tWV?Math.round(tC*100/tWV)+"% of revenue ":"",P&&dl(tC,P.c))}</div>`;
   const mx=Math.max(1,...bks.map(b=>Math.max(b.w_v,b.c_v))),nice=v=>{const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p},top=nice(mx),many=bks.length>12;
   const bar=(i,v,cls,lbl)=>v?`<button type="button" class="tb ${cls}" data-tbk="${i}" data-f="${cls==="lw"?"won":"all"}" style="height:${Math.max(2,Math.round(v*100/top))}%" title="${lbl}: ${inr(v)}">${many?"":`<em>${inrS(v)}</em>`}</button>`:`<span class="tb ${cls} z"></span>`;
   const chart=`<div class="mch t2"><div class="may">${[4,3,2,1,0].map(k=>`<span>${k?inrS(top*k/4):"0"}</span>`).join("")}</div>
     <div class="mpl" style="grid-template-columns:repeat(${bks.length},minmax(0,1fr))"><div class="mgr">${[0,1,2,3,4].map(()=>"<i></i>").join("")}</div>
     ${bks.map((b,i)=>`<div class="mcol ${b.b>=now&&b.a<=now?"now":""}"><div class="mbx">${bar(i,b.w_v,"lw","Revenue won")}${bar(i,b.c_v,"lc","Collected")}</div><div class="mlb">${many&&i%Math.ceil(bks.length/12)?"":esc(b.c&&bks.length>7?b.c:b.l)}</div></div>`).join("")}</div></div>`;
-  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.a_n||b.w_n||b.c_v),hid=bks.length-rows.length;
+  const fine=unit==="day"||unit==="week",rows=bks.slice().map((b,i)=>({b,i})).reverse().filter(({b})=>!(many||fine)||b.w_n||b.c_v),hid=bks.length-rows.length;
   const gr=(i)=>{const p=bks[i-1];if(!p)return `<span class="g nil">—</span>`;const c=bks[i].w_v,v=p.w_v;if(!v)return c?`<span class="g up">New</span>`:`<span class="g nil">—</span>`;const g=Math.round((c-v)*100/v);return `<span class="g ${g>0?"up":g<0?"dn":"nil"}">${g>0?"▲ ":g<0?"▼ ":""}${Math.abs(g)}%</span>`};
-  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Added</span><span>Won</span><span>Won value</span><span>Collected</span><span>Avg deal</span>${fine?"":"<span>Growth</span>"}</div>
-    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.a_n?`<button class="nmb la" data-tbk="${i}" data-f="all">${b.a_n}</button>`:"0"}</span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span><span>${b.w_n?inrS(b.w_v/b.w_n):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
+  const tbl=`<div class="mtb t2 ${fine?"nogr":""}"><div class="mth"><span>${unit==="day"?"Day":unit==="week"?"Week":unit==="month"?"Month":"Quarter"}</span><span>Deals won</span><span>Revenue</span><span>Collected</span>${fine?"":"<span>Growth</span>"}</div>
+    ${rows.map(({b,i})=>`<div class="mtr"><span>${esc(b.l)} <small>${esc(b.s)}</small></span><span>${b.w_n?`<button class="nmb lw" data-tbk="${i}" data-f="won">${b.w_n}</button>`:"0"}</span><span class="wv">${b.w_v?inrS(b.w_v):"—"}</span><span class="cv">${b.c_v?inrS(b.c_v):"—"}</span>${fine?"":gr(i)}</div>`).join("")||`<div class="mtr one"><span>Nothing in this period</span></div>`}${hid&&rows.length?`<div class="mtr one"><span>No activity on the other ${hid} ${unit}${hid===1?"":"s"}</span></div>`:""}</div>`;
   return `<div class="brk wide mow">
     <div class="brkh"><div class="bh1">Performance · ${esc(PL[an.p]||"")}<small>${unit==="day"?"Day by day":unit==="week"?"Week by week":unit==="month"?"Month by month":"Quarter by quarter"}${P?" · change vs the previous period":""}</small></div>
       <div class="mleg" style="margin:0;flex:none"><span class="lw">Revenue won</span><span class="lc">Collected</span></div></div>
@@ -1655,33 +1669,22 @@ const numCell=(k,f,n)=>n?`<button class="numb" data-tsl="${esc(k)}" data-f="${f}
 function insStageSel(ss){const cnt={};ss.forEach(s=>{const g=s.stage||"Lead";cnt[g]=(cnt[g]||0)+1});return stageSel(cnt,an.stg||"all","data-anstg")}
 /* Team Insights · Schools tab: every school in the chosen stage, with a quick stage switcher */
 function insSchoolsTab(ss){
-  const st=an.stg||"all",list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
+  const st=an.stg||"all",q=(an.q||"").trim().toLowerCase();
+  const list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
+    .filter(s=>!q||((s.name||"")+" "+(s.city||"")+" "+(s.address||"")).toLowerCase().includes(q))
     .sort((a,b)=>STAGES.indexOf(a.stage||"Lead")-STAGES.indexOf(b.stage||"Lead")||insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
   const tot=list.reduce((a,s)=>a+insVal(s),0),c=st==="all"?"#0d7f7a":STC[st]||"#64748b";
   const head=`<div class="sph" style="--c:${c}"><div><small>Stage</small><b>${st==="all"?"All stages":esc(st)}</b></div><div><small>Schools · ${esc(PL[an.p]||"")}</small><b>${list.length}</b></div><div><small>Deal value / yr</small><b>${tot?inrS(tot):"—"}</b></div></div>`;
-  if(!list.length)return head+noMatch("No schools here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet");
+  if(!list.length)return head+noMatch(q?"No schools match “"+esc(an.q.trim())+"”":"No schools here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet");
   return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b";
     return `<div class="spc" style="--c:${cc}"><div class="spgo" data-tgo="${s.id}" title="Open this school">
       <div class="r"><b>${esc(s.name||"—")}</b><span class="spv">${insVal(s)?inrS(insVal(s))+"<small>/yr</small>":"No deal yet"}</span></div>
-      <small class="spm">${esc([s.city,s.board,s.strength?s.strength+" students":""].filter(Boolean).join(" · "))||"&nbsp;"}</small></div>
+      <small class="spm">${esc([[s.city,s.state].filter(Boolean).join(", "),s.board].filter(Boolean).join(" · "))||"Location not added"}</small>
+      ${(()=>{const d=s.deal||{},b=(d.basis||"year")==="month"?"mo":"yr",x=[s.strength?s.strength+" students":"",d.price?inr(d.price)+"/student/"+b:""].filter(Boolean).join(" · ");return x?`<small class="spm spd">${esc(x)}</small>`:""})()}</div>
       <div class="spf"><span class="fav sm" style="background:${mcol(owner(s))}">${esc((ulabel(owner(s))||"?")[0].toUpperCase())}</span><span>${esc(ulabel(owner(s)))}</span>
       <label class="stgch" style="--c:${cc}" title="Change stage"><i></i><select data-chstg="${s.id}" aria-label="Stage">${STAGES.map(g=>`<option ${g===(s.stage||"Lead")?"selected":""}>${g}</option>`).join("")}</select></label></div></div>`}).join("")+`</div>`;
 }
 /* Team Insights · Deals tab: the money view of the same pipeline */
-function insDealsTab(ss){
-  const st=an.stg||"all";
-  let list=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price);
-  if(st!=="all")list=list.filter(s=>(s.stage||"Lead")===st);
-  list.sort((a,b)=>insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
-  const tot=list.reduce((a,s)=>a+insVal(s),0),c=st==="all"?"#0d7f7a":STC[st]||"#64748b";
-  const head=`<div class="sph" style="--c:${c}"><div><small>${st==="all"?"Deals":esc(st)+" deals"} · ${esc(PL[an.p]||"")}</small><b>${list.length}</b></div><div><small>Value / yr incl. GST</small><b>${tot?inr(tot):"—"}</b></div><div><small>Avg deal</small><b>${list.length&&tot?inrS(tot/list.length):"—"}</b></div></div>`;
-  if(!list.length)return head+noMatch("No deals here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet — add Students and Price on a school to create one");
-  return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b",d=s.deal,cal=calc(d);
-    return `<div class="spc" style="--c:${cc}"><div class="spgo" data-sel="${s.id}" data-tabto="deal" title="Open this deal">
-      <div class="r"><b>${esc(s.name||"—")}</b><span class="spv">${inr(cal.yt)}<small>/yr</small></span></div>
-      <small class="spm">${d.students} students × ${inr(d.price)}/${d.basis==="year"?"yr":"mo"} · ${d.signing?((s.stage==="Won"?"Signed ":"Signing ")+fmtDate(d.signing)):"No signing date"}</small></div>
-      <div class="spf"><span class="pill ${sc(s.stage)}">${esc(s.stage||"Lead")}</span><span class="fav sm" style="background:${mcol(owner(s))}">${esc((ulabel(owner(s))||"?")[0].toUpperCase())}</span><span>${esc(ulabel(owner(s)))}</span></div></div>`}).join("")+`</div>`;
-}
 function insSheet(title,list){
   list=list.slice().sort((a,b)=>insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
   const tot=list.reduce((a,s)=>a+insVal(s),0);
@@ -1767,7 +1770,7 @@ function analyticsView(){
   const col=collectedIn(from,to,df?ids:null);
   const won=ss.filter(s=>s.stage==="Won").length,lost=ss.filter(s=>s.stage==="Lost").length,cl=won+lost;
   const avg=wonP.length?wonV/wonP.length:0;
-  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt" title="${l}">${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
+  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x,ic)=>`<label class="flt ${ic===FI.q?"fq":""}" title="${l}">${ic?`<i class="fi">${sv(ic,14)}</i>`:""}${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
   const keys=[...new Set([...team.map(u=>u.id),...every.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||every.some(x=>x.u===k));
   const aAll=every.filter(x=>FEED_TYPES.has(x.e.type)).sort((a,b)=>b.t-a.t); // only logged calls, meetings, emails and messages
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
@@ -1782,7 +1785,7 @@ function analyticsView(){
   ${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" \u00b7 "+pz(ty("Email",tdE),"email")+" \u00b7 "+pz(ty("Message",tdE),"message"):"nothing logged yet")}
   ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" · since Monday")}
   ${insKc("#7c3aed",MO_IC,String(moE.length),"Activity this month",pz(mtM,"meeting")+" · since the 1st")}</div>`;
-  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
+  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`,FI.m)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`,FI.p)}${F("Stage",insStageSel(ss),FI.s)}${view==="overview"?F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`,FI.d):""}${view==="schools"?F("Search",`<input type="text" data-ansq value="${esc(an.q||"")}" placeholder="Search school" aria-label="Search school">`,FI.q):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div>${view==="overview"?`<button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button>`:""}</div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Schools "+pl,won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
@@ -1793,10 +1796,10 @@ function analyticsView(){
   const feed=`<div class="brk"><div class="brkh"><div class="bh1" id="feedtop">Activity feed · ${aAll.length}<small>calls, meetings, emails and messages</small></div></div>
   <div class="feedw">${aAll.length?pageRows.map(({e,s,k,u})=>`<div class="fe" data-sel="${s.id}" data-tabto="activity"><div class="fav" style="background:${mcol(u)}">${esc(ulabel(u)[0].toUpperCase())}</div><div class="fb"><div class="ft"><b>${esc(ulabel(u))}</b><span class="kl2" style="--c:${KC[k]||"#64748b"}">${KL[k]||"Update"}</span></div><div class="fx">${esc(k==="school_added"?s.name:e.text)}</div><small>${k==="school_added"?"":esc(s.name)+" · "}${dt(e.at)}</small></div></div>`).join("")+pager(pg,pages,aAll.length):noMatch("Nothing logged yet")}</div></div>`;
   {const i=out.indexOf('<div class="kgrid k6 lbl">');if(i<0)return out;
-   const v=view,nD=ss.filter(s=>s.deal&&s.deal.students&&s.deal.price).length;
+   const v=view,nD=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).length; // the Deals tab is not filtered
    const tabs=`<div class="dtabs ivt">${[["overview","Overview",null,"#4f46e5"],["activity","Activity",aAll.length,"#d97706"],["schools","Schools",ss.length,"#0d7f7a"],["deals","Deals",nD,"#16a34a"]].map(([k,l,n,c])=>`<button class="${v===k?"on":""}" style="--c:${c}" data-iview="${k}"><span>${l}</span>${n===null?"":`<em>${n}</em>`}</button>`).join("")}</div>`;
    const head=tabs+out.slice(0,i); // Overview/Schools/Deals on top, then the filters (stage included)
-   return v==="schools"?head+insSchoolsTab(ss):v==="deals"?head+insDealsTab(ss):v==="activity"?tabs+actCards+`<div class="ins actw">${feed}</div>`:head+out.slice(i)}
+   return v==="schools"?head+insSchoolsTab(ss):v==="deals"?tabs+dealsView("",true):v==="activity"?tabs+actCards+`<div class="ins actw">${feed}</div>`:head+out.slice(i)}
 }
 
 /* Educlawd CRM · Excel (.xlsx) export: writer + member / period filters */
@@ -2115,7 +2118,7 @@ function stageSheet(){
     return `<button class="stgr ${dstg===v?"on":""} ${c?"":"z"}" style="--c:${col}" data-dstgc="${esc(v)}"><i></i><span>${esc(l)}${v==="all"?"":`<u><b style="width:${Math.round(c*100/mx)}%"></b></u>`}</span><em>${c}</em></button>`};
   modal(`<div class="shh"><h3 style="margin:0">Filter by stage</h3><button class="ghost shx" data-m="close" aria-label="Close">✕</button></div><div class="stgl">${row("all","All open stages")}${OPEN_STAGES().map(g=>row(g,g)).join("")}</div>`,"side");
 }
-function dealsView(f){
+function dealsView(f,plain){ // plain: the Team Insights Deals tab — just This month / Upcoming / Won / Lost
   const eom=new Date();eom.setMonth(eom.getMonth()+1,0);eom.setHours(23,59,59,999);
   const every=schools.filter(s=>s.deal&&s.deal.students&&s.deal.price).map(s=>({s,c:calc(s.deal),sd:s.deal.signing?new Date(s.deal.signing+"T00:00"):null}));
   if(dstg!=="all"&&!STAGES.includes(dstg))dstg="all";
@@ -2126,12 +2129,13 @@ function dealsView(f){
   const sets={month:month.sort(byDate),upcoming:upc.sort(byDate),won:won.sort(recent),lost:lost.sort(recent)};
   const T=[["month","This month",month.length,"#0d7f7a"],["upcoming","Upcoming",upc.length,"#2563eb"],["won","Won",won.length,"#16a34a"],["lost","Lost",lost.length,"#dc2626"]];
   const tabs=`<div class="dtabs">${T.map(([k,l,n,c])=>`<button class="${dtab===k?"on":""}" style="--c:${c}" data-dt="${k}"><span>${l}</span><em>${n}</em></button>`).join("")}</div>`;
-  const openTab=dstg==="all"?dtab==="month"||dtab==="upcoming":dstg!=="Won"&&dstg!=="Lost";
+  const dg=plain?"all":dstg; // the Insights copy never drills into a single stage
+  const openTab=dg==="all"?dtab==="month"||dtab==="upcoming":dg!=="Won"&&dg!=="Lost";
   const dist=OPEN_STAGES().map(g=>[g,openAll.filter(r=>(r.s.stage||"Lead")===g).length]).filter(x=>x[1]);
   const dcnt={};every.forEach(r=>{const g=r.s.stage||"Lead";dcnt[g]=(dcnt[g]||0)+1});
-  const seg=`<div class="sgf">${stageSel(dcnt,dstg,"data-dstgf")}</div>`+(dstg==="all"?tabs:"");
-  const rows=(dstg==="all"?sets[dtab]:every.filter(r=>(r.s.stage||"Lead")===dstg).sort(openTab?byDate:recent)).filter(r=>(r.s.name||"").toLowerCase().includes(f));
-  if(!rows.length)return seg+noMatch(f?"No deals match your search":dstg!=="all"?"No "+esc(dstg)+" deals":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":dtab==="won"?"No won deals yet":"No lost deals");
+  const seg=(plain?"":`<div class="sgf">${stageSel(dcnt,dstg,"data-dstgf")}</div>`)+(dg==="all"?tabs:"");
+  const rows=(dg==="all"?sets[dtab]:every.filter(r=>(r.s.stage||"Lead")===dg).sort(openTab?byDate:recent)).filter(r=>(r.s.name||"").toLowerCase().includes(f));
+  if(!rows.length)return seg+noMatch(f?"No deals match your search":dg!=="all"?"No "+esc(dg)+" deals":dtab==="month"?"No deals to sign this month":dtab==="upcoming"?"No upcoming deals":dtab==="won"?"No won deals yet":"No lost deals");
   const tot=rows.reduce((a,r)=>a+r.c.yt,0),now=new Date();now.setHours(0,0,0,0);
   return seg+`<div class="hero dh"><div class="dhl"><small>Total incl. 18% GST</small><div class="big">${inr(tot)}<span> / year</span></div></div><div class="sub">${rows.length} deal${rows.length>1?"s":""}</div></div>`+rows.map(({s,c,sd})=>`<div class="it dc" data-sel="${s.id}" data-tabto="deal"><div class="r"><b>${esc(s.name)}</b><span class="dva">${inr(c.yt)}<small>/yr</small></span></div><small>${s.deal.students} students × ${inr(s.deal.price)}/${s.deal.basis==="year"?"yr":"mo"} · ${sd?(openTab?"Signing ":"Signed ")+fmtDate(s.deal.signing):"No signing date"}${(dstg==="all"?dtab==="month":openTab)&&sd&&sd<now?' · <span style="color:#b91c1c;font-weight:600">overdue</span>':""}</small></div>`).join("");
 }
@@ -2213,14 +2217,14 @@ addEventListener("popstate",()=>{
   navArmed=false;
   if($("#modalRoot").innerHTML){close();return navGuard()}
   if($("#drawerRoot .dwr.open")){closeDrawer();return setTimeout(navGuard,260)}
-  if(sel||nsel||psel){sel=null;nsel=null;psel=null;render();return navGuard()} // back to the list you came from (Tasks, Deals, …)
-  gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
+  if(sel||nsel||psel){backFromSchool();nsel=null;psel=null;render();return navGuard()} // back to the list you came from (Tasks, Deals, Team Insights, …)
+  gtab="home";retTab="";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
 });
 
 /* reopening the app after it was in the background for a while (phones often keep a "closed" app paused
    instead of restarting it) → start again on the dashboard, like a fresh open */
 const HOME_AFTER_MS=10*60*1000;let hiddenAt=0;
-function backToHome(){if(!me)return;try{close();closeDrawer()}catch(e){}gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();const a=document.querySelector(".app");if(a)a.scrollTop=0}
+function backToHome(){if(!me)return;try{close();closeDrawer()}catch(e){}gtab="home";retTab="";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();const a=document.querySelector(".app");if(a)a.scrollTop=0}
 document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS)backToHome();hiddenAt=0});
 addEventListener("pageshow",e=>{if(e.persisted&&hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS){backToHome();hiddenAt=0}});
 
@@ -3451,7 +3455,7 @@ function onClick(e){
   if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;ndt="contract";return render()}
   if(el=g("data-ndt")){ndt=el.dataset.ndt;return render()}
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
-  if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
+  if(el=g("data-nschool")){openSchool(el.dataset.nschool,"deal");return render()}
   if(el=g("data-ex"))return exAct(el);
   if(el=g("data-catsh"))return catSheet(+el.dataset.catsh);
   if(el=g("data-et")){etab=el.dataset.et;return render()}
@@ -3461,21 +3465,21 @@ function onClick(e){
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
   if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=el.dataset.psel;nsel=null}return render()}
   if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew,true)}
-  if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
+  if(el=g("data-pschool")){openSchool(el.dataset.pschool,"deal");return render()}
   if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
-  if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";sel=null;return render()}
+  if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";retTab="";sel=null;return render()}
   if(el=g("data-mst")){mst=el.dataset.mst;return render()}
   if(el=g("data-tsl"))return insSchools(el.dataset.tsl,el.dataset.f);
   if(el=g("data-tmo"))return insMonth(el.dataset.tmo,el.dataset.f);
   if(el=g("data-tbk")){const b=insBk[+el.dataset.tbk];if(!b)return;const w=el.dataset.f==="won";return insSheet(`${w?"Deals won":"Schools added"} · ${esc(b.l)} ${esc(b.s)}`,w?b.wn:b.ad)}
   if(el=g("data-tstage")){const st=el.dataset.tstage;an.stg=st==="__open"?"all":st;an.view="schools";return render()}
-  if(el=g("data-tgo")){const id=el.dataset.tgo;close();gtab="home";sel=id;tab="activity";filter="";$("#q").value="";return render()}
+  if(el=g("data-tgo")){openSchool(el.dataset.tgo,"activity");return render()}
   if(el=g("data-pick")){an.m=an.m===el.dataset.pick?"all":el.dataset.pick;an.lim=30;an.pg=1;return render()}
   if(el=g("data-pg")){const n=+el.dataset.pg;if(n>=1&&!el.disabled){an.pg=n;render();const f=document.getElementById("feedtop");if(f)f.scrollIntoView({block:"start"})}return}
   if(t.closest&&t.closest("#menu"))return openDrawer();
   if(g("data-dclose"))return closeDrawer();
-  if(el=g("data-dm")){gtab=el.dataset.dm;filter="";$("#q").value="";sel=null;psel=null;nsel=null;closeDrawer();return render()}
-  if(g("data-dprof")){closeDrawer();gtab="profile";filter="";$("#q").value="";sel=null;psel=null;nsel=null;return render()}
+  if(el=g("data-dm")){gtab=el.dataset.dm;retTab="";filter="";$("#q").value="";sel=null;psel=null;nsel=null;closeDrawer();return render()}
+  if(g("data-dprof")){closeDrawer();gtab="profile";retTab="";filter="";$("#q").value="";sel=null;psel=null;nsel=null;return render()}
   if(t.closest&&t.closest("#meb"))return profileSheet();
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
@@ -3487,7 +3491,7 @@ function onClick(e){
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
   if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
-  if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
+  if(el=g("data-g")){gtab=el.dataset.g;retTab="";sel=null;nsel=null;psel=null;filter="";$("#q").value="";return render()} // a module from the nav always lands on its list
   if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
   if(el=g("data-tab")){tab=el.dataset.tab;return render()}
   const s=cur();
@@ -3532,7 +3536,7 @@ function onClick(e){
   if(el=g("data-resch")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.resch);if(tk){reschSid=ss.id;reschedForm(tk)}return}
   if(!s)return;
   if(el=g("data-act")){const a=el.dataset.act;
-    if(a==="back"){sel=null;return render()}
+    if(a==="back"){backFromSchool();return render()}
     if(a==="edit")return schoolForm(s);
     if(a==="itab"){itab=el.dataset.v;return render()}
     if(a==="addContact")return contactForm();
@@ -3549,6 +3553,9 @@ document.addEventListener("input",e=>{if(["f_strength","e_dp","e_db"].includes(e
 document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.dataset.nsrt){nsrt=e.target.value;render();return}});
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
+document.addEventListener("input",e=>{const t=e.target;if(!t||!t.dataset||!("ansq" in t.dataset))return;
+  an.q=t.value;const p=t.selectionStart;render();
+  const n=document.querySelector("[data-ansq]");if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}});
 document.addEventListener("change",payChange);
 /* the stage dropdowns */
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset;if(!d)return;
