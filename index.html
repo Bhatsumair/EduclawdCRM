@@ -1321,6 +1321,10 @@ const sc=s=>"s-"+(s||"Lead").split(" ")[0];
 
 /* Educlawd CRM · State, local cache, sync queue, save / merge */
 let schools=[],sel=null,tab="activity",dbc=null,filter="";
+let retTab=""; // the module to go back to when a school opened from elsewhere is closed
+/* open a school from anywhere; only School Network and Profile have to hand the detail panel over to Home */
+function openSchool(id,t){close();if(gtab==="network"||gtab==="profile"){retTab=gtab;gtab="home"}sel=id;tab=t||"activity";itab=t==="contacts"?"contacts":"school";filter="";const q=$("#q");if(q)q.value=""}
+function backFromSchool(){sel=null;if(retTab){gtab=retTab;retTab=""}}
 let expenses=[],excats=[];
 let payments=[],psel=null; // admin-only payment plans (stored as their own admin-owned docs)
 const LS="educlawd_crm_v2";
@@ -1475,7 +1479,7 @@ async function syncNow(first){
     else setMode("⚠ "+((e&&e.message)||"Sync failed")+" – changes kept in this browser",true);
   }finally{syncing=false}
 }
-async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);gtab="home";sel=null;nsel=null;psel=null;render(); // always open on the dashboard
+async function beginSession(){dbc=mkDbc();team=[me];await syncNow(true);gtab="home";retTab="";sel=null;nsel=null;psel=null;render(); // always open on the dashboard
   {const q=new URLSearchParams(location.search);if(q.get("go")==="tasks"){gtab="tasks";sel=null;render();history.replaceState(history.state,"",location.pathname)}}
   startSync();pushSync()}
 const safe=fn=>async(...a)=>{try{await fn(...a)}catch(x){console.error(x);err("Something went wrong: "+(x.message||x.code||x))}};
@@ -2213,14 +2217,14 @@ addEventListener("popstate",()=>{
   navArmed=false;
   if($("#modalRoot").innerHTML){close();return navGuard()}
   if($("#drawerRoot .dwr.open")){closeDrawer();return setTimeout(navGuard,260)}
-  if(sel||nsel||psel){sel=null;nsel=null;psel=null;render();return navGuard()} // back to the list you came from (Tasks, Deals, …)
-  gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
+  if(sel||nsel||psel){backFromSchool();nsel=null;psel=null;render();return navGuard()} // back to the list you came from (Tasks, Deals, Team Insights, …)
+  gtab="home";retTab="";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();
 });
 
 /* reopening the app after it was in the background for a while (phones often keep a "closed" app paused
    instead of restarting it) → start again on the dashboard, like a fresh open */
 const HOME_AFTER_MS=10*60*1000;let hiddenAt=0;
-function backToHome(){if(!me)return;try{close();closeDrawer()}catch(e){}gtab="home";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();const a=document.querySelector(".app");if(a)a.scrollTop=0}
+function backToHome(){if(!me)return;try{close();closeDrawer()}catch(e){}gtab="home";retTab="";sel=null;nsel=null;psel=null;filter="";const q=$("#q");if(q)q.value="";render();const a=document.querySelector(".app");if(a)a.scrollTop=0}
 document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS)backToHome();hiddenAt=0});
 addEventListener("pageshow",e=>{if(e.persisted&&hiddenAt&&Date.now()-hiddenAt>=HOME_AFTER_MS){backToHome();hiddenAt=0}});
 
@@ -3451,7 +3455,7 @@ function onClick(e){
   if(el=g("data-nsel")){nsel=el.dataset.nsel;psel=null;ndt="contract";return render()}
   if(el=g("data-ndt")){ndt=el.dataset.ndt;return render()}
   if(el=g("data-nst")){nst=el.dataset.nst;return render()}
-  if(el=g("data-nschool")){gtab="home";sel=el.dataset.nschool;tab="deal";filter="";$("#q").value="";return render()}
+  if(el=g("data-nschool")){openSchool(el.dataset.nschool,"deal");return render()}
   if(el=g("data-ex"))return exAct(el);
   if(el=g("data-catsh"))return catSheet(+el.dataset.catsh);
   if(el=g("data-et")){etab=el.dataset.et;return render()}
@@ -3461,21 +3465,21 @@ function onClick(e){
   if(el=g("data-pn"))return payCount(+el.dataset.pn);
   if(el=g("data-psel")){const pl=payments.find(x=>x.id===el.dataset.psel),ws=wonOf(pl);if(el.dataset.go){gtab="network";filter="";$("#q").value=""}if(ws){nsel=ws.id;psel=null;ndt="pay"}else{psel=el.dataset.psel;nsel=null}return render()}
   if(el=g("data-pnew")){gtab="network";filter="";$("#q").value="";if(schools.some(x=>x.id===el.dataset.pnew&&x.stage==="Won")){nsel=el.dataset.pnew;psel=null;ndt="pay"}render();return payForm(null,el.dataset.pnew,true)}
-  if(el=g("data-pschool")){gtab="home";sel=el.dataset.pschool;tab="deal";filter="";$("#q").value="";return render()}
+  if(el=g("data-pschool")){openSchool(el.dataset.pschool,"deal");return render()}
   if(el=g("data-ts")){tsub=el.dataset.ts;return render()}
-  if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";sel=null;return render()}
+  if(el=g("data-viewm")){an.m=el.dataset.viewm;an.pg=1;gtab="reports";retTab="";sel=null;return render()}
   if(el=g("data-mst")){mst=el.dataset.mst;return render()}
   if(el=g("data-tsl"))return insSchools(el.dataset.tsl,el.dataset.f);
   if(el=g("data-tmo"))return insMonth(el.dataset.tmo,el.dataset.f);
   if(el=g("data-tbk")){const b=insBk[+el.dataset.tbk];if(!b)return;const w=el.dataset.f==="won";return insSheet(`${w?"Deals won":"Schools added"} · ${esc(b.l)} ${esc(b.s)}`,w?b.wn:b.ad)}
   if(el=g("data-tstage")){const st=el.dataset.tstage;an.stg=st==="__open"?"all":st;an.view="schools";return render()}
-  if(el=g("data-tgo")){const id=el.dataset.tgo;close();gtab="home";sel=id;tab="activity";filter="";$("#q").value="";return render()}
+  if(el=g("data-tgo")){openSchool(el.dataset.tgo,"activity");return render()}
   if(el=g("data-pick")){an.m=an.m===el.dataset.pick?"all":el.dataset.pick;an.lim=30;an.pg=1;return render()}
   if(el=g("data-pg")){const n=+el.dataset.pg;if(n>=1&&!el.disabled){an.pg=n;render();const f=document.getElementById("feedtop");if(f)f.scrollIntoView({block:"start"})}return}
   if(t.closest&&t.closest("#menu"))return openDrawer();
   if(g("data-dclose"))return closeDrawer();
-  if(el=g("data-dm")){gtab=el.dataset.dm;filter="";$("#q").value="";sel=null;psel=null;nsel=null;closeDrawer();return render()}
-  if(g("data-dprof")){closeDrawer();gtab="profile";filter="";$("#q").value="";sel=null;psel=null;nsel=null;return render()}
+  if(el=g("data-dm")){gtab=el.dataset.dm;retTab="";filter="";$("#q").value="";sel=null;psel=null;nsel=null;closeDrawer();return render()}
+  if(g("data-dprof")){closeDrawer();gtab="profile";retTab="";filter="";$("#q").value="";sel=null;psel=null;nsel=null;return render()}
   if(t.closest&&t.closest("#meb"))return profileSheet();
   if(g("data-adduser"))return userForm();
   if(el=g("data-edituser"))return userForm(team.find(x=>x.id===el.dataset.edituser));
@@ -3487,7 +3491,7 @@ function onClick(e){
   if(el=g("data-dstgc")){dstg=el.dataset.dstgc;close();return render()}
   if(el=g("data-dstgo"))return stageSheet();
   if(el=g("data-tt")){ttab=el.dataset.tt;return render()}
-  if(el=g("data-g")){gtab=el.dataset.g;filter="";$("#q").value="";return render()}
+  if(el=g("data-g")){gtab=el.dataset.g;retTab="";sel=null;nsel=null;psel=null;filter="";$("#q").value="";return render()} // a module from the nav always lands on its list
   if(el=g("data-sel")){sel=el.dataset.sel;tab=el.dataset.tabto||"activity";itab=el.dataset.tabto==="contacts"?"contacts":"school";return render()}
   if(el=g("data-tab")){tab=el.dataset.tab;return render()}
   const s=cur();
@@ -3532,7 +3536,7 @@ function onClick(e){
   if(el=g("data-resch")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.resch);if(tk){reschSid=ss.id;reschedForm(tk)}return}
   if(!s)return;
   if(el=g("data-act")){const a=el.dataset.act;
-    if(a==="back"){sel=null;return render()}
+    if(a==="back"){backFromSchool();return render()}
     if(a==="edit")return schoolForm(s);
     if(a==="itab"){itab=el.dataset.v;return render()}
     if(a==="addContact")return contactForm();
