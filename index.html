@@ -3231,7 +3231,7 @@ function netAct(el){
     if((s.tasks||[]).some(t=>t.title===ti))return toast("📅","Reminder already set");
     const o=structuredClone(s);
     (o.tasks=o.tasks||[]).push({id:uid(),type:"Call",title:ti,due:d.toISOString(),by:me?me.name:undefined,byId:me?me.id:undefined});
-    log(o,"Task",`Call task added: ${ti} (due ${fmt(d)})`);
+    log(o,"Task",`Call task added: ${ti}`);
     toast("📅","Renewal reminder set for "+fmtDate(localISO(d).slice(0,10)));return save(o)}
 }
 
@@ -3529,7 +3529,7 @@ function onClick(e){
     if(m==="saveTask"){const ti=val("t_title"),du=dueVal("t_due");if(!ti)return err("Enter what needs to be done");if(!du)return err("Pick a date and time");
       const dt=new Date(du),val_t=val("t_type"),cs=s.contacts||[],ce=document.getElementById("t_contact"),cid=ce?ce.value:(cs.length===1?cs[0].id:""),cn=(cs.find(x=>x.id===cid)||{}).name;
       (s.tasks=s.tasks||[]).push({id:uid(),type:val("t_type"),title:ti,due:dt.toISOString(),contactId:cid,by:me?me.name:undefined,byId:me?me.id:undefined,...(ntogVal()?{notify:true}:{})});
-      log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""} (due ${fmt(dt)})`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
+      log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""}`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
     if(m==="saveAct"){if(!val("a_text"))return err("Describe the activity");const ty=val("a_type");log(s,ty,val("a_text"),ty==="Note"?"note":"activity");close();toast(ICON[ty]||"✅",`${ty} logged successfully`);return save(s)}
   }
   if(el=g("data-done")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.done);if(tk){ss.tasks=ss.tasks.filter(x=>x!==tk);log(ss,tk.type,`Completed: ${tk.title}`,"task_done");toast("✅","Task completed");save(ss)}return}
