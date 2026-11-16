@@ -1229,16 +1229,21 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 /* filter bar: one compact row */
 .fbar{gap:7px;align-items:center;padding:7px 8px;border-radius:14px;margin-bottom:10px}
 .fgrid{display:flex;flex-wrap:wrap;gap:7px}
-.flt{flex-direction:row;align-items:center;gap:6px;flex:0 1 auto}
-.flt small{font-size:11px;letter-spacing:0;text-transform:none;padding:0}
-.flt select,.flt input{width:auto;min-height:34px;padding:6px 28px 6px 11px;border-radius:10px;font-size:13px;background-position:right 9px center}
-.flt input{padding:6px 11px}
+.flt{display:inline-flex;flex-direction:row;align-items:center;gap:7px;flex:0 1 auto;height:36px;padding:0 11px;border-radius:12px;background:var(--card);border:1px solid var(--line);box-shadow:0 1px 2px rgba(120,80,30,.06);transition:border-color .15s,box-shadow .15s}
+.flt:hover{border-color:color-mix(in srgb,var(--teal) 40%,var(--line))}
+.flt:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 16%,transparent)}
+.flt .fi{display:grid;place-items:center;flex:none;color:var(--teal)}
+.flt small{flex:none;font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;padding:0;color:var(--mute)}
+.flt select,.flt input{width:auto;min-width:0;height:34px;min-height:0;padding:0 19px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none;background-repeat:no-repeat;background-position:right 0 center;background-size:13px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23738086' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>")}
+.flt input{padding-right:0;background-image:none;font-weight:500;cursor:text;min-width:132px}
+.flt select:focus,.flt input:focus{outline:0;box-shadow:none}
+.flt.fq{flex:1 1 190px;max-width:290px}
 .fexp{min-height:34px;padding:6px 13px;border-radius:10px;font-size:13px;gap:6px;box-shadow:0 2px 7px color-mix(in srgb,var(--teal) 28%,transparent)}
 .sph{padding:9px 13px;margin:0 0 10px}
 .sph small{font-size:10px}.sph b{font-size:15.5px}
 @media(max-width:800px){
   .fbar{padding:6px;gap:6px}
-  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px)}.flt select,.flt input{flex:1;width:100%}
+  .fgrid{flex:1;gap:6px}.flt{flex:1 1 calc(50% - 3px);padding:0 9px}.flt select,.flt input{flex:1;width:100%;min-width:0;font-size:16px}.flt.fq{flex:1 1 100%;max-width:none}
   .fexp{flex:none;width:38px;padding:0;justify-content:center;align-self:stretch;border-radius:11px} /* icon only, keeps the row short */
   .fexp span{display:none}
   .sph{padding:9px 12px}.sph b{font-size:15px}
@@ -1307,6 +1312,12 @@ input[type=date]::-webkit-date-and-time-value,input[type=month]::-webkit-date-an
 const ACT=["Call","Meeting","Visit","Message","Email","Demo"]; // task types
 const ACT_LOG=["Call","Message","Meeting","Email","Note"]; // what you can log as an activity
 const FEED_TYPES=new Set(["Call","Meeting","Email","Message"]); // what the Activity tab counts and lists
+/* Educlawd CRM · small icons for the Team Insights filter pills */
+const FI={m:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  p:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  s:'<path d="M22 3H2l8 9.46V19l4 2v-8.54z"/>',
+  d:'<path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.2"/>',
+  q:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'};
 const ICON={Call:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',Meeting:"🤝",Visit:"📍",Message:"💬",Email:"✉️",Demo:"🖥️",Task:"✅",Note:"📝",Deal:"💰",Update:"🔄"};
 const IN_STATES=["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 const STAGES=["Lead","Contacted","Meeting done","Demo done","Proposal sent","Negotiation","Contract Signed","Won","Lost"];
@@ -1529,7 +1540,7 @@ const savePw=safe(async()=>{
 });
 
 /* Educlawd CRM · Team analytics view, filters, feed pagination */
-let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1,stg:"all",view:"overview"};
+let tsub="analytics",an={m:"all",p:"month",d:"all",t:"all",from:"",to:"",lim:30,pg:1,stg:"all",view:"overview",q:""};
 const KG={schools:["school_added","school_updated"],contacts:["contact_added","contact_updated"],activities:["activity","note"],tasks:["task_added","task_done","task_rescheduled"],deals:["deal","stage"]};
 const KL={school_added:"New school",school_updated:"School updated",contact_added:"New contact",contact_updated:"Contact updated",activity:"Activity",note:"Note",task_added:"Task added",task_done:"Task done",task_rescheduled:"Rescheduled",deal:"Deal",stage:"Stage change",update:"Update"};
 const KC={school_added:"#0d7f7a",school_updated:"#0d7f7a",contact_added:"#7c3aed",contact_updated:"#7c3aed",activity:"#2563eb",note:"#ca8a04",task_added:"#d97706",task_done:"#16a34a",task_rescheduled:"#d97706",deal:"#059669",stage:"#059669",update:"#64748b"};
@@ -1659,11 +1670,13 @@ const numCell=(k,f,n)=>n?`<button class="numb" data-tsl="${esc(k)}" data-f="${f}
 function insStageSel(ss){const cnt={};ss.forEach(s=>{const g=s.stage||"Lead";cnt[g]=(cnt[g]||0)+1});return stageSel(cnt,an.stg||"all","data-anstg")}
 /* Team Insights · Schools tab: every school in the chosen stage, with a quick stage switcher */
 function insSchoolsTab(ss){
-  const st=an.stg||"all",list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
+  const st=an.stg||"all",q=(an.q||"").trim().toLowerCase();
+  const list=(st==="all"?ss.slice():ss.filter(s=>(s.stage||"Lead")===st))
+    .filter(s=>!q||((s.name||"")+" "+(s.city||"")+" "+(s.address||"")).toLowerCase().includes(q))
     .sort((a,b)=>STAGES.indexOf(a.stage||"Lead")-STAGES.indexOf(b.stage||"Lead")||insVal(b)-insVal(a)||(a.name||"").localeCompare(b.name||""));
   const tot=list.reduce((a,s)=>a+insVal(s),0),c=st==="all"?"#0d7f7a":STC[st]||"#64748b";
   const head=`<div class="sph" style="--c:${c}"><div><small>Stage</small><b>${st==="all"?"All stages":esc(st)}</b></div><div><small>Schools · ${esc(PL[an.p]||"")}</small><b>${list.length}</b></div><div><small>Deal value / yr</small><b>${tot?inrS(tot):"—"}</b></div></div>`;
-  if(!list.length)return head+noMatch("No schools here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet");
+  if(!list.length)return head+noMatch(q?"No schools match “"+esc(an.q.trim())+"”":"No schools here"+(an.m!=="all"?" for "+esc(ulabel(an.m)):"")+" yet");
   return head+`<div class="spl">`+list.map(s=>{const cc=STC[s.stage||"Lead"]||"#64748b";
     return `<div class="spc" style="--c:${cc}"><div class="spgo" data-tgo="${s.id}" title="Open this school">
       <div class="r"><b>${esc(s.name||"—")}</b><span class="spv">${insVal(s)?inrS(insVal(s))+"<small>/yr</small>":"No deal yet"}</span></div>
@@ -1757,7 +1770,7 @@ function analyticsView(){
   const col=collectedIn(from,to,df?ids:null);
   const won=ss.filter(s=>s.stage==="Won").length,lost=ss.filter(s=>s.stage==="Lost").length,cl=won+lost;
   const avg=wonP.length?wonV/wonP.length:0;
-  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x)=>`<label class="flt" title="${l}">${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
+  const opt=(v,l,cur)=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`,F=(l,x,ic)=>`<label class="flt ${ic===FI.q?"fq":""}" title="${l}">${ic?`<i class="fi">${sv(ic,14)}</i>`:""}${l==="From"||l==="To"?`<small>${l}</small>`:""}${x}</label>`;
   const keys=[...new Set([...team.map(u=>u.id),...every.map(x=>x.u)])].filter(k=>team.some(u=>u.id===k)||every.some(x=>x.u===k));
   const aAll=every.filter(x=>FEED_TYPES.has(x.e.type)).sort((a,b)=>b.t-a.t); // only logged calls, meetings, emails and messages
   const dt=t=>new Date(t).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit"});
@@ -1772,7 +1785,7 @@ function analyticsView(){
   ${insKc("#4f46e5",P.list,String(tdE.length),"Activity today",tdE.length?pz(ty("Call",tdE),"call")+" \u00b7 "+pz(ty("Email",tdE),"email")+" \u00b7 "+pz(ty("Message",tdE),"message"):"nothing logged yet")}
   ${insKc("#0d7f7a",P.calp,String(wkE.length),"Activity this week",pz(mtW,"meeting")+" · since Monday")}
   ${insKc("#7c3aed",MO_IC,String(moE.length),"Activity this month",pz(mtM,"meeting")+" · since the 1st")}</div>`;
-  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`)}${F("Stage",insStageSel(ss))}${F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`)}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div><button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button></div>
+  const out=`<div class="fbar"><div class="fgrid">${F("Member",`<select data-an="m" aria-label="Member">${opt("all","All members",an.m)}${keys.map(k=>opt(k,ulabel(k),an.m)).join("")}</select>`,FI.m)}${F("Period",`<select data-an="p" aria-label="Period">${[["today","Today"],["7d","Last 7 days"],["30d","Last 30 days"],["month","This month"],["year","This year"],["all","All time"],["custom","Custom dates"]].map(([v,l])=>opt(v,l,an.p)).join("")}</select>`,FI.p)}${F("Stage",insStageSel(ss),FI.s)}${view==="overview"?F("Deals",`<select data-an="d" aria-label="Deal filter">${DF.map(([v,l])=>opt(v,l,an.d)).join("")}</select>`,FI.d):""}${view==="schools"?F("Search",`<input type="text" data-ansq value="${esc(an.q||"")}" placeholder="Search school" aria-label="Search school">`,FI.q):""}${an.p==="custom"?F("From",`<input type="date" data-an="from" value="${esc(an.from)}">`)+F("To",`<input type="date" data-an="to" value="${esc(an.to)}">`):""}</div>${view==="overview"?`<button class="fexp" data-export="1" title="Download an Excel file using the member, period, deal and type filters">${sv('<path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M5 21h14"/>',16)}<span>Export</span></button>`:""}</div>
   <div class="kgrid k6 lbl">${insKc("#4f46e5",P.home,String(ss.length),"Schools "+pl,won+" won · "+open.length+" open"+(lost?" · "+lost+" lost":""))}
   ${insKc("#0d7f7a",P.wallet,inrS(openV),"Open pipeline",open.length+" live deal"+(open.length===1?"":"s"))}
   ${insKc("#16a34a",P.check,inrS(wonV),"Won "+pl,wonP.length+" deal"+(wonP.length===1?"":"s")+(avg?" · avg "+inrS(avg):""))}
@@ -3540,6 +3553,9 @@ document.addEventListener("input",e=>{if(["f_strength","e_dp","e_db"].includes(e
 document.addEventListener("change",e=>{if(e.target&&e.target.dataset&&e.target.dataset.nsrt){nsrt=e.target.value;render();return}});
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset&&e.target.dataset.exs;if(!d)return;if(d==="exm")exm=e.target.value;else exc=e.target.value;render()});
 document.addEventListener("change",e=>{if(e.target&&e.target.id==="ex_cat"){const i=document.getElementById("ex_newcat");if(i){i.style.display=e.target.value==="__new"?"":"none";if(e.target.value==="__new")i.focus()}}});
+document.addEventListener("input",e=>{const t=e.target;if(!t||!t.dataset||!("ansq" in t.dataset))return;
+  an.q=t.value;const p=t.selectionStart;render();
+  const n=document.querySelector("[data-ansq]");if(n){n.focus();try{n.setSelectionRange(p,p)}catch(_){}}});
 document.addEventListener("change",payChange);
 /* the stage dropdowns */
 document.addEventListener("change",e=>{const d=e.target&&e.target.dataset;if(!d)return;
