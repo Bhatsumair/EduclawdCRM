@@ -3231,7 +3231,7 @@ function netAct(el){
     if((s.tasks||[]).some(t=>t.title===ti))return toast("📅","Reminder already set");
     const o=structuredClone(s);
     (o.tasks=o.tasks||[]).push({id:uid(),type:"Call",title:ti,due:d.toISOString(),by:me?me.name:undefined,byId:me?me.id:undefined});
-    log(o,"Task",`Call task added: ${ti} (due ${fmt(d)})`);
+    log(o,"Task",`Call task added: ${ti}`);
     toast("📅","Renewal reminder set for "+fmtDate(localISO(d).slice(0,10)));return save(o)}
 }
 
@@ -3273,6 +3273,7 @@ const EV_IC={Call:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.
   Deal:'<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
   Update:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>'};
 const EV_SHOW=new Set([...ACT,"Note","Task"]); // the timeline holds what people log, plus tasks
+const evShow=e=>EV_SHOW.has(e.type)&&e.kind!=="task_moved"&&!(e.type==="Task"&&/^Rescheduled:/.test(e.text||"")); // a task moved to another day is not worth a line (the text test covers entries logged before the tag existed)
 const tm=d=>new Date(d).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});
 function dayLabel(d){const x=new Date(d),n=new Date(),k=a=>a.toDateString();return k(x)===k(n)?"Today":k(x)===k(new Date(n-864e5))?"Yesterday":x.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}
 function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
@@ -3282,7 +3283,7 @@ function dueChip(due){const d=new Date(due),n=Date.now(),k=a=>a.toDateString();
   return{c:"",t:fmt(due)}}
 function activity(s){
   const now=Date.now(),tasks=(s.tasks||[]).slice().sort((a,b)=>a.due.localeCompare(b.due)),od=tasks.filter(t=>new Date(t.due)<now).length;
-  const tl=(s.timeline||[]).filter(e=>EV_SHOW.has(e.type)),list=tl,groups=[];
+  const tl=(s.timeline||[]).filter(evShow),list=tl,groups=[];
   list.forEach(e=>{const k=dayLabel(e.at);let g=groups[groups.length-1];if(!g||g.k!==k)groups.push(g={k,items:[]});g.items.push(e)});
   return `<div class="abar"><button class="ib" data-act="addTask">${sv(P.calp)} Add task</button><button class="alt ib" data-act="logAct">${sv(P.list)} Log activity</button></div>
   <h4>Upcoming tasks</h4>${tasks.length?taskList(tasks.map(t=>({t,s})),true):`<div class="empty emp">🎉 No open tasks<br><small>Use “Add task” to schedule a call, meeting or visit</small></div>`}
@@ -3518,7 +3519,7 @@ function onClick(e){
       if(isAdmin()){const ow=val("f_owner");if(ow&&ow!==(old?(old._owner||""):me.id))o._assign=ow}
       sel=o.id;if(!old)tab="activity";close();toast(old?"✏️":"🏫",old?(dealCh?"School & deal details updated successfully":"School details updated successfully"):"School added successfully");return save(o)}
     if(m==="saveResched"){const ss=schools.find(x=>x.id===reschSid),tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.id),du=dueVal("r_due");if(!tk)return close();if(!du)return err("Pick a date and time");
-      const dt=new Date(du);tk.due=dt.toISOString();if(ntogVal())tk.notify=true;else delete tk.notify;log(ss,"Task",`Rescheduled: ${tk.title} → ${fmt(dt)}`);close();toast("🗓️","Task rescheduled successfully");return save(ss)}
+      const dt=new Date(du);tk.due=dt.toISOString();if(ntogVal())tk.notify=true;else delete tk.notify;log(ss,"Task",`Rescheduled: ${tk.title} → ${fmt(dt)}`,"task_moved");close();toast("🗓️","Task rescheduled successfully");return save(ss)}
     if(!s)return;
     if(m==="saveContact"){if(!val("c_name"))return err("Name is required");if(val("c_phone")&&!/^\d{10}$/.test(val("c_phone")))return err("Phone number must be exactly 10 digits");
       s.contacts=s.contacts||[];const id=el.dataset.id,p=s.contacts.find(x=>x.id===id)||{id:uid()};
@@ -3528,7 +3529,7 @@ function onClick(e){
     if(m==="saveTask"){const ti=val("t_title"),du=dueVal("t_due");if(!ti)return err("Enter what needs to be done");if(!du)return err("Pick a date and time");
       const dt=new Date(du),val_t=val("t_type"),cs=s.contacts||[],ce=document.getElementById("t_contact"),cid=ce?ce.value:(cs.length===1?cs[0].id:""),cn=(cs.find(x=>x.id===cid)||{}).name;
       (s.tasks=s.tasks||[]).push({id:uid(),type:val("t_type"),title:ti,due:dt.toISOString(),contactId:cid,by:me?me.name:undefined,byId:me?me.id:undefined,...(ntogVal()?{notify:true}:{})});
-      log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""} (due ${fmt(dt)})`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
+      log(s,"Task",`${val("t_type")} task added: ${ti}${cn?" · "+cn:""}`);close();toast(ICON[val_t]||"✅",`${val_t} task added successfully`);return save(s)}
     if(m==="saveAct"){if(!val("a_text"))return err("Describe the activity");const ty=val("a_type");log(s,ty,val("a_text"),ty==="Note"?"note":"activity");close();toast(ICON[ty]||"✅",`${ty} logged successfully`);return save(s)}
   }
   if(el=g("data-done")){const ss=(el.dataset.sid&&schools.find(x=>x.id===el.dataset.sid))||s,tk=ss&&(ss.tasks||[]).find(x=>x.id===el.dataset.done);if(tk){ss.tasks=ss.tasks.filter(x=>x!==tk);log(ss,tk.type,`Completed: ${tk.title}`,"task_done");toast("✅","Task completed");save(ss)}return}
